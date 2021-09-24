@@ -1,0 +1,13 @@
+{
+  "version": "0.1",
+  "language": "en-GB",
+  "words": [
+    "editorconfig",
+    "Parens"
+  ],
+  "ignorePaths": [
+    "node_modules/**/*",
+    "dist/**/*",
+    "package-lock.json"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "name": "gulls-health-and-safety-api",
+  "version": "0.1.0",
+  "contributors": [
+    "John Moore <john.moore@nature.scot>",
+    "Mike Coats <mike.coats@nature.scot> (https://github.com/MikeCoats)"
+  ],
+  "repository": "github:Scottish-Natural-Heritage/gulls-health-and-safety-api",
+  "engines": {
+    "node": "^14.6.0 || >=16.0.0"
+  },
+  "scripts": {
+    "lint:spelling": "cspell \"{src/**/*.ts,**/*.json}\"",
+    "lint:code": "xo",
+    "lint": "npm run lint:spelling && npm run lint:code",
+    "clean": "rm -r dist/ || true",
+    "build:ts": "tsc",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "license": "(MIT OR OGL-UK-3.0)",
+  "devDependencies": {
+    "@ava/typescript": "^1.1.1",
+    "@types/hapi__hapi": "^20.0.8",
+    "@types/node": "^16.0.0",
+    "ava": "^3.15.0",
+    "cspell": "^5.6.6",
+    "eslint-plugin-editorconfig": "^3.0.2",
+    "eslint-plugin-jsdoc": "^35.4.1",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5",
+    "xo": "^0.42.0"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^20.1.5",
+    "axios": "^0.21.1",
+    "axios-mock-adapter": "^1.19.0"
+  },
+  "xo": {
+    "space": 2,
+    "prettier": true,
+    "plugins": [
+      "jsdoc",
+      "editorconfig"
+    ],
+    "extends": [
+      "plugin:jsdoc/recommended",
+      "plugin:editorconfig/all"
+    ],
+    "rules": {
+      "jsdoc/check-examples": 1,
+      "jsdoc/check-indentation": 1,
+      "jsdoc/check-syntax": 1,
+      "jsdoc/match-description": 1,
+      "jsdoc/require-description": 1,
+      "jsdoc/require-description-complete-sentence": 1
+    }
+  },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true,
+    "arrowParens": "always",
+    "bracketSpacing": false,
+    "trailingComma": "all"
+  },
+  "ava": {
+    "typescript": {
+      "rewritePaths": {
+        "src/": "dist/"
+      }
+    }
+  }
+}
