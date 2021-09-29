@@ -3,7 +3,11 @@
   "language": "en-GB",
   "words": [
     "editorconfig",
-    "Parens"
+    "jobid",
+    "matchscore",
+    "Parens",
+    "querytime",
+    "uprn"
   ],
   "ignorePaths": [
     "node_modules/**/*",
