@@ -3,7 +3,7 @@
     "allowJs": false,
     "alwaysStrict": true,
     "baseUrl": "./src",
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "module": "CommonJS",
     "noFallthroughCasesInSwitch": true,
