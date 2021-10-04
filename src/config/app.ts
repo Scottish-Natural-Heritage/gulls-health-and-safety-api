@@ -1,13 +1,15 @@
 interface AppConfig {
   port: string;
   pathPrefix: string;
-  postcodeApiKey: string | undefined;
+  gazetterBaseUrl: string;
+  postcodeApiKey: string;
 }
 
 const config: AppConfig = {
   port: '3017',
   pathPrefix: '/gulls-health-and-safety-api',
-  postcodeApiKey: process.env.POSTCODE_API_KEY,
+  gazetterBaseUrl: 'https://cagmap.snh.gov.uk/gazetteer',
+  postcodeApiKey: process.env.POSTCODE_API_KEY ?? 'override_this_value',
 };
 
 export default config;
