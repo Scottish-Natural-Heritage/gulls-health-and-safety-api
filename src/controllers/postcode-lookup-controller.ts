@@ -15,7 +15,7 @@ const PostcodeLookupController = {
     // Format postcode
     const cleanPostcode = utils.postalAddress.formatPostcodeForPrinting(postcode);
     // Send axios GET request to the Postcode lookup service with the auth token.
-    const severResponse: AxiosResponse = await axios.get(config.gazetterBaseUrl, {
+    const serverResponse: AxiosResponse = await axios.get(config.gazetteerBaseUrl, {
       params: {
         postcode: cleanPostcode,
       },
@@ -26,7 +26,7 @@ const PostcodeLookupController = {
 
     // Only save the address results from the API, There is no need to save any other info that comes back from the
     // API as it will never be used by our apps.
-    return severResponse.data as PostcodeLookup;
+    return serverResponse.data as PostcodeLookup;
   },
 };
 
