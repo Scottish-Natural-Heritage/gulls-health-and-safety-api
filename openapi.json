@@ -1,0 +1,316 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Gulls health and safety API",
+    "description": "An API composed of multiple REST endpoints that provide core 'Gull health and safety' data.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://licensing.nature.scot/gulls-health-and-safety-api/v1"
+    },
+    {
+      "url": "https://licensing.uat.nature.scot/gulls-health-and-safety-api/v1"
+    },
+    {
+      "url": "https://licensing.dev.nature.scot/gulls-health-and-safety-api/v1"
+    },
+    {
+      "url": "http://localhost:3017/gulls-health-and-safety-api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "All",
+      "description": "Access to everything in Gulls health and safety."
+    },
+    {
+      "name": "Application",
+      "description": "Gulls health and safety application Entity"
+    },
+    {
+      "name": "Posts",
+      "description": "returns all endpoints that use POST"
+    }
+  ],
+  "paths": {
+    "/applications": {
+      "post": {
+        "tags": ["Application", "All", "Posts"],
+        "summary": "Add a Gulls health and safety application",
+        "requestBody": {
+          "description": "new Gulls health and safety application Object to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApplication"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201Response"
+          },
+          "400": {
+            "$ref": "#/components/responses/400Response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "201Response": {
+        "description": "A new record has been created",
+        "headers": {
+          "Location": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "URL of the created object."
+          }
+        }
+      },
+
+      "400Response": {
+        "description": "Bad Request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/StandardErrorResponse"
+            }
+          }
+        }
+      },
+
+      "404Response": {
+        "description": "resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NotFoundErrorResponse"
+            }
+          }
+        }
+      }
+    },
+
+    "schemas": {
+      "PatchApplication": {
+        "type": "object",
+        "properties": {
+          "applicantDetails": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Joe Blogs"
+              },
+              "organisation": {
+                "type": "string",
+                "example": "Nature Scot"
+              },
+              "email": {
+                "type": "string",
+                "example": "test@nature.scot"
+              },
+              "telephone ": {
+                "type": "string",
+                "example": "01463725000"
+              },
+              "address1": {
+                "type": "string",
+                "example": "1 Test Street"
+              },
+              "address2": {
+                "type": "string",
+                "example": "Test Area"
+              },
+              "town": {
+                "type": "string",
+                "example": "Inverness"
+              },
+              "county ": {
+                "type": "string",
+                "example": "Inverness-shire"
+              },
+              "postcode": {
+                "type": "string",
+                "example": "IV38NW"
+              }
+            }
+          },
+          "licenceHolderDetails": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "John Smith"
+              },
+              "organisation": {
+                "type": "string",
+                "example": "Nature Scot"
+              },
+              "email": {
+                "type": "string",
+                "example": "test@nature.scot"
+              },
+              "telephone ": {
+                "type": "string",
+                "example": "01463725000"
+              },
+              "address1": {
+                "type": "string",
+                "example": "1 Test Street"
+              },
+              "address2": {
+                "type": "string",
+                "example": "Test Area"
+              },
+              "town": {
+                "type": "string",
+                "example": "Inverness"
+              },
+              "county ": {
+                "type": "string",
+                "example": "Inverness-shire"
+              },
+              "postcode": {
+                "type": "string",
+                "example": "IV38NW"
+              }
+            }
+          },
+          "site": {
+            "type": "object",
+            "properties": {
+              "address1": {
+                "type": "string",
+                "example": "1 Test Street"
+              },
+              "address2": {
+                "type": "string",
+                "example": "Test Area"
+              },
+              "town": {
+                "type": "string",
+                "example": "Inverness"
+              },
+              "county ": {
+                "type": "string",
+                "example": "Inverness-shire"
+              },
+              "propertyType": {
+                "type": "string",
+                "example": "Commercial"
+              },
+              "propertyTypeDetails": {
+                "type": "string",
+                "example": "Retail"
+              }
+            }
+          },
+          "applicationDetails": {
+            "type": "object",
+            "properties": {
+              "issue": {
+                "type": "array",
+                "example": "[Aggression resulting in direct strikes]"
+              },
+              "issueDetails": {
+                "type": "string",
+                "example": "Test More Details"
+              },
+              "measuresTaken": {
+                "type": "array",
+                "example": "[Physically preventing nesting, Human disturbance]"
+              },
+              "measuresMoreDetail": {
+                "type": "string",
+                "example": "Test More Details"
+              },
+              "measuresIntended": {
+                "type": "array",
+                "example": "[Removing old nests and potential nesting material, Hawking by birds of prey]"
+              },
+              "measuresNotIntended": {
+                "type": "string",
+                "example": "Test More Details"
+              },
+              "species": {
+                "type": "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/Species"
+                }
+              },
+              "siteLicenceBefore": {
+                "type": "boolean",
+                "example": false
+              },
+              "siteLicenceBeforeNumber": {
+                "type": "string",
+                "example": "123456789"
+              },
+              "supportingInfo": {
+                "type": "string",
+                "example": "Test Details"
+              },
+              "otherContactsEmails": {
+                "type": "array",
+                "example": "[test1@nature.scot, test2@nature.scot]"
+              }
+            }
+          }
+        }
+      },
+
+      "PostApplication": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PatchApplication"
+          }
+        ]
+      },
+
+      "Species": {
+        "type": "object",
+        "properties": {
+          "speciesIdentified": {
+              "type": "string",
+              "example": "Black-headed gull"
+          },
+          "adultsPresent": {
+            "type": "integer",
+            "example": 11
+          },
+          "licencedActivities": {
+            "type": "array",
+            "example": "[Nest removal, Egg removal]"
+          }
+        }
+      },
+
+      "StandardErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Bad Request."
+          }
+        }
+      },
+
+      "NotFoundErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not Found."
+          }
+        }
+      }
+    }
+  }
+}
