@@ -35,7 +35,12 @@
     "@hapi/hapi": "^20.1.5",
     "axios": "^0.21.1",
     "naturescot-utils": "^1.2.0",
-    "axios-mock-adapter": "^1.19.0"
+    "axios-mock-adapter": "^1.19.0",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.8.0",
+    "sequelize-cli": "^6.2.0",
+    "sqlite3": "^5.0.2"
   },
   "xo": {
     "space": 2,
