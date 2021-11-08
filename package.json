@@ -16,7 +16,10 @@
     "clean": "rm -r dist/ || true",
     "build:ts": "tsc",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "premigrations": "npx sequelize-cli db:migrate --env preMigrations --migrations-path util/db/pre-migrations",
+    "migrations": "npx sequelize-cli db:migrate --env database",
+    "prestart": "npm run migrations"
   },
   "license": "(MIT OR OGL-UK-3.0)",
   "devDependencies": {
