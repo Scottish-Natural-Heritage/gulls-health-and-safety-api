@@ -15,12 +15,6 @@ const AddressModel = (sequelize) => {
 
   Address.init(
     {
-      ApplicationId: {
-        type: Sequelize.INTEGER,
-        validate: {
-          notEmpty: true
-        }
-      },
       uprn: {
         type: Sequelize.STRING,
       },

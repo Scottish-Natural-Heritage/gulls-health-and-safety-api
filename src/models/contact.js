@@ -15,12 +15,6 @@ const ContactModel = (sequelize) => {
 
   Contact.init(
     {
-      ApplicationId: {
-        type: Sequelize.INTEGER,
-        validate: {
-          notEmpty: true
-        }
-      },
       name: {
         type: Sequelize.STRING,
         validate: {

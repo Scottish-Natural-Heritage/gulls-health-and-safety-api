@@ -17,15 +17,30 @@ const ApplicationModel = (sequelize) => {
   Application.init(
     {
       licenceHolderId: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       licenceApplicantId: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       licenceHolderAddressId: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       siteAddressId: {
+        type: Sequelize.INTEGER
+      },
+      speciesId: {
+        type: Sequelize.INTEGER
+      },
+      isResidentialSite: {
+        type: Sequelize.BOOLEAN
+      },
+      siteType: {
+        type: Sequelize.STRING
+      },
+      previousLicenceNumber: {
+        type: Sequelize.STRING
+      },
+      supportingInformation: {
         type: Sequelize.STRING
       }
     },
