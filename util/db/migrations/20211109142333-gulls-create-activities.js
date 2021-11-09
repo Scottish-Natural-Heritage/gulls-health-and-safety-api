@@ -1,20 +1,13 @@
 'use strict';
 
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
-
-/**
- * Build an Activity model.
- *
- * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
- * @returns {Sequelize.Model} An Activity model.
- */
-const ActivityModel = (sequelize) => {
-  class Activity extends Model {}
-
-  Activity.init(
-    {
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Activities', {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
       removeNests: {
         type: Sequelize.BOOLEAN
       },
@@ -51,16 +44,10 @@ const ActivityModel = (sequelize) => {
       quantityAdultsToKill: {
         type: Sequelize.INTEGER
       }
-    },
-    {
-      sequelize,
-      modelName: 'Activity',
-      timestamps: true,
-      paranoid: true
-    }
-  );
+    });
+  },
 
-  return Activity;
+  down: async (queryInterface) => {
+    await queryInterface.dropTable('Activities');
+  }
 };
-
-export {ActivityModel as default};
