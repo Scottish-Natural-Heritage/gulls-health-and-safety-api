@@ -16,13 +16,16 @@ const ApplicationModel = (sequelize) => {
 
   Application.init(
     {
-      test: {
-        type: Sequelize.BOOLEAN
+      licenceHolderId: {
+        type: Sequelize.STRING
       },
-      test2: {
-        type: Sequelize.BOOLEAN
+      licenceApplicantId: {
+        type: Sequelize.STRING
       },
-      test3: {
+      licenceHolderAddressId: {
+        type: Sequelize.STRING
+      },
+      siteAddressId: {
         type: Sequelize.STRING
       }
     },
