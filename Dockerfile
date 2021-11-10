@@ -41,6 +41,7 @@ COPY --chown=node:node --from=builder /home/node/dist ./dist
 COPY --chown=node:node --from=builder /home/node/package.json ./
 
 # Copy the code from the project.
+COPY --chown=node:node ./src ./src
 COPY --chown=node:node ./util ./util
 COPY --chown=node:node .sequelizerc ./
 
@@ -53,9 +54,9 @@ ENV GULLS_API_PATH_PREFIX gulls-health-and-safety-api
 ENV LICENSING_DB_HOST override_this_value
 ENV LICENSING_DB_PASS override_this_value
 ENV GULLS_DB_PASS override_this_value
-ENV GULLS_NOTIFY_API_KEY override_this_value
 ENV RO_GULLS_DB_PASS override_this_value
-ENV POSTCODE_API_KEY override_this_value
+# ENV GULLS_NOTIFY_API_KEY override_this_value
+# ENV POSTCODE_API_KEY override_this_value
 
 # Let docker know about our listening port.
 EXPOSE $GULLS_API_PORT
