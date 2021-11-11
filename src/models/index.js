@@ -19,7 +19,7 @@ const database = {
   Issue: Issue(sequelize),
   Measure: Measure(sequelize),
   Species: Species(sequelize),
-  Activity: Activity(sequelize)
+  Activity: Activity(sequelize),
 };
 
 // Relationships go here.
