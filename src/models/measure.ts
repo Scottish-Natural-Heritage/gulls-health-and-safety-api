@@ -1,6 +1,4 @@
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build a Measure model.
@@ -8,43 +6,43 @@ const {Model} = Sequelize;
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} A Measure model.
  */
-const MeasureModel = (sequelize) => {
+const MeasureModel = (sequelize: Sequelize) => {
   class Measure extends Model {}
 
   Measure.init(
     {
       ApplicationId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         validate: {
           notEmpty: true,
         },
       },
       preventNesting: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       removeOldNests: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       removeLitter: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       humanDisturbance: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       scaringDevices: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       hawking: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       disturbanceByDogs: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       measuresTriedDetail: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       measuresWillNotTryDetail: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
     },
     {

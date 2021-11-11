@@ -1,6 +1,4 @@
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build a Contact model.
@@ -8,29 +6,29 @@ const {Model} = Sequelize;
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} A Contact model.
  */
-const ContactModel = (sequelize) => {
+const ContactModel = (sequelize: Sequelize) => {
   class Contact extends Model {}
 
   Contact.init(
     {
       name: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         validate: {
           notEmpty: true,
         },
       },
       organisation: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       emailAddress: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         validate: {
           notEmpty: true,
           isEmail: true,
         },
       },
       phoneNumber: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
     },
     {

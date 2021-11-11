@@ -1,6 +1,4 @@
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build an Application model.
@@ -8,37 +6,37 @@ const {Model} = Sequelize;
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} An Application model.
  */
-const ApplicationModel = (sequelize) => {
+const ApplicationModel = (sequelize: Sequelize) => {
   class Application extends Model {}
 
   Application.init(
     {
       LicenceHolderId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       LicenceApplicantId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       LicenceHolderAddressId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       SiteAddressId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       SpeciesId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       isResidentialSite: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       siteType: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       previousLicenceNumber: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       supportingInformation: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
     },
     {

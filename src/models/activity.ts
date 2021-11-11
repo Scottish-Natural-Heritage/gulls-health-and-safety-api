@@ -1,6 +1,4 @@
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build an Activity model.
@@ -8,46 +6,46 @@ const {Model} = Sequelize;
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} An Activity model.
  */
-const ActivityModel = (sequelize) => {
+const ActivityModel = (sequelize: Sequelize) => {
   class Activity extends Model {}
 
   Activity.init(
     {
       removeNests: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       quantityNestsToRemove: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       eggDestruction: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       quantityNestsWhereEggsDestroyed: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       chicksToRescueCentre: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       quantityChicksToRescue: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       chicksRelocateNearby: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       quantityChicksToRelocate: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       killChicks: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       quantityChicksToKill: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       killAdults: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       quantityAdultsToKill: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
     },
     {

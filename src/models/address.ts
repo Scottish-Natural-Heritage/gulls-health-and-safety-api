@@ -1,6 +1,4 @@
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build an Address model.
@@ -8,28 +6,28 @@ const {Model} = Sequelize;
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} An Address model.
  */
-const AddressModel = (sequelize) => {
+const AddressModel = (sequelize: Sequelize) => {
   class Address extends Model {}
 
   Address.init(
     {
       uprn: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       addressLine1: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       addressLine2: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       addressTown: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       addressCounty: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       postcode: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
     },
     {

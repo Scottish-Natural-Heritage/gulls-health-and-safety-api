@@ -1,6 +1,4 @@
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build a Species model.
@@ -8,25 +6,25 @@ const {Model} = Sequelize;
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} A Species model.
  */
-const SpeciesModel = (sequelize) => {
+const SpeciesModel = (sequelize: Sequelize) => {
   class Species extends Model {}
 
   Species.init(
     {
       HerringGullId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       BlackHeadedGullId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       CommonGullId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       GreatBlackBackedGullId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       LesserBlackBackedGullId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
     },
     {

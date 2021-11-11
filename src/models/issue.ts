@@ -1,6 +1,4 @@
-import Sequelize from 'sequelize';
-
-const {Model} = Sequelize;
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build an Issue model.
@@ -8,49 +6,49 @@ const {Model} = Sequelize;
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} An Issue model.
  */
-const IssueModel = (sequelize) => {
+const IssueModel = (sequelize: Sequelize) => {
   class Issue extends Model {}
 
   Issue.init(
     {
       ApplicationId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         validate: {
           notEmpty: true,
         },
       },
       aggression: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       diveBombing: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       noise: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       droppings: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       nestingMaterial: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       atHeightAggression: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       other: {
-        type: Sequelize.BOOLEAN,
+        type: DataTypes.BOOLEAN,
       },
       whenIssue: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       whoAffected: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       howAffected: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       otherIssueInformation: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
     },
     {
