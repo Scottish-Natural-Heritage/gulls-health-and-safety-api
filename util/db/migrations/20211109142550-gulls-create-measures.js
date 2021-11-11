@@ -1,51 +1,49 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Measures', {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       ApplicationId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Applications',
-          key: 'id'
-        }
+          key: 'id',
+        },
       },
       preventNesting: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       removeOldNests: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       removeLitter: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       humanDisturbance: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       scaringDevices: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       hawking: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       disturbanceByDogs: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       measuresTriedDetail: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       measuresWillNotTryDetail: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     });
   },
 
   down: async (queryInterface) => {
     await queryInterface.dropTable('Measures');
-  }
+  },
 };

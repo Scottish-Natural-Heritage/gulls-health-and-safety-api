@@ -1,5 +1,3 @@
-'use strict';
-
 import Sequelize from 'sequelize';
 
 const {Model} = Sequelize;
@@ -18,49 +16,49 @@ const IssueModel = (sequelize) => {
       ApplicationId: {
         type: Sequelize.INTEGER,
         validate: {
-          notEmpty: true
-        }
+          notEmpty: true,
+        },
       },
       aggression: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       diveBombing: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       noise: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       droppings: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       nestingMaterial: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       atHeightAggression: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       other: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       whenIssue: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       whoAffected: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       howAffected: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       otherIssueInformation: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     },
     {
       sequelize,
       modelName: 'Issue',
       timestamps: true,
-      paranoid: true
-    }
+      paranoid: true,
+    },
   );
 
   return Issue;

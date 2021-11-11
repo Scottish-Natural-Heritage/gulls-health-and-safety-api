@@ -1,5 +1,5 @@
-import databaseConfig from '../config/database.js';
 import Sequelize from 'sequelize';
+import databaseConfig from '../config/database.js';
 
 import Application from './application.js';
 import Contact from './contact.js';

@@ -1,64 +1,62 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Applications', {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       LicenceHolderId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Contacts',
-          key: 'id'
-        }
+          key: 'id',
+        },
       },
       LicenceApplicantId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Contacts',
-          key: 'id'
-        }
+          key: 'id',
+        },
       },
       LicenceHolderAddressId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Addresses',
-          key: 'id'
-        }
+          key: 'id',
+        },
       },
       SiteAddressId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Addresses',
-          key: 'id'
-        }
+          key: 'id',
+        },
       },
       SpeciesId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Species',
-          key: 'id'
-        }
+          key: 'id',
+        },
       },
       isResidentialSite: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       siteType: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       previousLicenceNumber: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       supportingInformation: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     });
   },
 
   down: async (queryInterface) => {
     await queryInterface.dropTable('Applications');
-  }
+  },
 };

@@ -1,5 +1,3 @@
-'use strict';
-
 // The pre-migrations only make sense when running inside the production docker
 // environment. They are not required for the development SQLite DB.
 if (process.env.NODE_ENV === 'production') {
@@ -13,15 +11,15 @@ if (process.env.NODE_ENV === 'production') {
       await queryInterface.sequelize.query('create role gulls with noinherit login password :gullsPassword;', {
         type: Sequelize.QueryTypes.RAW,
         replacements: {
-          gullsPassword: config.password
-        }
+          gullsPassword: config.password,
+        },
       });
     },
     down: async (queryInterface, Sequelize) => {
       await queryInterface.sequelize.query('drop role gulls;', {
-        type: Sequelize.QueryTypes.RAW
+        type: Sequelize.QueryTypes.RAW,
       });
-    }
+    },
   };
 } else {
   module.exports = {
@@ -30,6 +28,6 @@ if (process.env.NODE_ENV === 'production') {
     },
     down: () => {
       return Promise.resolve();
-    }
+    },
   };
 }

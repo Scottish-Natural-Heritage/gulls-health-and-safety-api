@@ -1,5 +1,3 @@
-'use strict';
-
 import Sequelize from 'sequelize';
 
 const {Model} = Sequelize;
@@ -18,43 +16,43 @@ const MeasureModel = (sequelize) => {
       ApplicationId: {
         type: Sequelize.INTEGER,
         validate: {
-          notEmpty: true
-        }
+          notEmpty: true,
+        },
       },
       preventNesting: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       removeOldNests: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       removeLitter: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       humanDisturbance: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       scaringDevices: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       hawking: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       disturbanceByDogs: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       measuresTriedDetail: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       measuresWillNotTryDetail: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     },
     {
       sequelize,
       modelName: 'Measure',
       timestamps: true,
-      paranoid: true
-    }
+      paranoid: true,
+    },
   );
 
   return Measure;

@@ -1,53 +1,51 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Activities', {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       removeNests: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityNestsToRemove: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       eggDestruction: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityNestsWhereEggsDestroyed: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       chicksToRescueCentre: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityChicksToRescue: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       chicksRelocateNearby: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityChicksToRelocate: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       killChicks: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityChicksToKill: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       killAdults: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityAdultsToKill: {
-        type: Sequelize.INTEGER
-      }
+        type: Sequelize.INTEGER,
+      },
     });
   },
 
   down: async (queryInterface) => {
     await queryInterface.dropTable('Activities');
-  }
+  },
 };

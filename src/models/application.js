@@ -1,6 +1,3 @@
-/* eslint-disable unicorn/prevent-abbreviations */
-'use strict';
-
 import Sequelize from 'sequelize';
 
 const {Model} = Sequelize;
@@ -17,39 +14,39 @@ const ApplicationModel = (sequelize) => {
   Application.init(
     {
       LicenceHolderId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       LicenceApplicantId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       LicenceHolderAddressId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       SiteAddressId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       SpeciesId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       isResidentialSite: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       siteType: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       previousLicenceNumber: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       supportingInformation: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     },
     {
       sequelize,
       modelName: 'Application',
       timestamps: true,
-      paranoid: true
-    }
+      paranoid: true,
+    },
   );
 
   return Application;

@@ -1,5 +1,3 @@
-'use strict';
-
 import Sequelize from 'sequelize';
 
 const {Model} = Sequelize;
@@ -16,27 +14,27 @@ const SpeciesModel = (sequelize) => {
   Species.init(
     {
       HerringGullId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       BlackHeadedGullId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       CommonGullId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       GreatBlackBackedGullId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       LesserBlackBackedGullId: {
-        type: Sequelize.INTEGER
-      }
+        type: Sequelize.INTEGER,
+      },
     },
     {
       sequelize,
       modelName: 'Species',
       timestamps: true,
-      paranoid: true
-    }
+      paranoid: true,
+    },
   );
 
   return Species;

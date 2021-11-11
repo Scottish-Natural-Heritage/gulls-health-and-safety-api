@@ -1,5 +1,3 @@
-'use strict';
-
 import Sequelize from 'sequelize';
 
 const {Model} = Sequelize;
@@ -18,29 +16,29 @@ const ContactModel = (sequelize) => {
       name: {
         type: Sequelize.STRING,
         validate: {
-          notEmpty: true
-        }
+          notEmpty: true,
+        },
       },
       organisation: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       emailAddress: {
         type: Sequelize.STRING,
         validate: {
           notEmpty: true,
-          isEmail: true
-        }
+          isEmail: true,
+        },
       },
       phoneNumber: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     },
     {
       sequelize,
       modelName: 'Contact',
       timestamps: true,
-      paranoid: true
-    }
+      paranoid: true,
+    },
   );
 
   return Contact;

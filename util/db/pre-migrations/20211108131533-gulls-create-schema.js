@@ -1,5 +1,3 @@
-'use strict';
-
 // The pre-migrations only make sense when running inside the production docker
 // environment. They are not required for the development SQLite DB.
 if (process.env.NODE_ENV === 'production') {
@@ -9,7 +7,7 @@ if (process.env.NODE_ENV === 'production') {
     },
     down: async (queryInterface) => {
       await queryInterface.dropSchema('gulls');
-    }
+    },
   };
 } else {
   module.exports = {
@@ -18,6 +16,6 @@ if (process.env.NODE_ENV === 'production') {
     },
     down: () => {
       return Promise.resolve();
-    }
+    },
   };
 }

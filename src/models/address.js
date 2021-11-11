@@ -1,5 +1,3 @@
-'use strict';
-
 import Sequelize from 'sequelize';
 
 const {Model} = Sequelize;
@@ -19,27 +17,27 @@ const AddressModel = (sequelize) => {
         type: Sequelize.STRING,
       },
       addressLine1: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       addressLine2: {
         type: Sequelize.STRING,
       },
       addressTown: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       addressCounty: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       postcode: {
-        type: Sequelize.STRING
-      }
+        type: Sequelize.STRING,
+      },
     },
     {
       sequelize,
       modelName: 'Address',
       timestamps: true,
-      paranoid: true
-    }
+      paranoid: true,
+    },
   );
 
   return Address;

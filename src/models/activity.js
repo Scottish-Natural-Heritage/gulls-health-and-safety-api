@@ -1,5 +1,3 @@
-'use strict';
-
 import Sequelize from 'sequelize';
 
 const {Model} = Sequelize;
@@ -16,48 +14,48 @@ const ActivityModel = (sequelize) => {
   Activity.init(
     {
       removeNests: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityNestsToRemove: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       eggDestruction: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityNestsWhereEggsDestroyed: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       chicksToRescueCentre: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityChicksToRescue: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       chicksRelocateNearby: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityChicksToRelocate: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       killChicks: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityChicksToKill: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       killAdults: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       quantityAdultsToKill: {
-        type: Sequelize.INTEGER
-      }
+        type: Sequelize.INTEGER,
+      },
     },
     {
       sequelize,
       modelName: 'Activity',
       timestamps: true,
-      paranoid: true
-    }
+      paranoid: true,
+    },
   );
 
   return Activity;

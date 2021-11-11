@@ -6,7 +6,7 @@ const config = Object.freeze({
   databaseHost: process.env.LICENSING_DB_HOST || 'localhost',
   licensingPassword: process.env.LICENSING_DB_PASS || 'override_this_value',
   gullsPassword: process.env.GULLS_DB_PASS || 'override_this_value',
-  roGullsPassword: process.env.RO_GULLS_DB_PASS || 'override_this_value'
+  roGullsPassword: process.env.RO_GULLS_DB_PASS || 'override_this_value',
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'production') {
       host: config.databaseHost,
       dialect: 'postgres',
       schema: 'public',
-      logging: false
+      logging: false,
     },
     database: {
       username: 'gulls',
@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
       host: config.databaseHost,
       dialect: 'postgres',
       schema: 'gulls',
-      logging: false
+      logging: false,
     },
     ssDatabase: {
       username: 'rogulls',
@@ -36,20 +36,20 @@ if (process.env.NODE_ENV === 'production') {
       host: config.databaseHost,
       dialect: 'postgres',
       schema: 'gulls',
-      logging: false
-    }
+      logging: false,
+    },
   };
 } else {
   module.exports = {
     preMigrations: {
       dialect: 'sqlite',
       storage: './.development.db',
-      logging: false
+      logging: false,
     },
     database: {
       dialect: 'sqlite',
       storage: './.development.db',
-      logging: false
-    }
+      logging: false,
+    },
   };
 }
