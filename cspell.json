@@ -9,7 +9,10 @@
     "naturescot",
     "Parens",
     "querytime",
-    "uprn"
+    "uprn",
+    "premigrations",
+    "prestart",
+    "hstore"
   ],
   "ignorePaths": [
     "node_modules/**/*",

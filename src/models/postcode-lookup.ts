@@ -1,4 +1,4 @@
-import Address from './postcodeLookupAddress';
+import Address from './postcode-lookup-address';
 
 interface PostcodeLookup {
   results: [
