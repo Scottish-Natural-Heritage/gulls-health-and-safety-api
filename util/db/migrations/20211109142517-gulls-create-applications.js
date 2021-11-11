@@ -8,35 +8,35 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      licenceHolderId: {
+      LicenceHolderId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Contacts',
           key: 'id'
         }
       },
-      licenceApplicantId: {
+      LicenceApplicantId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Contacts',
           key: 'id'
         }
       },
-      licenceHolderAddressId: {
+      LicenceHolderAddressId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Addresses',
           key: 'id'
         }
       },
-      siteAddressId: {
+      SiteAddressId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Addresses',
           key: 'id'
         }
       },
-      speciesId: {
+      SpeciesId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Species',

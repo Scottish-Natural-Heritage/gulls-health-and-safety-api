@@ -8,35 +8,35 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      herringGullId: {
+      HerringGullId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Activities',
           key: 'id'
         }
       },
-      blackHeadedGullId: {
+      BlackHeadedGullId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Activities',
           key: 'id'
         }
       },
-      commonGullId: {
+      CommonGullId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Activities',
           key: 'id'
         }
       },
-      greatBlackBackedGullId: {
+      GreatBlackBackedGullId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Activities',
           key: 'id'
         }
       },
-      lesserBlackBackedGullId: {
+      LesserBlackBackedGullId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Activities',

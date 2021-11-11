@@ -15,19 +15,19 @@ const SpeciesModel = (sequelize) => {
 
   Species.init(
     {
-      herringGullId: {
+      HerringGullId: {
         type: Sequelize.INTEGER
       },
-      blackHeadedGullId: {
+      BlackHeadedGullId: {
         type: Sequelize.INTEGER
       },
-      commonGullId: {
+      CommonGullId: {
         type: Sequelize.INTEGER
       },
-      greatBlackBackedGullId: {
+      GreatBlackBackedGullId: {
         type: Sequelize.INTEGER
       },
-      lesserBlackBackedGullId: {
+      LesserBlackBackedGullId: {
         type: Sequelize.INTEGER
       }
     },

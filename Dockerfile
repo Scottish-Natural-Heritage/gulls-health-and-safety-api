@@ -35,6 +35,9 @@ FROM node:14-alpine
 WORKDIR /home/node
 USER node
 
+# Tell node, et al to run in production mode.
+ENV NODE_ENV production
+
 # Copy the run dependencies, built code and scripts from the builder.
 COPY --chown=node:node --from=builder /home/node/node_modules ./node_modules
 COPY --chown=node:node --from=builder /home/node/dist ./dist
