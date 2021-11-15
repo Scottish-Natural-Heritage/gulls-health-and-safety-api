@@ -44,19 +44,19 @@ const database = {
 };
 
 // Relationships go here.
-database.Application.hasMany(database.Contact);
-// database.Application.hasMany(database.Address);
-database.Application.hasOne(database.Issue);
-database.Application.hasOne(database.Measure);
-database.Application.hasOne(database.Species);
+database.Application.belongsTo(database.Contact);
+database.Application.belongsTo(database.Address);
+database.Application.belongsTo(database.Issue);
+database.Application.belongsTo(database.Measure);
+database.Application.belongsTo(database.Species);
 
-database.Contact.belongsTo(database.Application);
-// database.Address.belongsTo(database.Application);
-database.Issue.belongsTo(database.Application);
-database.Measure.belongsTo(database.Application);
-database.Species.belongsTo(database.Application);
+database.Contact.hasMany(database.Application);
+database.Address.hasMany(database.Application);
+database.Issue.hasMany(database.Application);
+database.Measure.hasMany(database.Application);
+database.Species.hasMany(database.Application);
 
-database.Species.hasMany(database.Activity);
-database.Activity.belongsTo(database.Species);
+database.Species.belongsTo(database.Activity);
+database.Activity.hasMany(database.Species);
 
 export {database as default};
