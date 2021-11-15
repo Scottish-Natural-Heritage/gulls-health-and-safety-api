@@ -7,7 +7,14 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @returns {Sequelize.Model} An Address model.
  */
 const AddressModel = (sequelize: Sequelize) => {
-  class Address extends Model {}
+  class Address extends Model {
+    public uprn!: string;
+    public addressLine1!: string;
+    public addressLine2!: string;
+    public addressTown!: string;
+    public addressCounty!: string;
+    public postcode!: string;
+  }
 
   Address.init(
     {
@@ -33,7 +40,7 @@ const AddressModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Address',
-      timestamps: true,
+      timestamps: false,
       paranoid: true,
     },
   );

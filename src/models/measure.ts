@@ -7,7 +7,18 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @returns {Sequelize.Model} A Measure model.
  */
 const MeasureModel = (sequelize: Sequelize) => {
-  class Measure extends Model {}
+  class Measure extends Model {
+    public ApplicationId!: number;
+    public preventNesting!: string;
+    public removeOldNests!: string;
+    public removeLitter!: string;
+    public humanDisturbance!: string;
+    public scaringDevices!: string;
+    public hawking!: string;
+    public disturbanceByDogs!: string;
+    public measuresTriedDetail!: string;
+    public measuresWillNotTryDetail!: string;
+  }
 
   Measure.init(
     {

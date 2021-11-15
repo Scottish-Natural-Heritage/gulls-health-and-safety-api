@@ -7,7 +7,20 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @returns {Sequelize.Model} An Issue model.
  */
 const IssueModel = (sequelize: Sequelize) => {
-  class Issue extends Model {}
+  class Issue extends Model {
+    public ApplicationId!: number;
+    public aggression!: boolean;
+    public diveBombing!: boolean;
+    public noise!: boolean;
+    public droppings!: boolean;
+    public nestingMaterial!: boolean;
+    public atHeightAggression!: boolean;
+    public other!: boolean;
+    public whenIssue!: string;
+    public whoAffected!: string;
+    public howAffected!: string;
+    public otherIssueInformation!: string;
+  }
 
   Issue.init(
     {

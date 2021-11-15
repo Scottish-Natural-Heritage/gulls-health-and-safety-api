@@ -7,7 +7,13 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @returns {Sequelize.Model} A Species model.
  */
 const SpeciesModel = (sequelize: Sequelize) => {
-  class Species extends Model {}
+  class Species extends Model {
+    public HerringGullId!: number;
+    public BlackHeadedGullId!: number;
+    public CommonGullId!: number;
+    public GreatBlackBackedGullId!: number;
+    public LesserBlackBackedGullId!: number;
+  }
 
   Species.init(
     {

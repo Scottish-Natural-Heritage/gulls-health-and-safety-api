@@ -7,7 +7,12 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @returns {Sequelize.Model} A Contact model.
  */
 const ContactModel = (sequelize: Sequelize) => {
-  class Contact extends Model {}
+  class Contact extends Model {
+    public name!: string;
+    public organisation!: string;
+    public emailAddress!: string;
+    public phoneNumber!: string;
+  }
 
   Contact.init(
     {

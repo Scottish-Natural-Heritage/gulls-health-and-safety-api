@@ -7,7 +7,20 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @returns {Sequelize.Model} An Activity model.
  */
 const ActivityModel = (sequelize: Sequelize) => {
-  class Activity extends Model {}
+  class Activity extends Model {
+    public removeNests!: boolean;
+    public quantityNestsToRemove!: string;
+    public eggDestruction!: boolean;
+    public quantityNestsWhereEggsDestroyed!: string;
+    public chicksToRescueCentre!: boolean;
+    public quantityChicksToRescue!: number;
+    public chicksRelocateNearby!: boolean;
+    public quantityChicksToRelocate!: number;
+    public killChicks!: boolean;
+    public quantityChicksToKill!: number;
+    public killAdults!: boolean;
+    public quantityAdultsToKill!: number;
+  }
 
   Activity.init(
     {

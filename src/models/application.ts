@@ -7,7 +7,17 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @returns {Sequelize.Model} An Application model.
  */
 const ApplicationModel = (sequelize: Sequelize) => {
-  class Application extends Model {}
+  class Application extends Model {
+    public LicenceHolderId!: number;
+    public LicenceApplicantId!: number;
+    public LicenceHolderAddressId!: number;
+    public SiteAddressId!: number;
+    public SpeciesId!: number;
+    public isResidentialSite!: boolean;
+    public siteType!: string;
+    public previousLicenceNumber!: string;
+    public supportingInformation!: string;
+  }
 
   Application.init(
     {

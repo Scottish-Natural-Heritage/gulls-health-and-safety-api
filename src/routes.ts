@@ -1,6 +1,9 @@
 import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
+
+import AddressController from './controllers/address';
+
 /**
  * An array of all the routes and controllers in the app.
  */
@@ -30,6 +33,20 @@ const routes: ServerRoute[] = [
       } catch {
         // If something went wrong while trying to find addresses send back a 500 with a error message
         return h.response({message: 'Invalid postcode.'}).code(500);
+      }
+    },
+  },
+  {
+    method: 'get',
+    path: `/test`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const addresses = await AddressController.findAll();
+        console.log(addresses);
+        return h.response(addresses);
+      } catch (error) {
+        console.log(error);
+        return undefined;
       }
     },
   },
