@@ -44,27 +44,27 @@ const database = {
 };
 
 // Relationships go here.
-database.Application.belongsTo(database.Contact, {foreignKey: 'LicenceHolderId'});
-database.Application.belongsTo(database.Contact, {foreignKey: 'LicenceApplicantId'});
-database.Application.belongsTo(database.Address, {foreignKey: 'LicenceHolderAddressId'});
-database.Application.belongsTo(database.Address, {foreignKey: 'SiteAddressId'});
-database.Application.belongsTo(database.Species, {foreignKey: 'SpeciesId'});
+// database.Application.belongsTo(database.Contact);
+// database.Application.belongsTo(database.Contact);
+// database.Application.belongsTo(database.Address);
+// database.Application.belongsTo(database.Address);
+// database.Application.belongsTo(database.Species);
 
-database.Issue.belongsTo(database.Application, {foreignKey: 'ApplicationId'});
-database.Measure.belongsTo(database.Application, {foreignKey: 'ApplicationId'});
+// database.Issue.belongsTo(database.Application);
+// database.Measure.belongsTo(database.Application);
 
-database.Contact.hasOne(database.Application);
-database.Address.hasOne(database.Application);
-database.Application.hasOne(database.Issue);
-database.Application.hasOne(database.Measure);
-database.Species.hasOne(database.Application);
+// database.Contact.hasOne(database.Application);
+// database.Address.hasOne(database.Application);
+// database.Application.hasOne(database.Issue);
+// database.Application.hasOne(database.Measure);
+// database.Species.hasOne(database.Application);
 
-database.Species.belongsTo(database.Activity, {as: 'HerringGull'});
-database.Species.belongsTo(database.Activity, {as: 'BlackHeadedGull'});
-database.Species.belongsTo(database.Activity, {as: 'CommonGull'});
-database.Species.belongsTo(database.Activity, {as: 'GreatBlackBackedGull'});
-database.Species.belongsTo(database.Activity, {as: 'LesserBlackBackedGull'});
-database.Activity.hasMany(database.Species);
+// database.Species.belongsTo(database.Activity);
+// database.Species.belongsTo(database.Activity);
+// database.Species.belongsTo(database.Activity);
+// database.Species.belongsTo(database.Activity);
+// database.Species.belongsTo(database.Activity);
+// database.Activity.hasMany(database.Species);
 
 
 

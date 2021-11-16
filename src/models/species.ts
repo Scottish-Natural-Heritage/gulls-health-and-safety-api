@@ -1,4 +1,4 @@
-import { Model, Sequelize} from 'sequelize';
+import { DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build a Species model.
@@ -17,7 +17,21 @@ const SpeciesModel = (sequelize: Sequelize) => {
 
   Species.init(
     {
-
+      HerringGullId: {
+        type: DataTypes.INTEGER,
+      },
+      BlackHeadedGullId: {
+        type: DataTypes.INTEGER,
+      },
+      CommonGullId: {
+        type: DataTypes.INTEGER,
+      },
+      GreatBlackBackedGullId: {
+        type: DataTypes.INTEGER,
+      },
+      LesserBlackBackedGullId: {
+        type: DataTypes.INTEGER,
+      },
     },
     {
       sequelize,

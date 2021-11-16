@@ -1,6 +1,6 @@
 import database from '../models/index.js';
 
-const {Species, Activity} = database;
+const {Species} = database;
 
 const SpeciesController = {
   findOne: async (id: number) => {
@@ -8,32 +8,7 @@ const SpeciesController = {
   },
 
   findAll: async () => {
-    return Species.findAll(
-      {
-        include: [
-          {
-            model: Activity,
-            as: 'HerringGull'
-          },
-          {
-            model: Activity,
-            as: 'BlackHeadedGull'
-          },
-          {
-            model: Activity,
-            as: 'CommonGull'
-          },
-          {
-            model: Activity,
-            as: 'GreatBlackBlackedGull'
-          },
-          {
-            model: Activity,
-            as: 'LesserBlackBlackedGull'
-          }
-        ]
-      }
-    );
+    return Species.findAll();
   },
 }
 
