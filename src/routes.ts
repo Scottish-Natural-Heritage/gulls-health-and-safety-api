@@ -2,7 +2,13 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 
-import AddressController from './controllers/address';
+// import ActivityController from './controllers/activity';
+// import AddressController from './controllers/address';
+// import ApplicationController from './controllers/application';
+// import ContactController from './controllers/contact';
+// import IssueController from './controllers/issue';
+// import MeasureController from './controllers/measure';
+import SpeciesController from './controllers/species';
 
 /**
  * An array of all the routes and controllers in the app.
@@ -41,9 +47,9 @@ const routes: ServerRoute[] = [
     path: `/test`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
-        const addresses = await AddressController.findAll();
-        console.log(addresses);
-        return h.response(addresses);
+        const species = await SpeciesController.findAll();
+        console.log(species);
+        return h.response(species);
       } catch (error) {
         console.log(error);
         return undefined;

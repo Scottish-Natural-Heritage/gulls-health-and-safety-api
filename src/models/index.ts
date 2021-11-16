@@ -44,19 +44,28 @@ const database = {
 };
 
 // Relationships go here.
-database.Application.belongsTo(database.Contact);
-database.Application.belongsTo(database.Address);
-database.Application.belongsTo(database.Issue);
-database.Application.belongsTo(database.Measure);
-database.Application.belongsTo(database.Species);
+database.Application.belongsTo(database.Contact, {foreignKey: 'LicenceHolderId'});
+database.Application.belongsTo(database.Contact, {foreignKey: 'LicenceApplicantId'});
+database.Application.belongsTo(database.Address, {foreignKey: 'LicenceHolderAddressId'});
+database.Application.belongsTo(database.Address, {foreignKey: 'SiteAddressId'});
+database.Application.belongsTo(database.Species, {foreignKey: 'SpeciesId'});
 
-database.Contact.hasMany(database.Application);
-database.Address.hasMany(database.Application);
-database.Issue.hasMany(database.Application);
-database.Measure.hasMany(database.Application);
-database.Species.hasMany(database.Application);
+database.Issue.belongsTo(database.Application, {foreignKey: 'ApplicationId'});
+database.Measure.belongsTo(database.Application, {foreignKey: 'ApplicationId'});
 
-database.Species.belongsTo(database.Activity);
+database.Contact.hasOne(database.Application);
+database.Address.hasOne(database.Application);
+database.Application.hasOne(database.Issue);
+database.Application.hasOne(database.Measure);
+database.Species.hasOne(database.Application);
+
+database.Species.belongsTo(database.Activity, {as: 'HerringGull'});
+database.Species.belongsTo(database.Activity, {as: 'BlackHeadedGull'});
+database.Species.belongsTo(database.Activity, {as: 'CommonGull'});
+database.Species.belongsTo(database.Activity, {as: 'GreatBlackBackedGull'});
+database.Species.belongsTo(database.Activity, {as: 'LesserBlackBackedGull'});
 database.Activity.hasMany(database.Species);
+
+
 
 export {database as default};

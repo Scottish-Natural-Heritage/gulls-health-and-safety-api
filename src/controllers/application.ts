@@ -1,6 +1,6 @@
 import database from '../models/index.js';
 
-const {Application} = database;
+const {Application, Contact, Address} = database;
 
 const ApplicationController = {
   findOne: async (id: number) => {
@@ -8,8 +8,29 @@ const ApplicationController = {
   },
 
   findAll: async () => {
-    return Application.findAll();
+    return Application.findAll({
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolderId'
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicantId'
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddressId'
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddressId'
+        }
+      ]
+    }
+    );
   },
+
 }
 
 export {ApplicationController as default};
