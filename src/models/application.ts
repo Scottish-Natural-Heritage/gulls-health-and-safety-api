@@ -52,7 +52,7 @@ const ApplicationModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Application',
-      timestamps: false,
+      timestamps: true,
       paranoid: true,
     },
   );

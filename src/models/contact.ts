@@ -39,7 +39,7 @@ const ContactModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Contact',
-      timestamps: false,
+      timestamps: true,
       paranoid: true,
     },
   );

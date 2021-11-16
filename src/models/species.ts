@@ -36,7 +36,7 @@ const SpeciesModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Species',
-      timestamps: false,
+      timestamps: true,
       paranoid: true,
     },
   );

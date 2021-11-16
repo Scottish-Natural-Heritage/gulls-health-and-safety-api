@@ -40,7 +40,7 @@ const AddressModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Address',
-      timestamps: false,
+      timestamps: true,
       paranoid: true,
     },
   );

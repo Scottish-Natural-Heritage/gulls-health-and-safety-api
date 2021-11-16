@@ -67,7 +67,7 @@ const IssueModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Issue',
-      timestamps: false,
+      timestamps: true,
       paranoid: true,
     },
   );

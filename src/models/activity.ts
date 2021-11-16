@@ -64,7 +64,7 @@ const ActivityModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Activity',
-      timestamps: false,
+      timestamps: true,
       paranoid: true,
     },
   );
