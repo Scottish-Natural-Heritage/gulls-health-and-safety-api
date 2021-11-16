@@ -2,12 +2,12 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 
-// import ActivityController from './controllers/activity';
-// import AddressController from './controllers/address';
-// import ApplicationController from './controllers/application';
-// import ContactController from './controllers/contact';
-// import IssueController from './controllers/issue';
-// import MeasureController from './controllers/measure';
+import ActivityController from './controllers/activity';
+import AddressController from './controllers/address';
+import ApplicationController from './controllers/application';
+import ContactController from './controllers/contact';
+import IssueController from './controllers/issue';
+import MeasureController from './controllers/measure';
 import SpeciesController from './controllers/species';
 
 /**
@@ -48,8 +48,20 @@ const routes: ServerRoute[] = [
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         const species = await SpeciesController.findAll();
+        const activity = await ActivityController.findAll();
+        const application = await ApplicationController.findAll();
+        const contact = await ContactController.findAll();
+        const issue = await IssueController.findAll();
+        const measure = await MeasureController.findAll();
+        const address = await AddressController.findAll();
         console.log(species);
-        return h.response(species);
+        console.log(activity);
+        console.log(application);
+        console.log(contact);
+        console.log(issue);
+        console.log(measure);
+        console.log(address);
+        return h.response(application);
       } catch (error) {
         console.log(error);
         return undefined;

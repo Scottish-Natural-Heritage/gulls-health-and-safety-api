@@ -59,7 +59,7 @@ const MeasureModel = (sequelize: Sequelize) => {
     {
       sequelize,
       modelName: 'Measure',
-      timestamps: true,
+      timestamps: false,
       paranoid: true,
     },
   );
