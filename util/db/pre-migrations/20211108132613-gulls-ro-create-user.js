@@ -4,7 +4,7 @@ if (process.env.NODE_ENV === 'production') {
   // Even though this is a 'pre-migrations' migration, we need to import the
   // production config as we're setting the password the production account will
   // use.
-  const config = require('../../../src/config/database.js').ssDatabase;
+  const config = require('../database.js').ssDatabase;
 
   module.exports = {
     up: (queryInterface, Sequelize) => {

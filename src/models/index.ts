@@ -9,15 +9,9 @@ import Activity from './activity';
 
 const Sequelize = require('sequelize');
 
-let envProd: boolean = false;
-
-if (process.env.NODE_ENV === 'production') {
-  envProd = true;
-}
-
 let sequelize = new Sequelize(localDbConfig.database);
 
-if (envProd) {
+if (process.env.NODE_ENV === 'production') {
   sequelize = new Sequelize(productionDbConfig.database);
 }
 
