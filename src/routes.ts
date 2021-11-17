@@ -4,6 +4,7 @@ import PostcodeLookup from './models/postcode-lookup';
 import utils from 'naturescot-utils';
 import Contact from './controllers/contact';
 import Address from './controllers/address';
+import Issue from './controllers/issue';
 
 const cleanOnBehalfContact = (body: any) => {
   return {
@@ -60,26 +61,26 @@ const cleanSiteAddress = (body: any) => {
 //   };
 // };
 
-// const cleanIssue = (body: any) => {
-//   return {
-//     // Just copy across the booleans.
-//     aggression: body.issueOnSite.aggression,
-//     diveBombing: body.issueOnSite.diveBombing,
-//     noise: body.issueOnSite.noise,
-//     droppings: body.issueOnSite.droppings,
-//     nestingMaterial: body.issueOnSite.nestingMaterial,
-//     atHeightAggression: body.issueOnSite.atHeightAggression,
-//     other: body.issueOnSite.other,
-//     // And clean the remaining strings a little.
-//     whenIssue: body.siteIssueDetails.whenIssue.trim(),
-//     whoAffected: body.siteIssueDetails.whoAffected.trim(),
-//     howAffected: body.siteIssueDetails.howAffected.trim(),
-//     otherIssueInformation:
-//       body.siteIssueDetails.otherIssueInformation === undefined
-//         ? undefined
-//         : body.siteIssueDetails.otherIssueInformation.trim(),
-//   };
-// };
+const cleanIssue = (body: any) => {
+  return {
+    // Just copy across the booleans.
+    aggression: body.issueOnSite.aggression,
+    diveBombing: body.issueOnSite.diveBombing,
+    noise: body.issueOnSite.noise,
+    droppings: body.issueOnSite.droppings,
+    nestingMaterial: body.issueOnSite.nestingMaterial,
+    atHeightAggression: body.issueOnSite.atHeightAggression,
+    other: body.issueOnSite.other,
+    // And clean the remaining strings a little.
+    whenIssue: body.siteIssueDetails.whenIssue.trim(),
+    whoAffected: body.siteIssueDetails.whoAffected.trim(),
+    howAffected: body.siteIssueDetails.howAffected.trim(),
+    otherIssueInformation:
+      body.siteIssueDetails.otherIssueInformation === undefined
+        ? undefined
+        : body.siteIssueDetails.otherIssueInformation.trim(),
+  };
+};
 
 // const cleanActivity = (body: any, gullType: string) => {
 //   return {
@@ -168,10 +169,14 @@ const routes: ServerRoute[] = [
           newSiteAddress = newAddress;
         }
 
+        const issue = cleanIssue(application);
+        const newIssue = await Issue.create(issue);
+
         console.log(newOnBehalfContact);
         console.log(newLicenceHolderContact);
         console.log(newAddress);
         console.log(newSiteAddress);
+        console.log(newIssue);
 
         return undefined;
       } catch (error) {
