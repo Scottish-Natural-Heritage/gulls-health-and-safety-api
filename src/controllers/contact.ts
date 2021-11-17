@@ -13,8 +13,6 @@ const ContactController = {
   },
 
   create: async (contact: any) => {
-    const contactId = Math.floor(Math.random() * 99_999);
-    contact.id = contactId;
     let newContact: any;
     await database.sequelize.transaction(async (t: transaction) => {
       newContact = await Contact.create(contact, {transaction: t});

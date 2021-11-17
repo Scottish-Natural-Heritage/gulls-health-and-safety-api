@@ -3,6 +3,7 @@ import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import utils from 'naturescot-utils';
 import Contact from './controllers/contact';
+import Address from './controllers/address';
 
 const cleanOnBehalfContact = (body: any) => {
   return {
@@ -50,64 +51,64 @@ const cleanSiteAddress = (body: any) => {
   };
 };
 
-const cleanApplication = (body: any) => {
-  return {
-    isResidentialSite: body.isResidentialSite,
-    siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
-    previousLicenceNumber: body.previousLicence ? body.previousLicenceNumber.trim() : undefined,
-    supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
-  };
-};
+// const cleanApplication = (body: any) => {
+//   return {
+//     isResidentialSite: body.isResidentialSite,
+//     siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
+//     previousLicenceNumber: body.previousLicence ? body.previousLicenceNumber.trim() : undefined,
+//     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
+//   };
+// };
 
-const cleanIssue = (body: any) => {
-  return {
-    // Just copy across the booleans.
-    aggression: body.issueOnSite.aggression,
-    diveBombing: body.issueOnSite.diveBombing,
-    noise: body.issueOnSite.noise,
-    droppings: body.issueOnSite.droppings,
-    nestingMaterial: body.issueOnSite.nestingMaterial,
-    atHeightAggression: body.issueOnSite.atHeightAggression,
-    other: body.issueOnSite.other,
-    // And clean the remaining strings a little.
-    whenIssue: body.siteIssueDetails.whenIssue.trim(),
-    whoAffected: body.siteIssueDetails.whoAffected.trim(),
-    howAffected: body.siteIssueDetails.howAffected.trim(),
-    otherIssueInformation:
-      body.siteIssueDetails.otherIssueInformation === undefined
-        ? undefined
-        : body.siteIssueDetails.otherIssueInformation.trim(),
-  };
-};
+// const cleanIssue = (body: any) => {
+//   return {
+//     // Just copy across the booleans.
+//     aggression: body.issueOnSite.aggression,
+//     diveBombing: body.issueOnSite.diveBombing,
+//     noise: body.issueOnSite.noise,
+//     droppings: body.issueOnSite.droppings,
+//     nestingMaterial: body.issueOnSite.nestingMaterial,
+//     atHeightAggression: body.issueOnSite.atHeightAggression,
+//     other: body.issueOnSite.other,
+//     // And clean the remaining strings a little.
+//     whenIssue: body.siteIssueDetails.whenIssue.trim(),
+//     whoAffected: body.siteIssueDetails.whoAffected.trim(),
+//     howAffected: body.siteIssueDetails.howAffected.trim(),
+//     otherIssueInformation:
+//       body.siteIssueDetails.otherIssueInformation === undefined
+//         ? undefined
+//         : body.siteIssueDetails.otherIssueInformation.trim(),
+//   };
+// };
 
-const cleanActivity = (body: any, gullType: string) => {
-  return {
-    removeNests: body.species?.[gullType].activities.removeNests,
-    quantityNestsToRemove: body.species?.[gullType].activities.quantityNestsToRemove
-      ? body.species?.[gullType].activities.quantityNestsToRemove
-      : undefined,
-    eggDestruction: body.species?.[gullType].activities.eggDestruction,
-    quantityNestsWhereEggsDestroyed: body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
-      ? body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
-      : undefined,
-    chicksToRescueCentre: body.species?.[gullType].activities.chicksToRescueCentre,
-    quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
-      ? body.species?.[gullType].activities.quantityChicksToRescue
-      : undefined,
-    chicksRelocateNearby: body.species?.[gullType].activities.chicksRelocateNearby,
-    quantityChicksToRelocate: body.species?.[gullType].activities.quantityChicksToRelocate
-      ? body.species?.[gullType].activities.quantityChicksToRelocate
-      : undefined,
-    killChicks: body.species?.[gullType].activities.killChicks,
-    quantityChicksToKill: body.species?.[gullType].activities.quantityChicksToKill
-      ? body.species?.[gullType].activities.quantityChicksToKill
-      : undefined,
-    killAdults: body.species?.[gullType].activities.killAdults,
-    quantityAdultsToKill: body.species?.[gullType].activities.quantityAdultsToKill
-      ? body.species?.[gullType].activities.quantityAdultsToKill
-      : undefined,
-  };
-};
+// const cleanActivity = (body: any, gullType: string) => {
+//   return {
+//     removeNests: body.species?.[gullType].activities.removeNests,
+//     quantityNestsToRemove: body.species?.[gullType].activities.quantityNestsToRemove
+//       ? body.species?.[gullType].activities.quantityNestsToRemove
+//       : undefined,
+//     eggDestruction: body.species?.[gullType].activities.eggDestruction,
+//     quantityNestsWhereEggsDestroyed: body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
+//       ? body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
+//       : undefined,
+//     chicksToRescueCentre: body.species?.[gullType].activities.chicksToRescueCentre,
+//     quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
+//       ? body.species?.[gullType].activities.quantityChicksToRescue
+//       : undefined,
+//     chicksRelocateNearby: body.species?.[gullType].activities.chicksRelocateNearby,
+//     quantityChicksToRelocate: body.species?.[gullType].activities.quantityChicksToRelocate
+//       ? body.species?.[gullType].activities.quantityChicksToRelocate
+//       : undefined,
+//     killChicks: body.species?.[gullType].activities.killChicks,
+//     quantityChicksToKill: body.species?.[gullType].activities.quantityChicksToKill
+//       ? body.species?.[gullType].activities.quantityChicksToKill
+//       : undefined,
+//     killAdults: body.species?.[gullType].activities.killAdults,
+//     quantityAdultsToKill: body.species?.[gullType].activities.quantityAdultsToKill
+//       ? body.species?.[gullType].activities.quantityAdultsToKill
+//       : undefined,
+//   };
+// };
 
 
 
@@ -148,13 +149,31 @@ const routes: ServerRoute[] = [
     path: `/application`,
     handler: async (request: Request, h: ResponseToolkit) => {
       const application = request.payload as any;
+      let newOnBehalfContact;
+      let newSiteAddress;
       try {
         if (application.onBehalf) {
-
+          const onBehalfContact = cleanOnBehalfContact(application);
+          newOnBehalfContact = await Contact.create(onBehalfContact);
         }
-        const newContact = await Contact.create(request);
-        console.log(newContact);
-        return newContact;
+        const licenceHolderContact = cleanLicenseHolderContact(application);
+        const newLicenceHolderContact = await Contact.create(licenceHolderContact);
+
+        const address = cleanAddress(application);
+        const newAddress = await Address.create(address);
+        if (!application.sameAddressAsLicenceHolder) {
+          const siteAddress = cleanSiteAddress(application);
+          newSiteAddress = await Address.create(siteAddress);
+        } else {
+          newSiteAddress = newAddress;
+        }
+
+        console.log(newOnBehalfContact);
+        console.log(newLicenceHolderContact);
+        console.log(newAddress);
+        console.log(newSiteAddress);
+
+        return undefined;
       } catch (error) {
         console.log(error);
         return undefined;
