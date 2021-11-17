@@ -1,0 +1,508 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Gulls health and safety API",
+    "description": "An API composed of multiple REST endpoints that provide core 'Gull health and safety' data.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://licensing.nature.scot/gulls-health-and-safety-api/v1"
+    },
+    {
+      "url": "https://licensing.uat.nature.scot/gulls-health-and-safety-api/v1"
+    },
+    {
+      "url": "https://licensing.dev.nature.scot/gulls-health-and-safety-api/v1"
+    },
+    {
+      "url": "http://localhost:3017/gulls-health-and-safety-api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "All",
+      "description": "Access to everything in Gulls health and safety."
+    },
+    {
+      "name": "Application",
+      "description": "Gulls health and safety application Entity"
+    },
+    {
+      "name": "Posts",
+      "description": "returns all endpoints that use POST"
+    }
+  ],
+  "paths": {
+    "/applications": {
+      "post": {
+        "tags": ["Application", "All", "Posts"],
+        "summary": "Add a Gulls health and safety application",
+        "requestBody": {
+          "description": "new Gulls health and safety application Object to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApplication"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201Response"
+          },
+          "400": {
+            "$ref": "#/components/responses/400Response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "201Response": {
+        "description": "A new record has been created",
+        "headers": {
+          "Location": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "URL of the created object."
+          }
+        }
+      },
+
+      "400Response": {
+        "description": "Bad Request.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/StandardErrorResponse"
+            }
+          }
+        }
+      },
+
+      "404Response": {
+        "description": "resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NotFoundErrorResponse"
+            }
+          }
+        }
+      }
+    },
+
+    "schemas": {
+      "PatchApplication": {
+        "type": "object",
+        "properties": {
+          "onBehalf": {
+            "type": "boolean",
+            "example": true
+          },
+          "onBehalfDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Contact"
+              }
+            ]
+          },
+          "licenceHolderDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Contact"
+              }
+            ]
+          },
+          "postcode": {
+            "type": "string",
+            "example": "IV38NW"
+          },
+          "uprn": {
+            "type": "string",
+            "example": "123554"
+          },
+          "manualAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              }
+            ]
+          },
+          "sameAddressAsLicenceHolder": {
+            "type": "boolean",
+            "example": true
+          },
+          "sitePostcode": {
+            "type": "string",
+            "example": "IV38NW"
+          },
+          "siteUprn": {
+            "type": "string",
+            "example": "123554"
+          },
+          "siteManualAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Address"
+              }
+            ]
+          },
+          "isResidentialSite": {
+            "type": "boolean",
+            "example": true
+          },
+          "residentialType": {
+            "type": "string",
+            "example": "Private rented"
+          },
+          "commercialType": {
+            "type": "string",
+            "example": "shop"
+          },
+          "issueOnSite": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IssuesOnSite"
+              }
+            ]
+          },
+          "siteIssueDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SiteIssueDetails"
+              }
+            ]
+          },
+          "measuresTried": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MeasuresTried"
+              }
+            ]
+          },
+          "measuresTriedMoreDetail": {
+            "type": "string",
+            "example": "More Details"
+          },
+          "measuresIntendToTry": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Measures"
+              }
+            ]
+          },
+          "measuresIntendNotToTry": {
+            "type": "string",
+            "example": "123456789"
+          },
+          "previousLicense": {
+            "type": "boolean",
+            "example": false
+          },
+          "previousLicenseNumber": {
+            "type": "string",
+            "example": "123456789"
+          },
+          "supportingInformation": {
+            "type": "string",
+            "example": "Test Details"
+          },
+          "species": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Species"
+              }
+            ]
+          },
+          "confirmDeclaration": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+
+      "PostApplication": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PatchApplication"
+          }
+        ]
+      },
+
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Joe Bloggs"
+          },
+          "organisation": {
+            "type": "string",
+            "example": "NatureScot"
+          },
+          "email": {
+            "type": "string",
+            "example": "test@nature.scot"
+          },
+          "telephone": {
+            "type": "string",
+            "example": "01463123456"
+          }
+        }
+      },
+
+      "Address": {
+        "type": "object",
+        "properties": {
+          "addressLine1": {
+            "type": "string",
+            "example": "32"
+          },
+          "addressLine2": {
+            "type": "string",
+            "example": "test street name"
+          },
+          "addressTown": {
+            "type": "string",
+            "example": "Inverness"
+          },
+          "addressCounty": {
+            "type": "string",
+            "example": "Inverness-shire"
+          }
+        }
+      },
+
+      "IssuesOnSite": {
+        "type": "object",
+        "properties": {
+          "aggression": {
+            "type": "boolean",
+            "example": false
+          },
+          "diveBombing": {
+            "type": "boolean",
+            "example": true
+          },
+          "noise": {
+            "type": "boolean",
+            "example": false
+          },
+          "droppings": {
+            "type": "boolean",
+            "example": true
+          },
+          "nestingMaterial": {
+            "type": "boolean",
+            "example": false
+          },
+          "atHeightAggression": {
+            "type": "boolean",
+            "example": false
+          },
+          "other": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+
+      "SiteIssueDetails": {
+        "type": "object",
+        "properties": {
+          "whenIssue": {
+            "type": "string",
+            "example": "Test More Details"
+          },
+          "whoAffected": {
+            "type": "string",
+            "example": "Test More Details"
+          },
+          "howAffected": {
+            "type": "string",
+            "example": "Test More Details"
+          },
+          "otherIssueInformation": {
+            "type": "string",
+            "example": "Test More Details"
+          }
+        }
+      },
+
+      "Measures": {
+        "type": "object",
+        "properties": {
+          "preventNesting": {
+            "type": "boolean",
+            "example": true
+          },
+          "removeOldNests": {
+            "type": "boolean",
+            "example": true
+          },
+          "removeLitter": {
+            "type": "boolean",
+            "example": true
+          },
+          "humanDisturbance": {
+            "type": "boolean",
+            "example": false
+          },
+          "scaringDevices": {
+            "type": "boolean",
+            "example": false
+          },
+          "hawking": {
+            "type": "boolean",
+            "example": false
+          },
+          "disturbanceByDogs": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+
+      "MeasuresTried": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Measures"
+          }
+        ],
+        "type": "object",
+        "properties": {
+          "disturbingScaringGulls": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+
+      "Species": {
+        "type": "object",
+        "properties": {
+          "herringGull": {
+            "allOf": [{
+              "$ref": "#/components/schemas/LicensedActivities"
+          }]
+          },
+          "blackHeadedGull": {
+            "allOf": [{
+              "$ref": "#/components/schemas/LicensedActivities"
+          }]
+          },
+          "commonGull": {
+            "allOf": [{
+              "$ref": "#/components/schemas/LicensedActivities"
+          }]
+          },
+          "greatBlackBackedGull": {
+            "allOf": [{
+              "$ref": "#/components/schemas/LicensedActivities"
+          }]
+          },
+          "lesserBlackBackedGull": {
+            "allOf": [{
+              "$ref": "#/components/schemas/LicensedActivities"
+          }]
+          }
+        }
+      },
+
+      "LicensedActivities": {
+        "type": "object",
+        "properties": {
+          "requiresLicense": {
+            "type": "boolean",
+            "example": true
+          },
+          "activities": {
+            "allOf": [{
+                "$ref": "#/components/schemas/Activities"
+            }]
+          }
+        }
+      },
+
+      "Activities": {
+        "type": "object",
+        "properties": {
+          "removeNests": {
+            "type": "boolean",
+            "example": true
+          },
+          "quantityNestsToRemove": {
+            "type": "string",
+            "example": "11 - 50"
+          },
+          "eggDestruction": {
+            "type": "boolean",
+            "example": true
+          },
+          "quantityNestsWhereEggsDestroyed": {
+            "type": "string",
+            "example": "11 - 50"
+          },
+          "chicksToRescueCentre": {
+            "type": "boolean",
+            "example": true
+          },
+          "quantityChicksToRescue": {
+            "type": "integer",
+            "example": 5
+          },
+          "chicksRelocateNearby": {
+            "type": "boolean",
+            "example": true
+          },
+          "quantityChicksToRelocate": {
+            "type": "integer",
+            "example": 5
+          },
+          "killChicks": {
+            "type": "boolean",
+            "example": true
+          },
+          "quantityChicksToKill": {
+            "type": "integer",
+            "example": 5
+          },
+          "killAdults": {
+            "type": "boolean",
+            "example": true
+          },
+          "quantityAdultsToKill": {
+            "type": "integer",
+            "example": 5
+          }
+        }
+      },
+
+      "StandardErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Bad Request."
+          }
+        }
+      },
+
+      "NotFoundErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not Found."
+          }
+        }
+      }
+    }
+  }
+}
