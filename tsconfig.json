@@ -22,5 +22,5 @@
     "strictPropertyInitialization": true,
     "target": "ES2019"
   },
-  "exclude": ["dist", "src/config/database.js"]
+  "exclude": ["dist"]
 }
