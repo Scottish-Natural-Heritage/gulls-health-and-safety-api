@@ -11,8 +11,10 @@ import Activity from './activity';
 
 const Sequelize = require('sequelize');
 
+// Default to the local database configuration.
 let sequelize = new Sequelize(localDatabaseConfig.database);
 
+// If we're running in production, switch to that configuration instead.
 if (process.env.NODE_ENV === 'production') {
   sequelize = new Sequelize(productionDatabaseConfig.database);
 }
