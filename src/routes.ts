@@ -5,6 +5,8 @@ import utils from 'naturescot-utils';
 import Contact from './controllers/contact';
 import Address from './controllers/address';
 import Issue from './controllers/issue';
+import Activity from './controllers/activity';
+import Species from './controllers/species';
 
 const cleanOnBehalfContact = (body: any) => {
   return {
@@ -82,36 +84,34 @@ const cleanIssue = (body: any) => {
   };
 };
 
-// const cleanActivity = (body: any, gullType: string) => {
-//   return {
-//     removeNests: body.species?.[gullType].activities.removeNests,
-//     quantityNestsToRemove: body.species?.[gullType].activities.quantityNestsToRemove
-//       ? body.species?.[gullType].activities.quantityNestsToRemove
-//       : undefined,
-//     eggDestruction: body.species?.[gullType].activities.eggDestruction,
-//     quantityNestsWhereEggsDestroyed: body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
-//       ? body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
-//       : undefined,
-//     chicksToRescueCentre: body.species?.[gullType].activities.chicksToRescueCentre,
-//     quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
-//       ? body.species?.[gullType].activities.quantityChicksToRescue
-//       : undefined,
-//     chicksRelocateNearby: body.species?.[gullType].activities.chicksRelocateNearby,
-//     quantityChicksToRelocate: body.species?.[gullType].activities.quantityChicksToRelocate
-//       ? body.species?.[gullType].activities.quantityChicksToRelocate
-//       : undefined,
-//     killChicks: body.species?.[gullType].activities.killChicks,
-//     quantityChicksToKill: body.species?.[gullType].activities.quantityChicksToKill
-//       ? body.species?.[gullType].activities.quantityChicksToKill
-//       : undefined,
-//     killAdults: body.species?.[gullType].activities.killAdults,
-//     quantityAdultsToKill: body.species?.[gullType].activities.quantityAdultsToKill
-//       ? body.species?.[gullType].activities.quantityAdultsToKill
-//       : undefined,
-//   };
-// };
-
-
+const cleanActivity = (body: any, gullType: string) => {
+  return {
+    removeNests: body.species?.[gullType].activities.removeNests,
+    quantityNestsToRemove: body.species?.[gullType].activities.quantityNestsToRemove
+      ? body.species?.[gullType].activities.quantityNestsToRemove
+      : undefined,
+    eggDestruction: body.species?.[gullType].activities.eggDestruction,
+    quantityNestsWhereEggsDestroyed: body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
+      ? body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
+      : undefined,
+    chicksToRescueCentre: body.species?.[gullType].activities.chicksToRescueCentre,
+    quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
+      ? body.species?.[gullType].activities.quantityChicksToRescue
+      : undefined,
+    chicksRelocateNearby: body.species?.[gullType].activities.chicksRelocateNearby,
+    quantityChicksToRelocate: body.species?.[gullType].activities.quantityChicksToRelocate
+      ? body.species?.[gullType].activities.quantityChicksToRelocate
+      : undefined,
+    killChicks: body.species?.[gullType].activities.killChicks,
+    quantityChicksToKill: body.species?.[gullType].activities.quantityChicksToKill
+      ? body.species?.[gullType].activities.quantityChicksToKill
+      : undefined,
+    killAdults: body.species?.[gullType].activities.killAdults,
+    quantityAdultsToKill: body.species?.[gullType].activities.quantityAdultsToKill
+      ? body.species?.[gullType].activities.quantityAdultsToKill
+      : undefined,
+  };
+};
 
 /**
  * An array of all the routes and controllers in the app.
@@ -172,17 +172,75 @@ const routes: ServerRoute[] = [
         const issue = cleanIssue(application);
         const newIssue = await Issue.create(issue);
 
+        interface SpeciesIds {
+          HerringGullId: number | undefined;
+          BlackHeadedGullId: number | undefined;
+          CommonGullId: number | undefined;
+          GreatBlackBackedGullId: number | undefined;
+          LesserBlackBackedGullId: number | undefined;
+        }
+
+        let speciesIds: SpeciesIds = {
+          HerringGullId: undefined,
+          BlackHeadedGullId: undefined,
+          CommonGullId: undefined,
+          GreatBlackBackedGullId: undefined,
+          LesserBlackBackedGullId: undefined,
+        };
+
+        if (application.species.herringGull.requiresLicense) {
+          const herringActivity = cleanActivity(application, 'herringGull');
+          const herringGull = await Activity.create(herringActivity);
+          speciesIds.HerringGullId = herringGull.id;
+        }
+
+        if (application.species.blackHeadedGull.requiresLicense) {
+          const blackHeadedActivity = cleanActivity(application, 'blackHeadedGull');
+          const blackHeadedGull = await Activity.create(blackHeadedActivity);
+          speciesIds.BlackHeadedGullId = blackHeadedGull.id;
+        }
+
+        if (application.species.commonGull.requiresLicense) {
+          const commonActivity = cleanActivity(application, 'commonGull');
+          const commonGull = await Activity.create(commonActivity);
+          speciesIds.CommonGullId = commonGull.id;
+        }
+
+        if (application.species.greatBlackBackedGull.requiresLicense) {
+          const greatBlackBackedActivity = cleanActivity(application, 'greatBlackBackedGull');
+          const greatBlackBackedGull = await Activity.create(greatBlackBackedActivity);
+          speciesIds.GreatBlackBackedGullId = greatBlackBackedGull.id;
+        }
+
+        if (application.species.lesserBlackBackedGull.requiresLicense) {
+          const lesserBlackBackedActivity = cleanActivity(application, 'lesserBlackBackedGull');
+          const lesserBlackBackedGull = await Activity.create(lesserBlackBackedActivity);
+          speciesIds.LesserBlackBackedGullId = lesserBlackBackedGull.id;
+        }
+
+        const newSpecies = await Species.create(speciesIds);
+
         console.log(newOnBehalfContact);
         console.log(newLicenceHolderContact);
         console.log(newAddress);
         console.log(newSiteAddress);
         console.log(newIssue);
+        console.log(speciesIds);
+        console.log(newSpecies);
 
         return undefined;
       } catch (error) {
         console.log(error);
         return undefined;
       }
+    },
+  },
+  {
+    method: 'get',
+    path: `/test-getting`,
+    handler: async (_request: Request, h: ResponseToolkit) => {
+      const species = await Species.findAll();
+      return species;
     },
   },
 ];

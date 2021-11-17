@@ -1,6 +1,7 @@
+import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 
-const {Species} = database;
+const {Species, Activity} = database;
 
 const SpeciesController = {
   findOne: async (id: number) => {
@@ -8,7 +9,22 @@ const SpeciesController = {
   },
 
   findAll: async () => {
-    return Species.findAll();
+    return Species.findAll(
+      {
+        include: [{
+          model: Activity,
+          as: 'HerringGull'
+        }]
+      }
+    );
+  },
+
+  create: async (species: any) => {
+    let newSpecies: any;
+    await database.sequelize.transaction(async (t: transaction) => {
+      newSpecies = await Species.create(species, {transaction: t});
+    });
+    return newSpecies;
   },
 };
 
