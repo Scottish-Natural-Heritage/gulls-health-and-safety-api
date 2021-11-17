@@ -1,6 +1,7 @@
 import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
+
 /**
  * An array of all the routes and controllers in the app.
  */
