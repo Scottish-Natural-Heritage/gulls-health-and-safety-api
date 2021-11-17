@@ -10,6 +10,6 @@ const IssueController = {
   findAll: async () => {
     return Issue.findAll();
   },
-}
+};
 
 export {IssueController as default};

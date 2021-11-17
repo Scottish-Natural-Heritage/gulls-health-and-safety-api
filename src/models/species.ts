@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize} from 'sequelize';
+import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
  * Build a Species model.

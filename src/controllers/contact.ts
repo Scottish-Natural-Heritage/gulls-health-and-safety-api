@@ -10,6 +10,6 @@ const ContactController = {
   findAll: async () => {
     return Contact.findAll();
   },
-}
+};
 
 export {ContactController as default};

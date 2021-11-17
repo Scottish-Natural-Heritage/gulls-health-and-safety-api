@@ -10,6 +10,6 @@ const MeasureController = {
   findAll: async () => {
     return Measure.findAll();
   },
-}
+};
 
 export {MeasureController as default};

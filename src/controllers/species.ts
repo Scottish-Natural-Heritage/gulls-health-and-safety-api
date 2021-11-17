@@ -10,6 +10,6 @@ const SpeciesController = {
   findAll: async () => {
     return Species.findAll();
   },
-}
+};
 
 export {SpeciesController as default};

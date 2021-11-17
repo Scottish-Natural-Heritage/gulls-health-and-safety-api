@@ -1,4 +1,6 @@
-import {productionDbConfig, localDbConfig} from '../config/tsDbConfig';
+/* eslint-disable @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, new-cap */
+
+import {productionDatabaseConfig, localDatabaseConfig} from '../config/ts-database-config';
 import Application from './application';
 import Contact from './contact';
 import Address from './address';
@@ -9,10 +11,10 @@ import Activity from './activity';
 
 const Sequelize = require('sequelize');
 
-let sequelize = new Sequelize(localDbConfig.database);
+let sequelize = new Sequelize(localDatabaseConfig.database);
 
 if (process.env.NODE_ENV === 'production') {
-  sequelize = new Sequelize(productionDbConfig.database);
+  sequelize = new Sequelize(productionDatabaseConfig.database);
 }
 
 const database = {

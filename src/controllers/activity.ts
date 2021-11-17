@@ -10,6 +10,6 @@ const ActivityController = {
   findAll: async () => {
     return Activity.findAll();
   },
-}
+};
 
 export {ActivityController as default};

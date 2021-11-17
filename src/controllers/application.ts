@@ -10,7 +10,6 @@ const ApplicationController = {
   findAll: async () => {
     return Application.findAll();
   },
-
-}
+};
 
 export {ApplicationController as default};

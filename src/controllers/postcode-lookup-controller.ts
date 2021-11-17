@@ -15,7 +15,7 @@ const PostcodeLookupController = {
     // Format postcode
     const cleanPostcode = utils.postalAddress.formatPostcodeForPrinting(postcode);
     // Send axios GET request to the Postcode lookup service with the auth token.
-    const serverResponse: AxiosResponse = await axios.get(config.gazetteerBaseUrl, {
+    const serverResponse: AxiosResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
       params: {
         postcode: cleanPostcode,
       },

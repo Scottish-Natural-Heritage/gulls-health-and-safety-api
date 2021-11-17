@@ -12,7 +12,8 @@
     "uprn",
     "premigrations",
     "prestart",
-    "hstore"
+    "hstore",
+    "rogulls"
   ],
   "ignorePaths": [
     "node_modules/**/*",

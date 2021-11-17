@@ -10,6 +10,6 @@ const AddressController = {
   findAll: async () => {
     return Address.findAll();
   },
-}
+};
 
 export {AddressController as default};
