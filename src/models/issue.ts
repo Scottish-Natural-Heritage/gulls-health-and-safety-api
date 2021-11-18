@@ -8,6 +8,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  */
 const IssueModel = (sequelize: Sequelize) => {
   class Issue extends Model {
+    public id!: number;
     public ApplicationId!: number;
     public aggression!: boolean;
     public diveBombing!: boolean;

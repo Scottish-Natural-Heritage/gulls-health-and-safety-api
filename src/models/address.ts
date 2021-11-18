@@ -8,6 +8,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  */
 const AddressModel = (sequelize: Sequelize) => {
   class Address extends Model {
+    public id!: number;
     public uprn!: string;
     public addressLine1!: string;
     public addressLine2!: string;

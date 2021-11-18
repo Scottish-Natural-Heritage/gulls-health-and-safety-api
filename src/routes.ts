@@ -2,12 +2,13 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import utils from 'naturescot-utils';
-import Contact from './controllers/contact';
-import Address from './controllers/address';
-import Issue from './controllers/issue';
-import Activity from './controllers/activity';
+// import Contact from './controllers/contact';
+// import Address from './controllers/address';
+// import Issue from './controllers/issue';
+// import Activity from './controllers/activity';
 import Species from './controllers/species';
-import Measure from './controllers/measure';
+// import Measure from './controllers/measure';
+import Application from './controllers/application';
 
 const cleanOnBehalfContact = (body: any) => {
   return {
@@ -55,14 +56,14 @@ const cleanSiteAddress = (body: any) => {
   };
 };
 
-// const cleanApplication = (body: any) => {
-//   return {
-//     isResidentialSite: body.isResidentialSite,
-//     siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
-//     previousLicenceNumber: body.previousLicence ? body.previousLicenceNumber.trim() : undefined,
-//     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
-//   };
-// };
+const cleanApplication = (body: any) => {
+  return {
+    isResidentialSite: body.isResidentialSite,
+    siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
+    previousLicenceNumber: body.previousLicence ? body.previousLicenceNumber.trim() : undefined,
+    supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
+  };
+};
 
 const cleanIssue = (body: any) => {
   return {
@@ -184,90 +185,72 @@ const routes: ServerRoute[] = [
     method: 'post',
     path: `/application`,
     handler: async (request: Request, h: ResponseToolkit) => {
-      const application = request.payload as any;
-      let newOnBehalfContact;
-      let newSiteAddress;
       try {
-        if (application.onBehalf) {
-          const onBehalfContact = cleanOnBehalfContact(application);
-          newOnBehalfContact = await Contact.create(onBehalfContact);
-        }
+        const application = request.payload as any;
+
+        let onBehalfContact;
+        let siteAddress;
+        let herringActivity;
+        let blackHeadedActivity;
+        let commonActivity;
+        let greatBlackBackedActivity;
+        let lesserBlackBackedActivity;
+
+        // Clean the incoming data.
         const licenceHolderContact = cleanLicenseHolderContact(application);
-        const newLicenceHolderContact = await Contact.create(licenceHolderContact);
-
         const address = cleanAddress(application);
-        const newAddress = await Address.create(address);
-        if (!application.sameAddressAsLicenceHolder) {
-          const siteAddress = cleanSiteAddress(application);
-          newSiteAddress = await Address.create(siteAddress);
-        } else {
-          newSiteAddress = newAddress;
-        }
-
         const issue = cleanIssue(application);
-        const newIssue = await Issue.create(issue);
+        const measure = cleanMeasure(application);
 
-        interface SpeciesIds {
-          HerringGullId: number | undefined;
-          BlackHeadedGullId: number | undefined;
-          CommonGullId: number | undefined;
-          GreatBlackBackedGullId: number | undefined;
-          LesserBlackBackedGullId: number | undefined;
+        // Clean the optional incoming data.
+        if (application.onBehalf) {
+          onBehalfContact = cleanOnBehalfContact(application);
         }
 
-        let speciesIds: SpeciesIds = {
-          HerringGullId: undefined,
-          BlackHeadedGullId: undefined,
-          CommonGullId: undefined,
-          GreatBlackBackedGullId: undefined,
-          LesserBlackBackedGullId: undefined,
-        };
+        // Clean all the possible species activities.
+        if (!application.sameAddressAsLicenceHolder) {
+          siteAddress = cleanSiteAddress(application);
+        }
 
         if (application.species.herringGull.requiresLicense) {
-          const herringActivity = cleanActivity(application, 'herringGull');
-          const herringGull = await Activity.create(herringActivity);
-          speciesIds.HerringGullId = herringGull.id;
+          herringActivity = cleanActivity(application, 'herringGull');
         }
 
         if (application.species.blackHeadedGull.requiresLicense) {
-          const blackHeadedActivity = cleanActivity(application, 'blackHeadedGull');
-          const blackHeadedGull = await Activity.create(blackHeadedActivity);
-          speciesIds.BlackHeadedGullId = blackHeadedGull.id;
+          blackHeadedActivity = cleanActivity(application, 'blackHeadedGull');
         }
 
         if (application.species.commonGull.requiresLicense) {
-          const commonActivity = cleanActivity(application, 'commonGull');
-          const commonGull = await Activity.create(commonActivity);
-          speciesIds.CommonGullId = commonGull.id;
+          commonActivity = cleanActivity(application, 'commonGull');
         }
 
         if (application.species.greatBlackBackedGull.requiresLicense) {
-          const greatBlackBackedActivity = cleanActivity(application, 'greatBlackBackedGull');
-          const greatBlackBackedGull = await Activity.create(greatBlackBackedActivity);
-          speciesIds.GreatBlackBackedGullId = greatBlackBackedGull.id;
+          greatBlackBackedActivity = cleanActivity(application, 'greatBlackBackedGull');
         }
 
         if (application.species.lesserBlackBackedGull.requiresLicense) {
-          const lesserBlackBackedActivity = cleanActivity(application, 'lesserBlackBackedGull');
-          const lesserBlackBackedGull = await Activity.create(lesserBlackBackedActivity);
-          speciesIds.LesserBlackBackedGullId = lesserBlackBackedGull.id;
+          lesserBlackBackedActivity = cleanActivity(application, 'lesserBlackBackedGull');
         }
 
-        const newSpecies = await Species.create(speciesIds);
+        // Clean the fields on the application.
+        const incomingApplication = cleanApplication(application);
 
-        const measure = cleanMeasure(application);
-        const newMeasure = await Measure.create(measure);
+        const newApplication: any = await Application.create(
+          onBehalfContact,
+          licenceHolderContact,
+          address,
+          siteAddress,
+          issue,
+          herringActivity,
+          blackHeadedActivity,
+          commonActivity,
+          greatBlackBackedActivity,
+          lesserBlackBackedActivity,
+          measure,
+          incomingApplication,
+        );
 
-        console.log(newOnBehalfContact);
-        console.log(newLicenceHolderContact);
-        console.log(newAddress);
-        console.log(newSiteAddress);
-        console.log(newIssue);
-        console.log(speciesIds);
-        console.log(newSpecies);
-        console.log(newMeasure);
-
-        return newMeasure;
+        return newApplication;
       } catch (error) {
         console.log(error);
         return undefined;

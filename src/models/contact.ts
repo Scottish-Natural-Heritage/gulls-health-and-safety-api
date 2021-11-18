@@ -8,6 +8,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  */
 const ContactModel = (sequelize: Sequelize) => {
   class Contact extends Model {
+    public id!: number;
     public name!: string;
     public organisation!: string;
     public emailAddress!: string;
