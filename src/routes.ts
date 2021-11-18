@@ -7,6 +7,7 @@ import Address from './controllers/address';
 import Issue from './controllers/issue';
 import Activity from './controllers/activity';
 import Species from './controllers/species';
+import Measure from './controllers/measure';
 
 const cleanOnBehalfContact = (body: any) => {
   return {
@@ -110,6 +111,40 @@ const cleanActivity = (body: any, gullType: string) => {
     quantityAdultsToKill: body.species?.[gullType].activities.quantityAdultsToKill
       ? body.species?.[gullType].activities.quantityAdultsToKill
       : undefined,
+  };
+};
+
+const cleanMeasure = (body: any) => {
+  return {
+    preventNesting: body.measuresTried.preventNesting
+      ? 'Tried'
+      : body.measuresIntendToTry.preventNesting
+      ? 'Intend'
+      : 'no',
+    removeOldNests: body.measuresTried.removeOldNests
+      ? 'Tried'
+      : body.measuresIntendToTry.removeOldNests
+      ? 'Intend'
+      : 'no',
+    removeLitter: body.measuresTried.removeLitter ? 'Tried' : body.measuresIntendToTry.removeLitter ? 'Intend' : 'no',
+    humanDisturbance: body.measuresTried.humanDisturbance
+      ? 'Tried'
+      : body.measuresIntendToTry.humanDisturbance
+      ? 'Intend'
+      : 'no',
+    scaringDevices: body.measuresTried.scaringDevices
+      ? 'Tried'
+      : body.measuresIntendToTry.scaringDevices
+      ? 'Intend'
+      : 'no',
+    hawking: body.measuresTried.hawking ? 'Tried' : body.measuresIntendToTry.hawking ? 'Intend' : 'no',
+    disturbanceByDogs: body.measuresTried.disturbanceByDogs
+      ? 'Tried'
+      : body.measuresIntendToTry.disturbanceByDogs
+      ? 'Intend'
+      : 'no',
+    measuresTriedDetail: body.measuresTriedMoreDetail.trim(),
+    measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
   };
 };
 
@@ -220,6 +255,9 @@ const routes: ServerRoute[] = [
 
         const newSpecies = await Species.create(speciesIds);
 
+        const measure = cleanMeasure(application);
+        const newMeasure = await Measure.create(measure);
+
         console.log(newOnBehalfContact);
         console.log(newLicenceHolderContact);
         console.log(newAddress);
@@ -227,8 +265,9 @@ const routes: ServerRoute[] = [
         console.log(newIssue);
         console.log(speciesIds);
         console.log(newSpecies);
+        console.log(newMeasure);
 
-        return undefined;
+        return newMeasure;
       } catch (error) {
         console.log(error);
         return undefined;
