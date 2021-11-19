@@ -13,7 +13,7 @@ const ActivityController = {
   },
 
   create: async (activity: any) => {
-    let newActivity: any;
+    let newActivity;
     await database.sequelize.transaction(async (t: transaction) => {
       newActivity = await Activity.create(activity, {transaction: t});
     });

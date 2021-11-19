@@ -13,7 +13,7 @@ const IssueController = {
   },
 
   create: async (issue: any) => {
-    let newIssue: any;
+    let newIssue;
     await database.sequelize.transaction(async (t: transaction) => {
       newIssue = await Issue.create(issue, {transaction: t});
     });

@@ -13,7 +13,7 @@ const ContactController = {
   },
 
   create: async (contact: any) => {
-    let newContact: any;
+    let newContact;
     await database.sequelize.transaction(async (t: transaction) => {
       newContact = await Contact.create(contact, {transaction: t});
     });

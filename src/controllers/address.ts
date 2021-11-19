@@ -13,7 +13,7 @@ const AddressController = {
   },
 
   create: async (address: any) => {
-    let newAddress: any;
+    let newAddress;
     await database.sequelize.transaction(async (t: transaction) => {
       newAddress = await Address.create(address, {transaction: t});
     });

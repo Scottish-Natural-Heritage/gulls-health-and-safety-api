@@ -13,7 +13,7 @@ const MeasureController = {
   },
 
   create: async (measure: any) => {
-    let newMeasure: any;
+    let newMeasure;
     await database.sequelize.transaction(async (t: transaction) => {
       newMeasure = await Measure.create(measure, {transaction: t});
     });

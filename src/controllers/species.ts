@@ -9,18 +9,18 @@ const SpeciesController = {
   },
 
   findAll: async () => {
-    return Species.findAll(
-      {
-        include: [{
+    return Species.findAll({
+      include: [
+        {
           model: Activity,
-          as: 'HerringGull'
-        }]
-      }
-    );
+          as: 'HerringGull',
+        },
+      ],
+    });
   },
 
   create: async (species: any) => {
-    let newSpecies: any;
+    let newSpecies;
     await database.sequelize.transaction(async (t: transaction) => {
       newSpecies = await Species.create(species, {transaction: t});
     });

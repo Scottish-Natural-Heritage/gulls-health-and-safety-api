@@ -3,6 +3,9 @@ import database from '../models/index.js';
 
 const {Application, Contact, Address, Activity, Issue, Measure, Species} = database;
 
+/**
+ * Local interface to hold the species ID foreign keys.
+ */
 interface SpeciesIds {
   HerringGullId: number | undefined;
   BlackHeadedGullId: number | undefined;
@@ -10,6 +13,23 @@ interface SpeciesIds {
   GreatBlackBackedGullId: number | undefined;
   LesserBlackBackedGullId: number | undefined;
 }
+
+/**
+ * Local interface of the application.
+ */
+interface application {
+  id: number;
+  LicenceHolderId: number;
+  LicenceApplicantId: number;
+  LicenceHolderAddressId: number;
+  SiteAddressId: number;
+  SpeciesId: number;
+  isResidentialSite: boolean;
+  siteType: string;
+  previousLicenceNumber: string;
+  supportingInformation: string;
+}
+
 
 const ApplicationController = {
   findOne: async (id: number) => {
@@ -20,6 +40,23 @@ const ApplicationController = {
     return Application.findAll();
   },
 
+  /**
+   * The create function writes the incoming application to the appropriate database tables.
+   *
+   * @param {any | undefined} onBehalfContact The on behalf contact details.
+   * @param {any | undefined} licenceHolderContact The license holder contact details.
+   * @param {any | undefined} address The license holder's address.
+   * @param {any | undefined} siteAddress The site's address.
+   * @param {any | undefined} issue The issue details.
+   * @param {any | undefined} herringActivity The herring gull activities to be licensed.
+   * @param {any | undefined} blackHeadedActivity The black-headed gull activities to be licensed.
+   * @param {any | undefined} commonActivity The common gull activities to be licensed.
+   * @param {any | undefined} greatBlackBackedActivity The great black-backed gull activities to be licensed.
+   * @param {any | undefined} lesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
+   * @param {any | undefined} measure The measures taken / not taken details.
+   * @param {any | undefined} incomingApplication The application details.
+   * @returns {application} newApplication The newly created application.
+   */
   create: async (
     onBehalfContact: any | undefined,
     licenceHolderContact: any,
@@ -34,7 +71,7 @@ const ApplicationController = {
     measure: any,
     incomingApplication: any,
   ) => {
-    let speciesIds: SpeciesIds = {
+    const speciesIds: SpeciesIds = {
       HerringGullId: undefined,
       BlackHeadedGullId: undefined,
       CommonGullId: undefined,
@@ -49,6 +86,7 @@ const ApplicationController = {
       if (onBehalfContact) {
         newOnBehalfContact = await Contact.create(onBehalfContact, {transaction: t});
       }
+
       const newAddress = await Address.create(address, {transaction: t});
       if (siteAddress) {
         newSiteAddress = await Address.create(siteAddress, {transaction: t});
@@ -95,14 +133,18 @@ const ApplicationController = {
       let foundExistingId = true; // Assume true until checked.
 
       // Generate a random 6 digit ID and check if it's already in use.
+      // No await in loop disabled because we need to wait for the result.
+      /* eslint-disable no-await-in-loop */
       while (foundExistingId && remainingAttempts > 0) {
-        newId = Math.floor(Math.random() * 999999);
+        newId = Math.floor(Math.random() * 999_999);
         existingApplication = await Application.findByPk(newId);
         if (!existingApplication) {
           foundExistingId = false;
         }
+
         remainingAttempts--;
       }
+      /* eslint-enable no-await-in-loop */
 
       incomingApplication.id = newId;
 
@@ -114,7 +156,12 @@ const ApplicationController = {
       issue.ApplicationId = newApplication.id;
       await Issue.create(issue, {transaction: t});
     });
-    return newApplication;
+
+    if (newApplication) {
+      return newApplication as application;
+    }
+
+    return undefined;
   },
 };
 
