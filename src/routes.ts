@@ -2,12 +2,7 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import utils from 'naturescot-utils';
-// import Contact from './controllers/contact';
-// import Address from './controllers/address';
-// import Issue from './controllers/issue';
-// import Activity from './controllers/activity';
 import Species from './controllers/species';
-// import Measure from './controllers/measure';
 import Application from './controllers/application';
 
 const cleanOnBehalfContact = (body: any) => {
@@ -35,24 +30,24 @@ const cleanLicenseHolderContact = (body: any) => {
 
 const cleanAddress = (body: any) => {
   return {
-    uprn: body.uprn === undefined ? undefined : body.uprn.trim(),
+    uprn: body.uprn === undefined ? undefined : body.uprn,
     postcode: body.postcode.trim(),
-    addressLine1: body.manualAddress?.addressLine1.trim(),
+    addressLine1: body.manualAddress?.addressLine1 === undefined ? undefined : body.manualAddress?.addressLine1.trim(),
     addressLine2: body.manualAddress?.addressLine2 === undefined ? undefined : body.manualAddress?.addressLine2.trim(),
-    addressTown: body.manualAddress?.addressTown.trim(),
-    addressCounty: body.manualAddress?.addressCounty.trim(),
+    addressTown: body.manualAddress?.addressTown === undefined ? undefined : body.manualAddress?.addressTown.trim(),
+    addressCounty: body.manualAddress?.addressCounty=== undefined ? undefined : body.manualAddress?.addressCounty.trim(),
   };
 };
 
 const cleanSiteAddress = (body: any) => {
   return {
-    uprn: body.siteUprn === undefined ? undefined : body.uprn.trim(),
+    uprn: body.siteUprn === undefined ? undefined : body.uprn,
     postcode: body.sitePostcode.trim(),
-    addressLine1: body.siteManualAddress?.addressLine1.trim(),
+    addressLine1: body.siteManualAddress?.addressLine1 === undefined ? undefined : body.siteManualAddress?.addressLine1.trim(),
     addressLine2:
       body.siteManualAddress?.addressLine2 === undefined ? undefined : body.siteManualAddress?.addressLine2.trim(),
-    addressTown: body.siteManualAddress?.addressTown.trim(),
-    addressCounty: body.siteManualAddress?.addressCounty.trim(),
+    addressTown: body.siteManualAddress?.addressTown === undefined ? undefined : body.siteManualAddress?.addressTown.trim(),
+    addressCounty: body.siteManualAddress?.addressCounty === undefined ? undefined : body.siteManualAddress?.addressCounty.trim(),
   };
 };
 
@@ -121,29 +116,29 @@ const cleanMeasure = (body: any) => {
       ? 'Tried'
       : body.measuresIntendToTry.preventNesting
       ? 'Intend'
-      : 'no',
+      : 'No',
     removeOldNests: body.measuresTried.removeOldNests
       ? 'Tried'
       : body.measuresIntendToTry.removeOldNests
       ? 'Intend'
-      : 'no',
-    removeLitter: body.measuresTried.removeLitter ? 'Tried' : body.measuresIntendToTry.removeLitter ? 'Intend' : 'no',
+      : 'No',
+    removeLitter: body.measuresTried.removeLitter ? 'Tried' : body.measuresIntendToTry.removeLitter ? 'Intend' : 'No',
     humanDisturbance: body.measuresTried.humanDisturbance
       ? 'Tried'
       : body.measuresIntendToTry.humanDisturbance
       ? 'Intend'
-      : 'no',
+      : 'No',
     scaringDevices: body.measuresTried.scaringDevices
       ? 'Tried'
       : body.measuresIntendToTry.scaringDevices
       ? 'Intend'
-      : 'no',
-    hawking: body.measuresTried.hawking ? 'Tried' : body.measuresIntendToTry.hawking ? 'Intend' : 'no',
+      : 'No',
+    hawking: body.measuresTried.hawking ? 'Tried' : body.measuresIntendToTry.hawking ? 'Intend' : 'No',
     disturbanceByDogs: body.measuresTried.disturbanceByDogs
       ? 'Tried'
       : body.measuresIntendToTry.disturbanceByDogs
       ? 'Intend'
-      : 'no',
+      : 'No',
     measuresTriedDetail: body.measuresTriedMoreDetail.trim(),
     measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
   };

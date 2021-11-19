@@ -10,7 +10,7 @@ module.exports = {
         autoIncrement: true,
       },
       uprn: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       addressLine1: {
         type: Sequelize.STRING,
