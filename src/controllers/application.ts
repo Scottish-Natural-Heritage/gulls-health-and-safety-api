@@ -89,7 +89,21 @@ const ApplicationController = {
       incomingApplication.SiteAddressId = newSiteAddress ? newSiteAddress.id : newAddress.id;
       incomingApplication.SpeciesId = newSpecies.id;
 
-      const newId = Math.floor(Math.random() * 999999);
+      let newId; // The prospective random ID of the new application.
+      let existingApplication; // Possible already assigned application.
+      let remainingAttempts = 10; // Allow 10 attempts to check if the ID is in use.
+      let foundExistingId = true; // Assume true until checked.
+
+      // Generate a random 6 digit ID and check if it's already in use.
+      while (foundExistingId && remainingAttempts > 0) {
+        newId = Math.floor(Math.random() * 999999);
+        existingApplication = await Application.findByPk(newId);
+        if (!existingApplication) {
+          foundExistingId = false;
+        }
+        remainingAttempts--;
+      }
+
       incomingApplication.id = newId;
 
       newApplication = await Application.create(incomingApplication, {transaction: t});
