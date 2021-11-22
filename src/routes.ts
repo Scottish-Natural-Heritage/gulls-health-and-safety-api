@@ -37,6 +37,23 @@ const routes: ServerRoute[] = [
     },
   },
   {
+    method: 'get',
+    path: `/application/{id}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const application = await Application.findOne(request.params.id);
+
+        if (application) {
+          return h.response(application).code(200)
+        } else {
+          return undefined;
+        }
+      } catch (error: unknown) {
+        return error;
+      }
+    }
+  },
+  {
     method: 'post',
     path: `/application`,
     handler: async (request: Request, h: ResponseToolkit) => {
