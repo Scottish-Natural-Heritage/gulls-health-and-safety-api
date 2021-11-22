@@ -195,7 +195,6 @@ const cleanMeasure = (body: any): any => {
     measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
   };
 };
-/* eslint-enable editorconfig/indent */
 
 /**
  * This function returns an address object for a supplied UPRN.
@@ -215,14 +214,27 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
     },
   });
 
+  const subBuildingName = serverResponse.data.results[0].address[0].sub_building_name
+    ? String(serverResponse.data.results[0].address[0].sub_building_name)
+    : '';
+  const organisationName = serverResponse.data.results[0].address[0].rm_organisation_name
+    ? String(serverResponse.data.results[0].address[0].rm_organisation_name)
+    : '';
+  const buildingNumber = serverResponse.data.results[0].address[0].building_number
+    ? String(serverResponse.data.results[0].address[0].building_number)
+    : '';
+  const buildingName = serverResponse.data.results[0].address[0].building_name
+    ? String(serverResponse.data.results[0].address[0].building_name)
+    : '';
+
+  const addressLine1 = `${subBuildingName} ${organisationName} ${buildingNumber} ${buildingName}`;
+
   return {
     uprn: serverResponse.data.results[0].address[0].uprn,
     postcode: serverResponse.data.results[0].address[0].postcode
       ? serverResponse.data.results[0].address[0].postcode
       : '',
-    addressLine1: serverResponse.data.results[0].address[0].building_name
-      ? serverResponse.data.results[0].address[0].building_name
-      : '',
+    addressLine1,
     addressLine2: serverResponse.data.results[0].address[0].street_description
       ? serverResponse.data.results[0].address[0].street_description
       : '',
@@ -234,6 +246,7 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
       : '',
   };
 };
+/* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
   cleanOnBehalfContact,
