@@ -196,6 +196,12 @@ const cleanMeasure = (body: any): any => {
   };
 };
 
+/**
+ * This function returns an address object for a supplied UPRN.
+ *
+ * @param {number} uprn The UPRN to resolve to an address.
+ * @returns {any} The address details for the passed UPRN.
+ */
 const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
   // Send axios GET request to the Postcode lookup service with the auth token.
   const serverResponse: AxiosResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
@@ -212,14 +218,12 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
     uprn: serverResponse.data.results[0].address[0].uprn,
     postcode: serverResponse.data.results[0].address[0].postcode
       ? serverResponse.data.results[0].address[0].postcode
-      : undefined,
-    addressLine1: serverResponse.data.results[0].address[0].building_number
-      ? serverResponse.data.results[0].address[0].building_number
-      : '' + String(serverResponse.data.results[0].address[0].street_description)
-      ? serverResponse.data.results[0].address[0].street_description
       : '',
-    addressLine2: serverResponse.data.results[0].address[0].locality
-      ? serverResponse.data.results[0].address[0].locality
+    addressLine1: serverResponse.data.results[0].address[0].building_name
+      ? serverResponse.data.results[0].address[0].building_name
+      : '',
+    addressLine2: serverResponse.data.results[0].address[0].street_description
+      ? serverResponse.data.results[0].address[0].street_description
       : '',
     addressTown: serverResponse.data.results[0].address[0].post_town
       ? serverResponse.data.results[0].address[0].post_town

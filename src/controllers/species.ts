@@ -1,7 +1,7 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 
-const {Species, Activity} = database;
+const {Species} = database;
 
 const SpeciesController = {
   findOne: async (id: number) => {
@@ -9,14 +9,7 @@ const SpeciesController = {
   },
 
   findAll: async () => {
-    return Species.findAll({
-      include: [
-        {
-          model: Activity,
-          as: 'HerringGull',
-        },
-      ],
-    });
+    return Species.findAll();
   },
 
   create: async (species: any) => {

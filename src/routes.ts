@@ -1,7 +1,6 @@
 import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
-import Species from './controllers/species';
 import Application from './controllers/application';
 import CleaningFunctions from './controllers/cleaning-functions';
 
@@ -127,14 +126,6 @@ const routes: ServerRoute[] = [
         // Return any errors.
         return error;
       }
-    },
-  },
-  {
-    method: 'get',
-    path: `/test-getting`,
-    handler: async (_request: Request, _h: ResponseToolkit) => {
-      const species = await Species.findAll();
-      return species;
     },
   },
 ];
