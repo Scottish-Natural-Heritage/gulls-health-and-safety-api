@@ -195,6 +195,7 @@ const cleanMeasure = (body: any): any => {
     measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
   };
 };
+/* eslint-enable editorconfig/indent */
 
 /**
  * This function returns an address object for a supplied UPRN.
@@ -233,8 +234,6 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
       : '',
   };
 };
-
-/* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
   cleanOnBehalfContact,
