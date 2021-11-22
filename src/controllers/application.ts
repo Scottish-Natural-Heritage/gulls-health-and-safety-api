@@ -30,7 +30,6 @@ interface application {
   supportingInformation: string;
 }
 
-
 const ApplicationController = {
   findOne: async (id: number) => {
     return Application.findByPk(id);
@@ -55,7 +54,7 @@ const ApplicationController = {
    * @param {any | undefined} lesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
    * @param {any | undefined} measure The measures taken / not taken details.
    * @param {any | undefined} incomingApplication The application details.
-   * @returns {application} newApplication The newly created application.
+   * @returns {application} Returns newApplication, the newly created application.
    */
   create: async (
     onBehalfContact: any | undefined,
@@ -79,21 +78,25 @@ const ApplicationController = {
       LesserBlackBackedGullId: undefined,
     };
     let newApplication;
+    // Start a transaction.
     await database.sequelize.transaction(async (t: transaction) => {
       let newOnBehalfContact;
       let newSiteAddress;
+      // Add the licence holder details to DB, and optional on-behalf contact details.
       const newLicenceHolderContact = await Contact.create(licenceHolderContact, {transaction: t});
       if (onBehalfContact) {
         newOnBehalfContact = await Contact.create(onBehalfContact, {transaction: t});
       }
 
+      // Add licence holder address to DB and Site address. Check if the addresses are the same.
       const newAddress = await Address.create(address, {transaction: t});
       if (siteAddress) {
         newSiteAddress = await Address.create(siteAddress, {transaction: t});
       } else {
-        siteAddress = newAddress;
+        siteAddress = address;
       }
 
+      // Add any species specific activities to the DB and get their IDs.
       if (herringActivity) {
         const herringGull = await Activity.create(herringActivity, {transaction: t});
         speciesIds.HerringGullId = herringGull.id;
@@ -119,8 +122,10 @@ const ApplicationController = {
         speciesIds.LesserBlackBackedGullId = lesserBlackBackedGull.id;
       }
 
+      // Set the species foreign keys in the DB.
       const newSpecies = await Species.create(speciesIds, {transaction: t});
 
+      // Set the application's foreign keys.
       incomingApplication.LicenceHolderId = newLicenceHolderContact.id;
       incomingApplication.LicenceApplicantId = newOnBehalfContact ? newOnBehalfContact.id : newLicenceHolderContact.id;
       incomingApplication.LicenceHolderAddressId = newAddress.id;
@@ -148,19 +153,24 @@ const ApplicationController = {
 
       incomingApplication.id = newId;
 
+      // Add the application to the DB.
       newApplication = await Application.create(incomingApplication, {transaction: t});
 
+      // Add any measures taken / tried / etc to the DB.
       measure.ApplicationId = newApplication.id;
       await Measure.create(measure, {transaction: t});
 
+      // Add any issues declared to the DB.
       issue.ApplicationId = newApplication.id;
       await Issue.create(issue, {transaction: t});
     });
 
+    // If all went well and we have a new application return it.
     if (newApplication) {
       return newApplication as application;
     }
 
+    // If no new application was added to the DB return undefined.
     return undefined;
   },
 };

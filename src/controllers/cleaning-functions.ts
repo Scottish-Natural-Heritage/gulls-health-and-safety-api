@@ -1,4 +1,6 @@
 import utils from 'naturescot-utils';
+import axios, {AxiosResponse} from 'axios';
+import config from '../config/app';
 
 /**
  * Cleans the on behalf contact details into something the database can use.
@@ -61,7 +63,7 @@ const cleanAddress = (body: any): any => {
  */
 const cleanSiteAddress = (body: any): any => {
   return {
-    uprn: body.siteUprn === undefined ? undefined : body.uprn,
+    uprn: body.siteUprn === undefined ? undefined : body.siteUprn,
     postcode: body.sitePostcode.trim(),
     addressLine1:
       body.siteManualAddress?.addressLine1 === undefined ? undefined : body.siteManualAddress?.addressLine1.trim(),
@@ -193,6 +195,41 @@ const cleanMeasure = (body: any): any => {
     measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
   };
 };
+
+const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
+  // Send axios GET request to the Postcode lookup service with the auth token.
+  const serverResponse: AxiosResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
+    params: {
+      uprn,
+      fieldset: 'all',
+    },
+    headers: {
+      Authorization: `Bearer ${config.postcodeApiKey}`,
+    },
+  });
+
+  return {
+    uprn: serverResponse.data.results[0].address[0].uprn,
+    postcode: serverResponse.data.results[0].address[0].postcode
+      ? serverResponse.data.results[0].address[0].postcode
+      : undefined,
+    addressLine1: serverResponse.data.results[0].address[0].building_number
+      ? serverResponse.data.results[0].address[0].building_number
+      : '' + String(serverResponse.data.results[0].address[0].street_description)
+      ? serverResponse.data.results[0].address[0].street_description
+      : '',
+    addressLine2: serverResponse.data.results[0].address[0].locality
+      ? serverResponse.data.results[0].address[0].locality
+      : '',
+    addressTown: serverResponse.data.results[0].address[0].post_town
+      ? serverResponse.data.results[0].address[0].post_town
+      : '',
+    addressCounty: serverResponse.data.results[0].address[0].administrative_area
+      ? serverResponse.data.results[0].address[0].administrative_area
+      : '',
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -204,6 +241,7 @@ const CleaningFunctions = {
   cleanIssue,
   cleanActivity,
   cleanMeasure,
+  cleanAddressFromUprn,
 };
 
 export default CleaningFunctions;
