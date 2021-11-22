@@ -7,9 +7,10 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.INTEGER,
+        autoIncrement: true,
       },
       uprn: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
       addressLine1: {
         type: Sequelize.STRING,

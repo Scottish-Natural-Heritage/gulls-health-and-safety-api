@@ -1,3 +1,4 @@
+import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 
 const {Activity} = database;
@@ -9,6 +10,14 @@ const ActivityController = {
 
   findAll: async () => {
     return Activity.findAll();
+  },
+
+  create: async (activity: any) => {
+    let newActivity;
+    await database.sequelize.transaction(async (t: transaction) => {
+      newActivity = await Activity.create(activity, {transaction: t});
+    });
+    return newActivity;
   },
 };
 

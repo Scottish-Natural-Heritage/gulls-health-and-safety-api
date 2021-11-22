@@ -8,6 +8,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  */
 const MeasureModel = (sequelize: Sequelize) => {
   class Measure extends Model {
+    public id!: number;
     public ApplicationId!: number;
     public preventNesting!: string;
     public removeOldNests!: string;

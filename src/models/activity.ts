@@ -8,6 +8,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  */
 const ActivityModel = (sequelize: Sequelize) => {
   class Activity extends Model {
+    public id!: number;
     public removeNests!: boolean;
     public quantityNestsToRemove!: string;
     public eggDestruction!: boolean;

@@ -8,6 +8,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  */
 const ApplicationModel = (sequelize: Sequelize) => {
   class Application extends Model {
+    public id!: number;
     public LicenceHolderId!: number;
     public LicenceApplicantId!: number;
     public LicenceHolderAddressId!: number;

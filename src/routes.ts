@@ -1,6 +1,8 @@
 import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
+import Application from './controllers/application';
+import CleaningFunctions from './controllers/cleaning-functions';
 
 /**
  * An array of all the routes and controllers in the app.
@@ -31,6 +33,98 @@ const routes: ServerRoute[] = [
       } catch {
         // If something went wrong while trying to find addresses send back a 500 with a error message
         return h.response({message: 'Invalid postcode.'}).code(500);
+      }
+    },
+  },
+  {
+    method: 'post',
+    path: `/application`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Get the payload from the request.
+        const application = request.payload as any;
+
+        let onBehalfContact;
+        let address;
+        let siteAddress;
+        let herringActivity;
+        let blackHeadedActivity;
+        let commonActivity;
+        let greatBlackBackedActivity;
+        let lesserBlackBackedActivity;
+
+        // Clean the incoming data.
+        const licenceHolderContact = CleaningFunctions.cleanLicenseHolderContact(application);
+        address = CleaningFunctions.cleanAddress(application);
+
+        // If we only have a UPRN get the rest of the address.
+        if (address.uprn) {
+          address = await CleaningFunctions.cleanAddressFromUprn(address.uprn);
+        }
+
+        const issue = CleaningFunctions.cleanIssue(application);
+        const measure = CleaningFunctions.cleanMeasure(application);
+
+        // If applying on behalf of someone else clean contact details.
+        if (application.onBehalf) {
+          onBehalfContact = CleaningFunctions.cleanOnBehalfContact(application);
+        }
+
+        // If site address is different from licence holder's address clean it.
+        if (!application.sameAddressAsLicenceHolder) {
+          siteAddress = CleaningFunctions.cleanSiteAddress(application);
+        }
+
+        // If we only have a UPRN get the rest of the site's address.
+        if (siteAddress?.uprn) {
+          siteAddress = await CleaningFunctions.cleanAddressFromUprn(siteAddress.uprn);
+        }
+
+        // Clean all the possible species activities.
+        if (application.species.herringGull.requiresLicense) {
+          herringActivity = CleaningFunctions.cleanActivity(application, 'herringGull');
+        }
+
+        if (application.species.blackHeadedGull.requiresLicense) {
+          blackHeadedActivity = CleaningFunctions.cleanActivity(application, 'blackHeadedGull');
+        }
+
+        if (application.species.commonGull.requiresLicense) {
+          commonActivity = CleaningFunctions.cleanActivity(application, 'commonGull');
+        }
+
+        if (application.species.greatBlackBackedGull.requiresLicense) {
+          greatBlackBackedActivity = CleaningFunctions.cleanActivity(application, 'greatBlackBackedGull');
+        }
+
+        if (application.species.lesserBlackBackedGull.requiresLicense) {
+          lesserBlackBackedActivity = CleaningFunctions.cleanActivity(application, 'lesserBlackBackedGull');
+        }
+
+        // Clean the fields on the application.
+        const incomingApplication = CleaningFunctions.cleanApplication(application);
+
+        // Call the controllers create function to write the cleaned data to the DB.
+        const newApplication = await Application.create(
+          onBehalfContact,
+          licenceHolderContact,
+          address,
+          siteAddress,
+          issue,
+          herringActivity,
+          blackHeadedActivity,
+          commonActivity,
+          greatBlackBackedActivity,
+          lesserBlackBackedActivity,
+          measure,
+          incomingApplication,
+        );
+
+        // If all is well return the application and 201 created.
+        return h.response(newApplication).code(201);
+      } catch (error: unknown) {
+        // Return any errors.
+        return error;
       }
     },
   },
