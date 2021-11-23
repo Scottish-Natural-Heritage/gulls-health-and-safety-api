@@ -3,6 +3,7 @@ import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
 import CleaningFunctions from './controllers/cleaning-functions';
+import config from './config/app';
 
 /**
  * An array of all the routes and controllers in the app.
@@ -10,14 +11,14 @@ import CleaningFunctions from './controllers/cleaning-functions';
 const routes: ServerRoute[] = [
   {
     method: 'get',
-    path: `/`,
+    path: `${config.pathPrefix}/`,
     handler: (_request: Request, h: ResponseToolkit) => {
       return h.response({message: 'Hello, world!'});
     },
   },
   {
     method: 'get',
-    path: `/postcode`,
+    path: `${config.pathPrefix}/postcode`,
     handler: async (request: Request, h: ResponseToolkit) => {
       // Grab the Postcode from the query params.
       const postcodeQuery: string = request.query.q as string;
@@ -38,7 +39,7 @@ const routes: ServerRoute[] = [
   },
   {
     method: 'get',
-    path: `/application/{id}`,
+    path: `${config.pathPrefix}/application/{id}`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         const application = await Application.findOne(request.params.id);
@@ -55,7 +56,7 @@ const routes: ServerRoute[] = [
   },
   {
     method: 'post',
-    path: `/application`,
+    path: `${config.pathPrefix}/application`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // Get the payload from the request.

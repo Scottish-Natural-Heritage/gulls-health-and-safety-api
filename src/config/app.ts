@@ -1,4 +1,5 @@
 interface AppConfig {
+  pathPrefix: string;
   postcodeApiKey: string;
   databaseHost: string;
   licensingPassword: string;
@@ -7,6 +8,7 @@ interface AppConfig {
 }
 
 const config: AppConfig = {
+  pathPrefix: '/gulls-health-and-safety-api/v1',
   postcodeApiKey: process.env.PC_LOOKUP_API_KEY ?? 'override_this_value',
   databaseHost: process.env.LICENSING_DB_HOST ?? 'localhost',
   licensingPassword: process.env.LICENSING_DB_PASS ?? 'override_this_value',
