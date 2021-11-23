@@ -59,7 +59,7 @@ ENV LICENSING_DB_PASS override_this_value
 ENV GULLS_DB_PASS override_this_value
 ENV RO_GULLS_DB_PASS override_this_value
 ENV PC_LOOKUP_API_KEY override_this_value
-# ENV GULLS_NOTIFY_API_KEY override_this_value
+ENV GULLS_NOTIFY_API_KEY override_this_value
 
 # Let docker know about our listening port.
 EXPOSE $GULLS_API_PORT
