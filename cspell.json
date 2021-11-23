@@ -2,6 +2,7 @@
   "version": "0.1",
   "language": "en-GB",
   "words": [
+    "Bloggs",
     "editorconfig",
     "gazetteer",
     "jobid",
@@ -10,6 +11,7 @@
     "Parens",
     "querytime",
     "uprn",
+    "openapi",
     "premigrations",
     "prestart",
     "hstore",
