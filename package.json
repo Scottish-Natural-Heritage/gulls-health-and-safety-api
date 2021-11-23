@@ -16,13 +16,17 @@
     "clean": "rm -r dist/ || true",
     "build:ts": "tsc",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "premigrations": "npx sequelize-cli db:migrate --env preMigrations --migrations-path util/db/pre-migrations",
+    "migrations": "npx sequelize-cli db:migrate --env database",
+    "prestart": "npm run migrations"
   },
   "license": "(MIT OR OGL-UK-3.0)",
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
     "@types/hapi__hapi": "^20.0.8",
     "@types/node": "^16.0.0",
+    "@types/validator": "13.6.6",
     "ava": "^3.15.0",
     "cspell": "^5.6.6",
     "eslint-plugin-editorconfig": "^3.0.2",
@@ -34,7 +38,13 @@
   "dependencies": {
     "@hapi/hapi": "^20.1.5",
     "axios": "^0.21.1",
-    "axios-mock-adapter": "^1.19.0"
+    "naturescot-utils": "^1.2.0",
+    "axios-mock-adapter": "^1.19.0",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.8.0",
+    "sequelize-cli": "^6.2.0",
+    "sqlite3": "^5.0.2"
   },
   "xo": {
     "space": 2,
@@ -53,7 +63,24 @@
       "jsdoc/check-syntax": 1,
       "jsdoc/match-description": 1,
       "jsdoc/require-description": 1,
-      "jsdoc/require-description-complete-sentence": 1
+      "jsdoc/require-description-complete-sentence": 1,
+      "arrow-body-style": [
+        "error",
+        "always"
+      ],
+      "@typescript-eslint/no-unsafe-call": 0,
+      "@typescript-eslint/no-unsafe-assignment": 0,
+      "@typescript-eslint/no-unsafe-member-access": 0,
+      "unicorn/prevent-abbreviations": [
+        "error",
+        {
+          "replacements": {
+            "application": {
+              "app": false
+            }
+          }
+        }
+      ]
     }
   },
   "prettier": {

@@ -3,7 +3,17 @@
   "language": "en-GB",
   "words": [
     "editorconfig",
-    "Parens"
+    "gazetteer",
+    "jobid",
+    "matchscore",
+    "naturescot",
+    "Parens",
+    "querytime",
+    "uprn",
+    "premigrations",
+    "prestart",
+    "hstore",
+    "rogulls"
   ],
   "ignorePaths": [
     "node_modules/**/*",
