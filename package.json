@@ -21,7 +21,7 @@
     "migrations": "npx sequelize-cli db:migrate --env database",
     "prestart": "npm run migrations",
     "nm:run": "newman run tests/v1-gulls-health-and-safety-api.postman_collection.json",
-    "pretest": "npm run build",
+    "pretest": "rm .development.db || true && npm run build",
     "test": "start-server-and-test start http://localhost:3017/gulls-health-and-safety-api/v1/ nm:run"
   },
   "license": "(MIT OR OGL-UK-3.0)",
