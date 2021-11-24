@@ -45,14 +45,14 @@ const routes: ServerRoute[] = [
         const application = await Application.findOne(request.params.id);
 
         if (application) {
-          return h.response(application).code(200)
+          return h.response(application).code(200);
         } else {
           return undefined;
         }
       } catch (error: unknown) {
         return error;
       }
-    }
+    },
   },
   {
     method: 'post',
@@ -138,8 +138,22 @@ const routes: ServerRoute[] = [
           incomingApplication,
         );
 
-        // If all is well return the application and 201 created.
-        return h.response(newApplication).code(201);
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is a newApplication object and it has the ID property then...
+        if (newApplication?.id) {
+          // Set a string representation of the ID to this local variable.
+          const newAppId = newApplication.id.toString();
+          // Construct a new URL object with the baseUrl declared above and the newId.
+          const locationUrl = new URL(newAppId, baseUrl);
+          // If all is well return the application location and 201 created.
+          return h.response(newApplication).location(locationUrl.href).code(201);
+        }
       } catch (error: unknown) {
         // Return any errors.
         return error;

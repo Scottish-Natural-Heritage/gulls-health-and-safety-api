@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c238379d-4277-4123-9d81-0c4387a6137e",
+		"_postman_id": "064b906b-1c69-4704-bb7f-80271affed4f",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -58,19 +58,15 @@
 							"    pm.response.to.have.status('Created');\r",
 							"});\r",
 							"\r",
-							"pm.test('Returned object matches posted object', function () {\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
 							"    \r",
-							"    var reqJsonData = JSON.parse(pm.request.body.raw);\r",
-							"    var resJsonData = pm.response.json();\r",
-							"\r",
-							"    // Check the values returned match what can be checked from the posted object.\r",
-							"    pm.expect(reqJsonData.isResidentialSite).to.eql(resJsonData.isResidentialSite);\r",
-							"    pm.expect(reqJsonData.previousLicenceNumber).to.eql(resJsonData.previousLicenceNumber);\r",
-							"    pm.expect(reqJsonData.supportingInformation).to.eql(resJsonData.supportingInformation);\r",
-							"\r",
-							"    // Save the ID so we can test GET later.\r",
-							"    pm.collectionVariables.set(\"GULLS_NEW_APP_ID\", resJsonData.id);\r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3001/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
 							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"GULLS_NEW_APP_ID\", pm.response.headers.get('Location').split('/').pop());\r",
 							""
 						],
 						"type": "text/javascript"
