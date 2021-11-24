@@ -42,15 +42,25 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/application/{id}`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${request.params.id} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
         const application = await Application.findOne(request.params.id);
 
-        if (application) {
-          return h.response(application).code(200);
-        } else {
-          return undefined;
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${request.params.id} not found.`}).code(404);
         }
+
+        // Return the application.
+        return h.response(application).code(200);
       } catch (error: unknown) {
-        return error;
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
       }
     },
   },
