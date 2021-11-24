@@ -48,7 +48,8 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.8.0",
     "sequelize-cli": "^6.2.0",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "notifications-node-client": "^5.1.0"
   },
   "xo": {
     "space": 2,
