@@ -32,6 +32,7 @@ jobs:
     - name: Check the integration tests
       env:
         GULLS_NOTIFY_API_KEY: ${{ secrets.GULLS_NOTIFY_TEST_KEY }}
+        PC_LOOKUP_API_KEY: ${{ secrets.PC_LOOKUP_API_KEY }}
       run: |
         npm run test
 
