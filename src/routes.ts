@@ -161,9 +161,12 @@ const routes: ServerRoute[] = [
           const newAppId = newApplication.id.toString();
           // Construct a new URL object with the baseUrl declared above and the newId.
           const locationUrl = new URL(newAppId, baseUrl);
-          // If all is well return the application location and 201 created.
+          // If all is well return the application, location and 201 created.
           return h.response(newApplication).location(locationUrl.href).code(201);
         }
+
+        // If we get here the application was not created successfully.
+        return h.response({message: `Failed to create application.`}).code(500);
       } catch (error: unknown) {
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
