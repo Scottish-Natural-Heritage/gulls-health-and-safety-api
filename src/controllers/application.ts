@@ -1,5 +1,7 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
+// import NotifyClient from 'notifications-node-client';
+const NotifyClient = require('notifications-node-client').NotifyClient;
 
 const {Application, Contact, Address, Activity, Issue, Measure, Species} = database;
 
@@ -28,6 +30,12 @@ interface application {
   siteType: string;
   previousLicenceNumber: string;
   supportingInformation: string;
+}
+
+const setLicenceHolderDirectEmailDetails = {};
+
+const sendLicenceHolderDirectEmail = async () => {
+  const notifyClient = new NotifyClient()
 }
 
 const ApplicationController = {
