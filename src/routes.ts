@@ -45,15 +45,15 @@ const routes: ServerRoute[] = [
         // Is the ID a number?
         const existingId = Number(request.params.id);
         if (Number.isNaN(existingId)) {
-          return h.response({message: `Application ${request.params.id} not valid.`}).code(404);
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
         }
 
         // Try to get the requested application.
-        const application = await Application.findOne(request.params.id);
+        const application = await Application.findOne(existingId);
 
         // Did we get an application?
         if (application === undefined || application === null) {
-          return h.response({message: `Application ${request.params.id} not found.`}).code(404);
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
         // Return the application.

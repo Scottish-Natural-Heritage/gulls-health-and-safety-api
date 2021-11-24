@@ -13,7 +13,8 @@
     "premigrations",
     "prestart",
     "hstore",
-    "rogulls"
+    "rogulls",
+    "prerequest"
   ],
   "ignorePaths": [
     "node_modules/**/*",
