@@ -3,6 +3,7 @@ import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
 import CleaningFunctions from './controllers/cleaning-functions';
+import config from './config/app';
 
 /**
  * An array of all the routes and controllers in the app.
@@ -10,14 +11,14 @@ import CleaningFunctions from './controllers/cleaning-functions';
 const routes: ServerRoute[] = [
   {
     method: 'get',
-    path: `/`,
+    path: `${config.pathPrefix}/`,
     handler: (_request: Request, h: ResponseToolkit) => {
       return h.response({message: 'Hello, world!'});
     },
   },
   {
     method: 'get',
-    path: `/postcode`,
+    path: `${config.pathPrefix}/postcode`,
     handler: async (request: Request, h: ResponseToolkit) => {
       // Grab the Postcode from the query params.
       const postcodeQuery: string = request.query.q as string;
@@ -37,8 +38,35 @@ const routes: ServerRoute[] = [
     },
   },
   {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Return the application.
+        return h.response(application).code(200);
+      } catch (error: unknown) {
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  {
     method: 'post',
-    path: `/application`,
+    path: `${config.pathPrefix}/application`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // Get the payload from the request.
@@ -120,11 +148,25 @@ const routes: ServerRoute[] = [
           incomingApplication,
         );
 
-        // If all is well return the application and 201 created.
-        return h.response(newApplication).code(201);
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is a newApplication object and it has the ID property then...
+        if (newApplication?.id) {
+          // Set a string representation of the ID to this local variable.
+          const newAppId = newApplication.id.toString();
+          // Construct a new URL object with the baseUrl declared above and the newId.
+          const locationUrl = new URL(newAppId, baseUrl);
+          // If all is well return the application location and 201 created.
+          return h.response(newApplication).location(locationUrl.href).code(201);
+        }
       } catch (error: unknown) {
-        // Return any errors.
-        return error;
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
       }
     },
   },

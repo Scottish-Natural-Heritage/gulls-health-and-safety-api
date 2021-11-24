@@ -32,7 +32,60 @@ interface application {
 
 const ApplicationController = {
   findOne: async (id: number) => {
-    return Application.findByPk(id);
+    return Application.findByPk(id, {
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddress',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+        {
+          model: Species,
+          as: 'Species',
+          include: [
+            {
+              model: Activity,
+              as: 'HerringGull',
+            },
+            {
+              model: Activity,
+              as: 'BlackHeadedGull',
+            },
+            {
+              model: Activity,
+              as: 'CommonGull',
+            },
+            {
+              model: Activity,
+              as: 'GreatBlackBackedGull',
+            },
+            {
+              model: Activity,
+              as: 'LesserBlackBackedGull',
+            },
+          ],
+        },
+        {
+          model: Issue,
+          as: 'ApplicationIssue',
+        },
+        {
+          model: Measure,
+          as: 'ApplicationMeasure',
+        },
+      ],
+    });
   },
 
   findAll: async () => {
