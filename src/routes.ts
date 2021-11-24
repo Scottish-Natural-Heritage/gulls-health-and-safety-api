@@ -165,8 +165,8 @@ const routes: ServerRoute[] = [
           return h.response(newApplication).location(locationUrl.href).code(201);
         }
       } catch (error: unknown) {
-        // Return any errors.
-        return error;
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
       }
     },
   },
