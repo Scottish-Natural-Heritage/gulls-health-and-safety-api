@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "064b906b-1c69-4704-bb7f-80271affed4f",
+		"_postman_id": "48963579-f7c5-4173-a050-c3d672f9645e",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -112,28 +112,95 @@
 							"    pm.response.to.have.status(200);\r",
 							"    pm.response.to.have.status('OK');\r",
 							"});\r",
-							"\r",
-							"pm.test('JSON response has correct properties', function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData).to.have.property('id');\r",
-							"    pm.expect(jsonData).to.have.property('LicenceHolderId');\r",
-							"    pm.expect(jsonData).to.have.property('LicenceApplicantId');\r",
-							"    pm.expect(jsonData).to.have.property('LicenceHolderAddressId');\r",
-							"    pm.expect(jsonData).to.have.property('SiteAddressId');\r",
-							"    pm.expect(jsonData).to.have.property('SpeciesId');\r",
-							"    pm.expect(jsonData).to.have.property('isResidentialSite');\r",
-							"    pm.expect(jsonData).to.have.property('siteType');\r",
-							"    pm.expect(jsonData).to.have.property('previousLicenceNumber');\r",
-							"    pm.expect(jsonData).to.have.property('supportingInformation');\r",
-							"    pm.expect(jsonData).to.have.property('LicenceHolder');\r",
-							"    pm.expect(jsonData).to.have.property('LicenceApplicant');\r",
-							"    pm.expect(jsonData).to.have.property('LicenceHolderAddress');\r",
-							"    pm.expect(jsonData).to.have.property('SiteAddress');\r",
-							"    pm.expect(jsonData).to.have.property('Species');\r",
-							"    pm.expect(jsonData).to.have.property('ApplicationIssue');\r",
-							"    pm.expect(jsonData).to.have.property('ApplicationMeasure');\r",
-							"})\r",
 							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept an application on behalf of",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"confirmedByLicensingHolder\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a confirmed Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returned object matches posted object', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData).to.have.property('confirmedByLicensingHolder');\r",
+							"});"
 						],
 						"type": "text/javascript"
 					}
