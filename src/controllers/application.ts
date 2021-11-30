@@ -264,9 +264,12 @@ const ApplicationController = {
     if (!onBehalfContact) {
       // Set the details of the email.
       const emailDetails = setLicenceHolderDirectEmailDetails(newApplication, licenceHolderContact, siteAddress);
-
-      // Send the email using the Notify service's API.
-      await sendLicenceHolderDirectEmail(emailDetails, licenceHolderContact.emailAddress);
+      try {
+        // Send the email using the Notify service's API.
+        await sendLicenceHolderDirectEmail(emailDetails, licenceHolderContact.emailAddress);
+      } catch (error: unknown) {
+        return error;
+      }
     }
 
     // If all went well and we have a new application return it.
