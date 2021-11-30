@@ -2,14 +2,11 @@ import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
 
-// Disabled because for some unfathomable reason adding the NotifyClient triggers this linting error, without the NotifyClient
-// import the code is fine, and is using object destructuring.
-/* eslint-disable-next-line prefer-destructuring */
 const {Application, Contact, Address, Activity, Issue, Measure, Species} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
-/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module */
+/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
 /**
