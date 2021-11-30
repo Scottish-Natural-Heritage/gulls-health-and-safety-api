@@ -15,7 +15,7 @@ const config: AppConfig = {
   licensingPassword: process.env.LICENSING_DB_PASS ?? 'override_this_value',
   gullsPassword: process.env.GULLS_DB_PASS ?? 'override_this_value',
   roGullsPassword: process.env.RO_GULLS_DB_PASS ?? 'override_this_value',
-  notifyApiKey: process.env.GULLS_NOTIFY_TEST_KEY ?? 'override_this_value'
+  notifyApiKey: process.env.GULLS_NOTIFY_API_KEY ?? 'override_this_value',
 };
 
 export default config;
