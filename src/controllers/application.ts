@@ -32,10 +32,18 @@ interface application {
   supportingInformation: string;
 }
 
-const setLicenceHolderDirectEmailDetails = {};
+const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderContact: any, siteAddress: any) => {
+  return {
+    licenceName: licenceHolderContact.name,
+    applicationDate: newApplication.createdAt,
+    siteName: siteAddress.name,
+    id: newApplication.id
+  }
+};
 
-const sendLicenceHolderDirectEmail = async () => {
+const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any) => {
   const notifyClient = new NotifyClient()
+  notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress)
 }
 
 const ApplicationController = {
@@ -225,6 +233,12 @@ const ApplicationController = {
       issue.ApplicationId = newApplication.id;
       await Issue.create(issue, {transaction: t});
     });
+
+    // If the licence holder applied directly send them a confirmation email.
+    if(!onBehalfContact) {
+      const emailDetails = setLicenceHolderDirectEmailDetails(newApplication, licenceHolderContact, siteAddress);
+      sendLicenceHolderDirectEmail(emailDetails, licenceHolderContact.emailAddress);
+    }
 
     // If all went well and we have a new application return it.
     if (newApplication) {
