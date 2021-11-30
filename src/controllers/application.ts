@@ -1,5 +1,6 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
+import config from '../config/app';
 // import NotifyClient from 'notifications-node-client';
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
@@ -32,19 +33,27 @@ interface application {
   supportingInformation: string;
 }
 
+// Create a more user friendly displayable date from a date object.
+const createDisplayDate = (date: Date) => {
+  return date.toLocaleDateString('en-GB', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+};
+
 const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderContact: any, siteAddress: any) => {
   return {
     licenceName: licenceHolderContact.name,
-    applicationDate: newApplication.createdAt,
-    siteName: siteAddress.name,
-    id: newApplication.id
-  }
+    applicationDate: createDisplayDate(new Date(newApplication.createdAt)),
+    siteName: siteAddress.addressLine1,
+    id: newApplication.id,
+  };
 };
 
 const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any) => {
-  const notifyClient = new NotifyClient()
-  notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress)
-}
+  const notifyClient = new NotifyClient(config.notifyApiKey);
+  notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress, {
+    personalisation: emailDetails,
+    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+  });
+};
 
 const ApplicationController = {
   findOne: async (id: number) => {
@@ -235,7 +244,7 @@ const ApplicationController = {
     });
 
     // If the licence holder applied directly send them a confirmation email.
-    if(!onBehalfContact) {
+    if (!onBehalfContact) {
       const emailDetails = setLicenceHolderDirectEmailDetails(newApplication, licenceHolderContact, siteAddress);
       sendLicenceHolderDirectEmail(emailDetails, licenceHolderContact.emailAddress);
     }
