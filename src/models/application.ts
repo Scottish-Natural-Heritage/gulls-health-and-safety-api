@@ -18,6 +18,7 @@ const ApplicationModel = (sequelize: Sequelize) => {
     public siteType!: string;
     public previousLicenceNumber!: string;
     public supportingInformation!: string;
+    public confirmedByLicensingHolder!: string;
   }
 
   Application.init(
@@ -48,6 +49,9 @@ const ApplicationModel = (sequelize: Sequelize) => {
       },
       supportingInformation: {
         type: DataTypes.STRING,
+      },
+      confirmedByLicensingHolder: {
+        type: DataTypes.BOOLEAN,
       },
     },
     {

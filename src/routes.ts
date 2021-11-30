@@ -173,6 +173,47 @@ const routes: ServerRoute[] = [
       }
     },
   },
+  {
+    method: 'patch',
+    path: `${config.pathPrefix}/application/{id}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Did we get an application that has already been confirmed?
+        if (application.confirmedByLicensingHolder) {
+          return h.response({message: `Application ${existingId} has already been confirmed.`}).code(400);
+        }
+
+        // Update the application in the database with confirmedByLicensingHolder set to true.
+        const confirmApplication: any = request.payload as any;
+        const updatedApplication = await Application.confirm(existingId, confirmApplication);
+
+        // If they're not successful, send a 500 error.
+        if (updatedApplication === undefined) {
+          return h.response({message: `Could not update application ${existingId}.`}).code(500);
+        }
+
+        // If they are, send back the updated fields.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
 ];
 
 export default routes;

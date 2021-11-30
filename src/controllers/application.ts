@@ -17,7 +17,7 @@ interface SpeciesIds {
 /**
  * Local interface of the application.
  */
-interface application {
+interface ApplicationInterface {
   id: number;
   LicenceHolderId: number;
   LicenceApplicantId: number;
@@ -28,6 +28,7 @@ interface application {
   siteType: string;
   previousLicenceNumber: string;
   supportingInformation: string;
+  confirmedByLicensingHolder: boolean;
 }
 
 const ApplicationController = {
@@ -107,7 +108,7 @@ const ApplicationController = {
    * @param {any | undefined} lesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
    * @param {any | undefined} measure The measures taken / not taken details.
    * @param {any | undefined} incomingApplication The application details.
-   * @returns {application} Returns newApplication, the newly created application.
+   * @returns {ApplicationInterface} Returns newApplication, the newly created application.
    */
   create: async (
     onBehalfContact: any | undefined,
@@ -220,12 +221,29 @@ const ApplicationController = {
 
     // If all went well and we have a new application return it.
     if (newApplication) {
-      return newApplication as application;
+      return newApplication as ApplicationInterface;
     }
 
     // If no new application was added to the DB return undefined.
     return undefined;
   },
+
+  confirm: async (id: number, confirmApplication: ApplicationInterface) => {
+    let confirmedApplication;
+    // Start the transaction.
+    await database.sequelize.transaction(async (t: transaction) => {
+      // Save the new values to the database.
+      confirmedApplication = await Application.update(confirmApplication, {where: {id}, transaction: t});
+    });
+    // If all went well and we have confirmed a application return it.
+    if (confirmedApplication) {
+      return confirmedApplication as ApplicationInterface;
+    }
+
+    // If no application was confirmed return undefined.
+    return undefined;
+  },
 };
 
 export {ApplicationController as default};
+export {ApplicationInterface};
