@@ -88,7 +88,7 @@ const cleanApplication = (body: any): any => {
     siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
     previousLicenceNumber: body.previousLicence ? body.previousLicenceNumber.trim() : undefined,
     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
-    confirmedByLicensingHolder: body.onBehalf ? false : true,
+    confirmedByLicensingHolder: !body.onBehalf,
   };
 };
 
