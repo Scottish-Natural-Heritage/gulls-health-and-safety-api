@@ -1,7 +1,13 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
+import config from '../config/app';
 
 const {Application, Contact, Address, Activity, Issue, Measure, Species} = database;
+
+// Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
+// in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
+/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
+const NotifyClient = require('notifications-node-client').NotifyClient;
 
 /**
  * Local interface to hold the species ID foreign keys.
@@ -30,6 +36,42 @@ interface ApplicationInterface {
   supportingInformation: string;
   confirmedByLicensingHolder: boolean;
 }
+
+// Create a more user friendly displayable date from a date object.
+const createDisplayDate = (date: Date) => {
+  return date.toLocaleDateString('en-GB', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+};
+
+/**
+ * This function returns an object containing the details required for the license holder direct email.
+ *
+ * @param {any} newApplication The newly created application, from which we get the application ID.
+ * @param {any} licenceHolderContact The licence holder's contact details.
+ * @param {any} siteAddress The address of the site to which the licence pertains.
+ * @returns {any} An object with the required details set.
+ */
+const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderContact: any, siteAddress: any) => {
+  return {
+    licenceName: licenceHolderContact.name,
+    applicationDate: createDisplayDate(new Date(newApplication.createdAt)),
+    siteName: siteAddress.addressLine1,
+    id: newApplication.id,
+  };
+};
+
+/**
+ * This function calls the Notify API and asks for an email to be send with the supplied details.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any) => {
+  const notifyClient = new NotifyClient(config.notifyApiKey);
+  notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress, {
+    personalisation: emailDetails,
+    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+  });
+};
 
 const ApplicationController = {
   findOne: async (id: number) => {
@@ -218,6 +260,18 @@ const ApplicationController = {
       issue.ApplicationId = newApplication.id;
       await Issue.create(issue, {transaction: t});
     });
+
+    // If the licence holder applied directly send them a confirmation email.
+    if (!onBehalfContact) {
+      // Set the details of the email.
+      const emailDetails = setLicenceHolderDirectEmailDetails(newApplication, licenceHolderContact, siteAddress);
+      try {
+        // Send the email using the Notify service's API.
+        await sendLicenceHolderDirectEmail(emailDetails, licenceHolderContact.emailAddress);
+      } catch (error: unknown) {
+        return error;
+      }
+    }
 
     // If all went well and we have a new application return it.
     if (newApplication) {

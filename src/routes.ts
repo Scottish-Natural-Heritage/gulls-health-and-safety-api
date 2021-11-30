@@ -133,7 +133,7 @@ const routes: ServerRoute[] = [
         const incomingApplication = CleaningFunctions.cleanApplication(application);
 
         // Call the controllers create function to write the cleaned data to the DB.
-        const newApplication = await Application.create(
+        const newApplication: any = await Application.create(
           onBehalfContact,
           licenceHolderContact,
           address,
