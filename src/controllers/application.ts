@@ -101,9 +101,69 @@ const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any
 };
 
 /**
+ * This function returns an object containing the details required for the license applicant notification email.
+ *
+ * @param {any} licenceApplicantContact The licence applicant's contact details.
+ * @param {any} licenceHolderContact The licence holder's contact details.
+ * @returns {any} An object with the required details set.
+ */
+const setLicenceApplicantNotificationDetails = (licenceApplicantContact: any, licenceHolderContact: any) => {
+  return {
+    laName: licenceApplicantContact.name,
+    lhName: licenceHolderContact.name,
+    lhOrg: licenceHolderContact.organisation,
+    lhEmail: licenceHolderContact.emailAddress,
+  };
+};
+
+/**
+ * This function calls the Notify API and asks for an email to be send with the supplied details.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceApplicantNotificationEmail = async (emailDetails: any, emailAddress: any) => {
+  const notifyClient = new NotifyClient(config.notifyApiKey);
+  notifyClient.sendEmail('6955dccf-c7ad-460f-8d5d-82ad984d018a', emailAddress, {
+    personalisation: emailDetails,
+    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+  });
+};
+
+/**
+ * This function returns an object containing the details required for the license holders magic link email.
+ *
+ * @param {any} licenceApplicantContact The licence applicant's contact details.
+ * @param {any} licenceHolderContact The licence holder's contact details.
+ * @returns {any} An object with the required details set.
+ */
+const setLicenceHolderMagicLinkDetails = (licenceHolderContact: any, licenceApplicantContact: any) => {
+  return {
+    lhName: licenceHolderContact.name,
+    onBehalfName: licenceApplicantContact.name,
+    onBehalfOrg: licenceApplicantContact.organisation,
+    onBehalfEmail: licenceApplicantContact.emailAddress,
+    magicLink: 'http://localhost:3017/gulls-health-and-safety/on-behalf-approve',
+  };
+};
+
+/**
  * This function calls the Notify API and asks for an email to be sent to the licence holder
  * and the licence applicant to confirm the application.
  *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceHolderMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
+  const notifyClient = new NotifyClient(config.notifyApiKey);
+  notifyClient.sendEmail('e2d7bea5-c487-448c-afa4-1360fe966eab', emailAddress, {
+    personalisation: emailDetails,
+    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+  });
+};
+
+/**
+ * This function calls the Notify API and asks for an email to be send with the supplied details.
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
@@ -303,8 +363,21 @@ const ApplicationController = {
       await Issue.create(issue, {transaction: t});
     });
 
-    // If the licence holder applied directly send them a confirmation email.
-    if (!onBehalfContact) {
+    // If the licence applicant applied on the license holder behalf so send them a confirmation email
+    // and send the email to the license holder containing the magic link.
+    if (onBehalfContact) {
+      // Set the details of the emails.
+      const emailDetails = setLicenceApplicantNotificationDetails(onBehalfContact, licenceHolderContact);
+      const magicLinkEmailDetails = setLicenceHolderMagicLinkDetails(licenceHolderContact, onBehalfContact);
+      try {
+        // Send the email using the Notify service's API.
+        await sendLicenceApplicantNotificationEmail(emailDetails, onBehalfContact.emailAddress);
+        await sendLicenceHolderMagicLinkEmail(magicLinkEmailDetails, licenceHolderContact.emailAddress);
+      } catch (error: unknown) {
+        return error;
+      }
+    } else {
+      // Else if the licence holder applied directly send them a confirmation email.
       // Set the details of the email.
       const emailDetails = setLicenceHolderDirectEmailDetails(newApplication, licenceHolderContact, siteAddress);
       try {
