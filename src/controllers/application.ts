@@ -87,7 +87,7 @@ const setHolderApplicantConfirmEmailDetails = (
 };
 
 /**
- * This function calls the Notify API and asks for an email to be send with the supplied details.
+ * This function calls the Notify API and asks for an email to be sent with the supplied details.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
