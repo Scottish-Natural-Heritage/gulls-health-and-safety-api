@@ -60,6 +60,33 @@ const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderCo
 };
 
 /**
+ * This function returns an object containing the details required for the licence holder and the
+ * licence applicant confirmation emails.
+ *
+ * @param {number} id The confirmed application's reference number.
+ * @param {string} createdAt The date the application was created on.
+ * @param {any} licenceHolderContact The licence holder's contact details.
+ * @param {any} onBehalfContact The licence applicant's contact details.
+ * @param {any} siteAddress The address of the site to which the licence pertains.
+ * @returns {any} An object with the required details set.
+ */
+const setHolderApplicantConfirmEmailDetails = (
+  id: number,
+  createdAt: string,
+  licenceHolderContact: any,
+  onBehalfContact: any,
+  siteAddress: any,
+) => {
+  return {
+    lhName: licenceHolderContact.name,
+    laName: onBehalfContact.name,
+    applicationDate: createDisplayDate(new Date(createdAt)),
+    siteName: siteAddress.addressLine1,
+    id,
+  };
+};
+
+/**
  * This function calls the Notify API and asks for an email to be send with the supplied details.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
@@ -68,6 +95,21 @@ const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderCo
 const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any) => {
   const notifyClient = new NotifyClient(config.notifyApiKey);
   notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress, {
+    personalisation: emailDetails,
+    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+  });
+};
+
+/**
+ * This function calls the Notify API and asks for an email to be sent to the licence holder
+ * and the licence applicant to confirm the application.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendHolderApplicantConfirmEmail = async (emailDetails: any, emailAddress: any) => {
+  const notifyClient = new NotifyClient(config.notifyApiKey);
+  notifyClient.sendEmail('b227af1f-4709-4be5-a111-66605dcf0525', emailAddress, {
     personalisation: emailDetails,
     emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
   });
@@ -289,6 +331,49 @@ const ApplicationController = {
       // Save the new values to the database.
       confirmedApplication = await Application.update(confirmApplication, {where: {id}, transaction: t});
     });
+
+    // If we have a confirmed application get some of its details to use in the confirmation emails.
+    if (confirmedApplication) {
+      const updatedApplication: any = await Application.findByPk(id, {
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+        ],
+      });
+
+      // The details required to generate the confirmation emails.
+      let emailDetails;
+
+      // Set the details required to generate the confirmation emails.
+      if (updatedApplication) {
+        emailDetails = setHolderApplicantConfirmEmailDetails(
+          updatedApplication.id,
+          updatedApplication.createdAt,
+          updatedApplication.LicenceHolder,
+          updatedApplication.LicenceApplicant,
+          updatedApplication.SiteAddress,
+        );
+      }
+
+      try {
+        // Send the email using the Notify service's API.
+        await sendHolderApplicantConfirmEmail(emailDetails, updatedApplication.LicenceHolder.emailAddress);
+        await sendHolderApplicantConfirmEmail(emailDetails, updatedApplication.LicenceApplicant.emailAddress);
+      } catch (error: unknown) {
+        return error;
+      }
+    }
+
     // If all went well and we have confirmed a application return it.
     if (confirmedApplication) {
       return confirmedApplication as ApplicationInterface;
