@@ -237,6 +237,25 @@ const ApplicationController = {
     return Application.findAll();
   },
 
+  findAllSummary: async() => {
+    return Application.findAll({
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+      ],
+    });
+  },
+
   /**
    * The create function writes the incoming application to the appropriate database tables.
    *
