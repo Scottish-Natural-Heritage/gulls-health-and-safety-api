@@ -9,6 +9,9 @@ import config from './config/app';
  * An array of all the routes and controllers in the app.
  */
 const routes: ServerRoute[] = [
+  /**
+   * "Hello, world!" endpoint.
+   */
   {
     method: 'get',
     path: `${config.pathPrefix}/`,
@@ -16,6 +19,9 @@ const routes: ServerRoute[] = [
       return h.response({message: 'Hello, world!'});
     },
   },
+  /**
+   * GET addresses from postcode lookup service endpoint.
+   */
   {
     method: 'get',
     path: `${config.pathPrefix}/postcode`,
@@ -37,6 +43,32 @@ const routes: ServerRoute[] = [
       }
     },
   },
+  /**
+   * GET all (summarized) applications endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/applications`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const applications = await Application.findAllSummary();
+
+        // Did we get any applications?
+        if (applications === undefined || applications === null) {
+          return h.response({message: `No applications found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(applications).code(200);
+      } catch (error: unknown) {
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET single application from ID endpoint.
+   */
   {
     method: 'get',
     path: `${config.pathPrefix}/application/{id}`,
@@ -64,6 +96,9 @@ const routes: ServerRoute[] = [
       }
     },
   },
+  /**
+   * POST new application endpoint.
+   */
   {
     method: 'post',
     path: `${config.pathPrefix}/application`,
@@ -173,6 +208,9 @@ const routes: ServerRoute[] = [
       }
     },
   },
+  /**
+   * PATCH application confirmed endpoint.
+   */
   {
     method: 'patch',
     path: `${config.pathPrefix}/application/{id}`,
