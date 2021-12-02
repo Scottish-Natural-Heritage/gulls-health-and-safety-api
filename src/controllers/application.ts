@@ -238,6 +238,12 @@ const ApplicationController = {
     return Application.findAll();
   },
 
+  /**
+   * This function returns all applications, including the licence holder and applicant details,
+   * and the site address details.
+   *
+   * @returns {any} Returns an array of applications with the contact and site address details included.
+   */
   findAllSummary: async () => {
     return Application.findAll({
       include: [
