@@ -133,8 +133,8 @@ const sendLicenceApplicantNotificationEmail = async (emailDetails: any, emailAdd
 /**
  * This function returns an object containing the details required for the license holders magic link email.
  *
- * @param {any} licenceApplicantContact The licence applicant's contact details.
  * @param {any} licenceHolderContact The licence holder's contact details.
+ * @param {any} licenceApplicantContact The licence applicant's contact details.
  * @returns {any} An object with the required details set.
  */
 const setLicenceHolderMagicLinkDetails = (licenceHolderContact: any, licenceApplicantContact: any) => {
@@ -164,6 +164,7 @@ const sendLicenceHolderMagicLinkEmail = async (emailDetails: any, emailAddress: 
 
 /**
  * This function calls the Notify API and asks for an email to be send with the supplied details.
+ *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
@@ -237,7 +238,7 @@ const ApplicationController = {
     return Application.findAll();
   },
 
-  findAllSummary: async() => {
+  findAllSummary: async () => {
     return Application.findAll({
       include: [
         {

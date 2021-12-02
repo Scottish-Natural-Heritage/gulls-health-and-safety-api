@@ -10,7 +10,7 @@ import config from './config/app';
  */
 const routes: ServerRoute[] = [
   /**
-   * Hello, world! endpoint.
+   * "Hello, world!" endpoint.
    */
   {
     method: 'get',
@@ -44,7 +44,7 @@ const routes: ServerRoute[] = [
     },
   },
   /**
-   * GET all applications endpoint.
+   * GET all (summarized) applications endpoint.
    */
   {
     method: 'get',
@@ -64,7 +64,7 @@ const routes: ServerRoute[] = [
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
-    }
+    },
   },
   /**
    * GET single application from ID endpoint.
