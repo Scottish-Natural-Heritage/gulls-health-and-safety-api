@@ -16,7 +16,8 @@
     "prestart",
     "hstore",
     "rogulls",
-    "prerequest"
+    "prerequest",
+    "pino"
   ],
   "ignorePaths": [
     "node_modules/**/*",
