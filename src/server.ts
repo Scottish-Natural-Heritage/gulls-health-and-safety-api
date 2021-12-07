@@ -24,26 +24,12 @@ const init = async () => {
     plugin: HapiPino,
     options: {
       logPayload: true,
-      logRequestComplete:
-        ((request: Hapi.Request) => {
-          return request.method === 'post';
-        }) ||
-        ((request: Hapi.Request) => {
-          return request.method === 'patch';
-        }) ||
-        ((request: Hapi.Request) => {
-          return request.method === 'delete';
-        }),
-      logRequestStart:
-        ((request: Hapi.Request) => {
-          return request.method === 'post';
-        }) ||
-        ((request: Hapi.Request) => {
-          return request.method === 'patch';
-        }) ||
-        ((request: Hapi.Request) => {
-          return request.method === 'delete';
-        }),
+      logRequestComplete: (request: Hapi.Request) => {
+        return request.method === 'post' || request.method === 'patch' || request.method === 'delete';
+      },
+      logRequestStart: (request: Hapi.Request) => {
+        return request.method === 'post' || request.method === 'patch' || request.method === 'delete';
+      },
       logEvents: ['onPostStart', 'onPostStop', 'response', 'request-error'],
       logRouteTags: false,
     },
