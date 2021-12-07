@@ -1,13 +1,13 @@
 // Required to stand up the server
 import * as Hapi from '@hapi/hapi';
 
+// Use Pino for logging from Hapi.
+import HapiPino from 'hapi-pino';
+
 // Import the micro-app's routes.
 import routes from './routes';
 
 import config from './config/app';
-
-// Use Pino for logging from Hapi
-import HapiPino from 'hapi-pino';
 import JsonUtils from './json-utils';
 
 // Start up our micro-app.
@@ -25,13 +25,25 @@ const init = async () => {
     options: {
       logPayload: true,
       logRequestComplete:
-        ((request: Hapi.Request) => request.method === 'post') ||
-        ((request: Hapi.Request) => request.method === 'patch') ||
-        ((request: Hapi.Request) => request.method === 'delete'),
+        ((request: Hapi.Request) => {
+          return request.method === 'post';
+        }) ||
+        ((request: Hapi.Request) => {
+          return request.method === 'patch';
+        }) ||
+        ((request: Hapi.Request) => {
+          return request.method === 'delete';
+        }),
       logRequestStart:
-        ((request: Hapi.Request) => request.method === 'post') ||
-        ((request: Hapi.Request) => request.method === 'patch') ||
-        ((request: Hapi.Request) => request.method === 'delete'),
+        ((request: Hapi.Request) => {
+          return request.method === 'post';
+        }) ||
+        ((request: Hapi.Request) => {
+          return request.method === 'patch';
+        }) ||
+        ((request: Hapi.Request) => {
+          return request.method === 'delete';
+        }),
       logEvents: ['onPostStart', 'onPostStop', 'response', 'request-error'],
       logRouteTags: false,
     },

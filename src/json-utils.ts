@@ -7,7 +7,7 @@
  * new object with the same keys and values as the Error, but as a plain JSON
  * object.
  */
- const unErrorJson = (json: Error | any) => {
+const unErrorJson = (json: Error | any): any => {
   if (json instanceof Error) {
     const error: Error = json;
     const unError: any = {};
@@ -23,7 +23,7 @@
 };
 
 const JsonUtils = {
-  unErrorJson
+  unErrorJson,
 };
 
 export default JsonUtils;
