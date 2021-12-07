@@ -192,7 +192,7 @@ const cleanMeasure = (body: any): any => {
       : body.measuresIntendToTry.disturbanceByDogs
       ? 'Intend'
       : 'No',
-    measuresTriedDetail: body.measuresTriedMoreDetail.trim(),
+    measuresTriedDetail: body.measuresTriedMoreDetail ? body.measuresTriedMoreDetail.trim() : undefined,
     measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
   };
 };
