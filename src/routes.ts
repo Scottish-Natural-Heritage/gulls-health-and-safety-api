@@ -4,6 +4,7 @@ import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
 import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
+import JsonUtils from './json-utils';
 
 /**
  * An array of all the routes and controllers in the app.
@@ -37,8 +38,10 @@ const routes: ServerRoute[] = [
         return addressResults.results[0].address
           ? h.response(addressResults.results[0].address)
           : h.response(addressResults.results[0]);
-      } catch {
-        // If something went wrong while trying to find addresses send back a 500 with a error message
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Send back a 500 with a error message
         return h.response({message: 'Invalid postcode.'}).code(500);
       }
     },
@@ -61,6 +64,8 @@ const routes: ServerRoute[] = [
         // If we get here we have something to return, so return it.
         return h.response(applications).code(200);
       } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
@@ -91,6 +96,8 @@ const routes: ServerRoute[] = [
         // Return the application.
         return h.response(application).code(200);
       } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
@@ -203,6 +210,8 @@ const routes: ServerRoute[] = [
         // If we get here the application was not created successfully.
         return h.response({message: `Failed to create application.`}).code(500);
       } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
@@ -247,6 +256,8 @@ const routes: ServerRoute[] = [
         // If they are, send back the updated fields.
         return h.response().code(200);
       } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }

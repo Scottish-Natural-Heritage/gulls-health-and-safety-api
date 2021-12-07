@@ -8,7 +8,7 @@ import config from './config/app';
 
 // Use Pino for logging from Hapi
 import HapiPino from 'hapi-pino';
-import JsonUtils from 'json';
+import JsonUtils from './json-utils';
 
 // Start up our micro-app.
 const init = async () => {
@@ -19,17 +19,22 @@ const init = async () => {
 
   server.route(routes);
 
-  // Set up logging. At this time we're only interested in error logging, so
-  // we've disabled all of the automatic server access logs.
+  // Set up logging on POST, PATCH and DELETE requests.
   await server.register({
     plugin: HapiPino,
     options: {
       logPayload: true,
-      logRequestComplete: true,
-      logRequestStart: true,
-      logEvents: false,
-      logRouteTags: false
-    }
+      logRequestComplete:
+        ((request: Hapi.Request) => request.method === 'post') ||
+        ((request: Hapi.Request) => request.method === 'patch') ||
+        ((request: Hapi.Request) => request.method === 'delete'),
+      logRequestStart:
+        ((request: Hapi.Request) => request.method === 'post') ||
+        ((request: Hapi.Request) => request.method === 'patch') ||
+        ((request: Hapi.Request) => request.method === 'delete'),
+      logEvents: ['onPostStart', 'onPostStop', 'response', 'request-error'],
+      logRouteTags: false,
+    },
   });
 
   // Start the now fully configured HTTP server.
