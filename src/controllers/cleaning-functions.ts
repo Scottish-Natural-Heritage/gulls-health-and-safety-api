@@ -1,6 +1,6 @@
 import utils from 'naturescot-utils';
-import axios, {AxiosResponse} from 'axios';
 import {AssessmentInterface} from 'models/assessment';
+import axios, {AxiosResponse} from '../config/axios';
 import config from '../config/app';
 
 /**
