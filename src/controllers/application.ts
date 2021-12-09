@@ -2,7 +2,7 @@ import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
 
-const {Application, Contact, Address, Activity, Issue, Measure, Species} = database;
+const {Application, Contact, Address, Activity, Issue, Measure, Species, Assessment} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -230,6 +230,10 @@ const ApplicationController = {
         {
           model: Measure,
           as: 'ApplicationMeasure',
+        },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
         },
       ],
     });
