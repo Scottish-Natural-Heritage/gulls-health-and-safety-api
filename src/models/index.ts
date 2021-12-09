@@ -2,6 +2,7 @@
 
 import {productionDatabaseConfig, localDatabaseConfig} from '../config/ts-database-config';
 import Application from './application';
+import Assessment from './assessment';
 import Contact from './contact';
 import Address from './address';
 import Issue from './issue';
@@ -22,6 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 const database = {
   sequelize,
   Application: Application(sequelize),
+  Assessment: Assessment(sequelize),
   Contact: Contact(sequelize),
   Address: Address(sequelize),
   Issue: Issue(sequelize),
@@ -43,9 +45,11 @@ database.Address.hasOne(database.Application, {as: 'LicenceHolderAddress', forei
 database.Address.hasOne(database.Application, {as: 'SiteAddress', foreignKey: 'SiteAddressId'});
 database.Species.hasOne(database.Application, {as: 'Species', foreignKey: 'SpeciesId'});
 
+database.Assessment.belongsTo(database.Application, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
 database.Issue.belongsTo(database.Application, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Measure.belongsTo(database.Application, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
 
+database.Application.hasOne(database.Assessment, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Issue, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Measure, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
 
