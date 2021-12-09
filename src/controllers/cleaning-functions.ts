@@ -1,5 +1,6 @@
 import utils from 'naturescot-utils';
 import axios, {AxiosResponse} from 'axios';
+import {AssessmentInterface} from 'models/assessment';
 import config from '../config/app';
 
 /**
@@ -247,6 +248,45 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
       : '',
   };
 };
+
+/**
+ * Clean an incoming PATCH request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanAssessment = (body: any): any => {
+  const cleanedBody: AssessmentInterface = {};
+
+  // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if (body.backgroundInformation) {
+    cleanedBody.backgroundInformation = body.backgroundInformation;
+  }
+
+  if (body.testOneAssessment) {
+    cleanedBody.testOneAssessment = body.testOneAssessment.trim();
+  }
+
+  if (body.testOneDecision) {
+    cleanedBody.testOneDecision = body.testOneDecision;
+  }
+
+  if (body.testTwoAssessment) {
+    cleanedBody.testTwoAssessment = body.testTwoAssessment.trim();
+  }
+
+  if (body.testTwoDecision) {
+    cleanedBody.testTwoDecision = body.testTwoDecision;
+  }
+
+  if (body.decision) {
+    cleanedBody.decision = body.decision;
+  }
+
+  return cleanedBody;
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -259,6 +299,7 @@ const CleaningFunctions = {
   cleanActivity,
   cleanMeasure,
   cleanAddressFromUprn,
+  cleanAssessment,
 };
 
 export default CleaningFunctions;
