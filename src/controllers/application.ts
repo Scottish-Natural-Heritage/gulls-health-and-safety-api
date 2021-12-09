@@ -32,6 +32,7 @@ interface ApplicationInterface {
   SpeciesId: number;
   isResidentialSite: boolean;
   siteType: string;
+  previousLicence: boolean;
   previousLicenceNumber: string;
   supportingInformation: string;
   confirmedByLicensingHolder: boolean;
