@@ -12,9 +12,6 @@ module.exports = {
           key: 'id',
         },
       },
-      backgroundInformation: {
-        type: Sequelize.BOOLEAN,
-      },
       testOneAssessment: {
         type: Sequelize.STRING,
       },

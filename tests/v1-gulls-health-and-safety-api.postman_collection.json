@@ -227,95 +227,6 @@
 			"response": []
 		},
 		{
-			"name": "Assess an application - background info",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Status code is 200 OK', function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"    pm.response.to.have.status('OK');\r",
-							"});\r",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"backgroundInformation\": true\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/assessment",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3017",
-					"path": [
-						"gulls-health-and-safety-api",
-						"v1",
-						"application",
-						"{{GULLS_NEW_APP_ID}}",
-						"assessment"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get a partial assessed application - background info",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Status code is 200 OK', function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"    pm.response.to.have.status('OK');\r",
-							"});\r",
-							"\r",
-							"pm.test('Returned object matches posted object', function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"\r",
-							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('backgroundInformation');\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3017",
-					"path": [
-						"gulls-health-and-safety-api",
-						"v1",
-						"application",
-						"{{GULLS_NEW_APP_ID}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Assess an application - test one",
 			"event": [
 				{
@@ -543,7 +454,7 @@
 			"response": []
 		},
 		{
-			"name": "Get a partial assessed application - background info Copy",
+			"name": "Get a partial assessed application - decision",
 			"event": [
 				{
 					"listen": "test",
@@ -557,7 +468,7 @@
 							"pm.test('Returned object matches posted object', function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"\r",
-							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('backgroundInformation');\r",
+							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('decision');\r",
 							"});"
 						],
 						"type": "text/javascript"

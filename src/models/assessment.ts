@@ -5,7 +5,6 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  */
 interface AssessmentInterface {
   ApplicationId?: number;
-  backgroundInformation?: boolean;
   testOneAssessment?: string;
   testOneDecision?: boolean;
   testTwoAssessment?: string;
@@ -22,7 +21,6 @@ interface AssessmentInterface {
 const AssessmentModel = (sequelize: Sequelize) => {
   class Assessment extends Model {
     public ApplicationId!: number;
-    public backgroundInformation!: boolean;
     public testOneAssessment!: string;
     public testOneDecision!: boolean;
     public testTwoAssessment!: string;
@@ -38,9 +36,6 @@ const AssessmentModel = (sequelize: Sequelize) => {
         validate: {
           notEmpty: true,
         },
-      },
-      backgroundInformation: {
-        type: DataTypes.BOOLEAN,
       },
       testOneAssessment: {
         type: DataTypes.STRING,

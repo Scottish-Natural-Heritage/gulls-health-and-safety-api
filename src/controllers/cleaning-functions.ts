@@ -233,7 +233,7 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
   const addressLine1 = `${subBuildingName} ${organisationName} ${buildingNumber} ${buildingName}`;
 
   return {
-    uprn: serverResponse.data.results[0].address[0].uprn,
+    uprn: serverResponse.data.results[0].address[0].uprn as string,
     postcode: serverResponse.data.results[0].address[0].postcode
       ? serverResponse.data.results[0].address[0].postcode
       : '',
@@ -261,10 +261,6 @@ const cleanAssessment = (body: any): any => {
   const cleanedBody: AssessmentInterface = {};
 
   // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
-  if (body.backgroundInformation) {
-    cleanedBody.backgroundInformation = body.backgroundInformation;
-  }
-
   if (body.testOneAssessment) {
     cleanedBody.testOneAssessment = body.testOneAssessment.trim();
   }
