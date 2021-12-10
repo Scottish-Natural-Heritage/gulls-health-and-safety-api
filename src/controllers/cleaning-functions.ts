@@ -195,7 +195,7 @@ const cleanMeasure = (body: any): any => {
       ? 'Intend'
       : 'No',
     measuresTriedDetail: body.measuresTriedMoreDetail ? body.measuresTriedMoreDetail.trim() : undefined,
-    measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
+    measuresWillNotTryDetail: body.measuresIntendNotToTry ? body.measuresIntendNotToTry.trim() : undefined,
   };
 };
 
