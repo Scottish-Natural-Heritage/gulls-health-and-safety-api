@@ -18,9 +18,9 @@ const AssessmentController = {
    * if it exists then it will update the assessment record with the partial object but if it does not then it will create a new assessment
    * record in the database.
    *
-   * @param assessment The partial assessment object.
-   * @param applicationId The ID of the application that is being assessed.
-   * @returns updateOrCreateAssessment if the assessment was upserted or undefined if something went wrong.
+   * @param {AssessmentInterface} assessment The partial assessment object.
+   * @param {number} applicationId The ID of the application that is being assessed.
+   * @returns {boolean} If the assessment was upserted or undefined if something went wrong.
    */
   upsert: async (assessment: AssessmentInterface, applicationId: number): Promise<boolean> => {
     assessment.ApplicationId = applicationId;
