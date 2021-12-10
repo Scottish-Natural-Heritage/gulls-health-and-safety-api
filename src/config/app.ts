@@ -7,7 +7,7 @@ interface AppConfig {
   gullsPassword: string;
   roGullsPassword: string;
   underTest: boolean;
-  notifyApiKey: string;
+  notifyApiKey: string | null;
 }
 
 const config: AppConfig = {
@@ -19,7 +19,7 @@ const config: AppConfig = {
   gullsPassword: process.env.GULLS_DB_PASS ?? 'override_this_value',
   roGullsPassword: process.env.RO_GULLS_DB_PASS ?? 'override_this_value',
   underTest: Boolean(process.env.UNDER_TEST),
-  notifyApiKey: process.env.GULLS_NOTIFY_API_KEY ?? 'override_this_value',
+  notifyApiKey: process.env.GULLS_NOTIFY_API_KEY ?? null,
 };
 
 export default config;

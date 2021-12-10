@@ -101,7 +101,7 @@ if (config.underTest) {
 
   const mock = new MockAdapter(axios);
   mock
-    .onGet(config.postcodeApiEndpoint)
+    .onGet('https://cagmap.snh.gov.uk/gazetteer', { params: { uprn: 10092032547, fieldset: 'all' }})
     .reply(200, gazetteerResponse)
     // CSpell:disable-next-line
     .onAny(/^http:\/\/localhost:3017\/gulls-health-and-safety-api\/v1\/\/applications\/.*\/$/)
