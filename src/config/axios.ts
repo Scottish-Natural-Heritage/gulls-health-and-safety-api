@@ -104,9 +104,7 @@ if (config.underTest) {
     .onGet(config.postcodeApiEndpoint)
     .reply(200, gazetteerResponse)
     // CSpell:disable-next-line
-    .onAny(/^http:\/\/localhost:3001\/standard-forestry-operations-api\/v1\/\/applications\/.*\/$/)
-    .reply(404, {detail: 'Not found'})
-    .onAny(/^http:\/\/localhost:3001\/standard-forestry-operations-api\/v2\/\/applications\/.*\/$/)
+    .onAny(/^http:\/\/localhost:3017\/gulls-health-and-safety-api\/v1\/\/applications\/.*\/$/)
     .reply(404, {detail: 'Not found'})
     .onAny()
     .reply(500);
