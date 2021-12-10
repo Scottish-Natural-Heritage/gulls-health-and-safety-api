@@ -1,6 +1,6 @@
 import utils from 'naturescot-utils';
 import {AssessmentInterface} from 'models/assessment';
-import axios, {AxiosResponse} from '../config/axios';
+import axios from '../config/axios';
 import config from '../config/app';
 
 /**
@@ -46,7 +46,7 @@ const cleanLicenseHolderContact = (body: any): any => {
  */
 const cleanAddress = (body: any): any => {
   return {
-    uprn: body.uprn === undefined ? undefined : body.uprn,
+    uprn: body.uprn === undefined ? undefined : (body.uprn as string),
     postcode: body.postcode.trim(),
     addressLine1: body.manualAddress?.addressLine1 === undefined ? undefined : body.manualAddress?.addressLine1.trim(),
     addressLine2: body.manualAddress?.addressLine2 === undefined ? undefined : body.manualAddress?.addressLine2.trim(),
@@ -64,7 +64,7 @@ const cleanAddress = (body: any): any => {
  */
 const cleanSiteAddress = (body: any): any => {
   return {
-    uprn: body.siteUprn === undefined ? undefined : body.siteUprn,
+    uprn: body.siteUprn === undefined ? undefined : (body.siteUprn as string),
     postcode: body.sitePostcode.trim(),
     addressLine1:
       body.siteManualAddress?.addressLine1 === undefined ? undefined : body.siteManualAddress?.addressLine1.trim(),
@@ -207,7 +207,7 @@ const cleanMeasure = (body: any): any => {
  */
 const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
   // Send axios GET request to the Postcode lookup service with the auth token.
-  const serverResponse: AxiosResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
+  const serverResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
     params: {
       uprn,
       fieldset: 'all',
@@ -232,8 +232,10 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
 
   const addressLine1 = `${subBuildingName} ${organisationName} ${buildingNumber} ${buildingName}`;
 
+  const uprnString = String(serverResponse.data.results[0].address[0].uprn);
+
   return {
-    uprn: serverResponse.data.results[0].address[0].uprn as string,
+    uprn: uprnString,
     postcode: serverResponse.data.results[0].address[0].postcode
       ? serverResponse.data.results[0].address[0].postcode
       : '',
