@@ -2,7 +2,7 @@ import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
 
-const {Application, Contact, Address, Activity, Issue, Measure, Species} = database;
+const {Application, Contact, Address, Activity, Issue, Measure, Species, Assessment} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -32,6 +32,7 @@ interface ApplicationInterface {
   SpeciesId: number;
   isResidentialSite: boolean;
   siteType: string;
+  previousLicence: boolean;
   previousLicenceNumber: string;
   supportingInformation: string;
   confirmedByLicensingHolder: boolean;
@@ -93,11 +94,13 @@ const setHolderApplicantConfirmEmailDetails = (
  * @param {any} emailAddress The email address to send the email to.
  */
 const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any) => {
-  const notifyClient = new NotifyClient(config.notifyApiKey);
-  notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress, {
-    personalisation: emailDetails,
-    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
-  });
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
 };
 
 /**
@@ -123,11 +126,13 @@ const setLicenceApplicantNotificationDetails = (licenceApplicantContact: any, li
  * @param {any} emailAddress The email address to send the email to.
  */
 const sendLicenceApplicantNotificationEmail = async (emailDetails: any, emailAddress: any) => {
-  const notifyClient = new NotifyClient(config.notifyApiKey);
-  notifyClient.sendEmail('6955dccf-c7ad-460f-8d5d-82ad984d018a', emailAddress, {
-    personalisation: emailDetails,
-    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
-  });
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    notifyClient.sendEmail('6955dccf-c7ad-460f-8d5d-82ad984d018a', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
 };
 
 /**
@@ -155,11 +160,13 @@ const setLicenceHolderMagicLinkDetails = (licenceHolderContact: any, licenceAppl
  * @param {any} emailAddress The email address to send the email to.
  */
 const sendLicenceHolderMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
-  const notifyClient = new NotifyClient(config.notifyApiKey);
-  notifyClient.sendEmail('e2d7bea5-c487-448c-afa4-1360fe966eab', emailAddress, {
-    personalisation: emailDetails,
-    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
-  });
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    notifyClient.sendEmail('e2d7bea5-c487-448c-afa4-1360fe966eab', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
 };
 
 /**
@@ -169,11 +176,13 @@ const sendLicenceHolderMagicLinkEmail = async (emailDetails: any, emailAddress: 
  * @param {any} emailAddress The email address to send the email to.
  */
 const sendHolderApplicantConfirmEmail = async (emailDetails: any, emailAddress: any) => {
-  const notifyClient = new NotifyClient(config.notifyApiKey);
-  notifyClient.sendEmail('b227af1f-4709-4be5-a111-66605dcf0525', emailAddress, {
-    personalisation: emailDetails,
-    emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
-  });
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    notifyClient.sendEmail('b227af1f-4709-4be5-a111-66605dcf0525', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
 };
 
 const ApplicationController = {
@@ -229,6 +238,10 @@ const ApplicationController = {
         {
           model: Measure,
           as: 'ApplicationMeasure',
+        },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
         },
       ],
     });

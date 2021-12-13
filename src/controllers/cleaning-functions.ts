@@ -1,5 +1,6 @@
 import utils from 'naturescot-utils';
-import axios, {AxiosResponse} from 'axios';
+import {AssessmentInterface} from 'models/assessment';
+import axios from '../config/axios';
 import config from '../config/app';
 
 /**
@@ -45,7 +46,7 @@ const cleanLicenseHolderContact = (body: any): any => {
  */
 const cleanAddress = (body: any): any => {
   return {
-    uprn: body.uprn === undefined ? undefined : body.uprn,
+    uprn: body.uprn === undefined ? undefined : (body.uprn as string),
     postcode: body.postcode.trim(),
     addressLine1: body.manualAddress?.addressLine1 === undefined ? undefined : body.manualAddress?.addressLine1.trim(),
     addressLine2: body.manualAddress?.addressLine2 === undefined ? undefined : body.manualAddress?.addressLine2.trim(),
@@ -63,7 +64,7 @@ const cleanAddress = (body: any): any => {
  */
 const cleanSiteAddress = (body: any): any => {
   return {
-    uprn: body.siteUprn === undefined ? undefined : body.siteUprn,
+    uprn: body.siteUprn === undefined ? undefined : (body.siteUprn as string),
     postcode: body.sitePostcode.trim(),
     addressLine1:
       body.siteManualAddress?.addressLine1 === undefined ? undefined : body.siteManualAddress?.addressLine1.trim(),
@@ -86,7 +87,8 @@ const cleanApplication = (body: any): any => {
   return {
     isResidentialSite: body.isResidentialSite,
     siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
-    previousLicenceNumber: body.previousLicence ? body.previousLicenceNumber.trim() : undefined,
+    previousLicence: body.previousLicence,
+    previousLicenceNumber: body.previousLicenceNumber ? body.previousLicenceNumber.trim() : undefined,
     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
     confirmedByLicensingHolder: !body.onBehalf,
   };
@@ -193,7 +195,7 @@ const cleanMeasure = (body: any): any => {
       ? 'Intend'
       : 'No',
     measuresTriedDetail: body.measuresTriedMoreDetail ? body.measuresTriedMoreDetail.trim() : undefined,
-    measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
+    measuresWillNotTryDetail: body.measuresIntendNotToTry ? body.measuresIntendNotToTry.trim() : undefined,
   };
 };
 
@@ -205,7 +207,7 @@ const cleanMeasure = (body: any): any => {
  */
 const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
   // Send axios GET request to the Postcode lookup service with the auth token.
-  const serverResponse: AxiosResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
+  const serverResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
     params: {
       uprn,
       fieldset: 'all',
@@ -230,8 +232,10 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
 
   const addressLine1 = `${subBuildingName} ${organisationName} ${buildingNumber} ${buildingName}`;
 
+  const uprnString = String(serverResponse.data.results[0].address[0].uprn);
+
   return {
-    uprn: serverResponse.data.results[0].address[0].uprn,
+    uprn: uprnString,
     postcode: serverResponse.data.results[0].address[0].postcode
       ? serverResponse.data.results[0].address[0].postcode
       : '',
@@ -247,6 +251,41 @@ const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
       : '',
   };
 };
+
+/**
+ * Clean an incoming PATCH request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanAssessment = (body: any): any => {
+  const cleanedBody: AssessmentInterface = {};
+
+  // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if (body.testOneAssessment) {
+    cleanedBody.testOneAssessment = body.testOneAssessment.trim();
+  }
+
+  if (body.testOneDecision) {
+    cleanedBody.testOneDecision = body.testOneDecision;
+  }
+
+  if (body.testTwoAssessment) {
+    cleanedBody.testTwoAssessment = body.testTwoAssessment.trim();
+  }
+
+  if (body.testTwoDecision) {
+    cleanedBody.testTwoDecision = body.testTwoDecision;
+  }
+
+  if (body.decision) {
+    cleanedBody.decision = body.decision;
+  }
+
+  return cleanedBody;
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -259,6 +298,7 @@ const CleaningFunctions = {
   cleanActivity,
   cleanMeasure,
   cleanAddressFromUprn,
+  cleanAssessment,
 };
 
 export default CleaningFunctions;

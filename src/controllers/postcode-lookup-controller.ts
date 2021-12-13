@@ -1,5 +1,5 @@
-import axios, {AxiosResponse} from 'axios';
 import utils from 'naturescot-utils';
+import axios, {AxiosResponse} from '../config/axios';
 import PostcodeLookup from '../models/postcode-lookup';
 
 // Load the config.

@@ -2,6 +2,7 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
+import Assessment from './controllers/assessment';
 import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
 import JsonUtils from './json-utils';
@@ -217,6 +218,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * PATCH application confirmed endpoint.
    */
@@ -251,6 +253,52 @@ const routes: ServerRoute[] = [
         // If they're not successful, send a 500 error.
         if (updatedApplication === undefined) {
           return h.response({message: `Could not update application ${existingId}.`}).code(500);
+        }
+
+        // If they are, send back the updated fields.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * PATCH application assessment endpoint.
+   */
+  {
+    method: 'patch',
+    path: `${config.pathPrefix}/application/{id}/assessment`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Clean the fields on the applications assessment.
+        const incomingAssessment = CleaningFunctions.cleanAssessment(request.payload as any);
+
+        // Upsert the assessment.
+        const assessment = await Assessment.upsert(incomingAssessment, existingId);
+
+        // If they're not successful, send a 500 error.
+        if (!assessment) {
+          return h
+            .response({message: `Could not update or create the assessment for application ${existingId}.`})
+            .code(500);
         }
 
         // If they are, send back the updated fields.
