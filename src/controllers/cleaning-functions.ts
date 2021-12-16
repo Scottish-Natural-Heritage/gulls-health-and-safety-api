@@ -267,7 +267,7 @@ const cleanAssessment = (body: any): any => {
     cleanedBody.testOneAssessment = body.testOneAssessment.trim();
   }
 
-  if (body.testOneDecision) {
+  if ('testOneDecision' in body) {
     cleanedBody.testOneDecision = body.testOneDecision;
   }
 
@@ -275,11 +275,11 @@ const cleanAssessment = (body: any): any => {
     cleanedBody.testTwoAssessment = body.testTwoAssessment.trim();
   }
 
-  if (body.testTwoDecision) {
+  if ('testTwoDecision' in body) {
     cleanedBody.testTwoDecision = body.testTwoDecision;
   }
 
-  if (body.decision) {
+  if ('decision' in body) {
     cleanedBody.decision = body.decision;
   }
 
