@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "48963579-f7c5-4173-a050-c3d672f9645e",
+		"_postman_id": "192e9783-6acf-443a-bf00-2de6e451f459",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -490,6 +490,53 @@
 						"v1",
 						"application",
 						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get the public JWK",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returned object looks like a public EC JWK', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData).to.have.property('kty');\r",
+							"    pm.expect(jsonData.kty).to.equal('EC')\r",
+							"    pm.expect(jsonData).to.have.property('crv');\r",
+							"    pm.expect(jsonData.crv).to.equal('P-256')\r",
+							"    pm.expect(jsonData).to.have.property('x');\r",
+							"    pm.expect(jsonData).to.have.property('y');\r",
+							"    pm.expect(jsonData).to.not.have.property('d');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/public-key",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"public-key"
 					]
 				}
 			},

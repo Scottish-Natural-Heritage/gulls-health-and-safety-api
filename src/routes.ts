@@ -7,6 +7,8 @@ import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
+import jwk from './config/jwk';
+
 /**
  * An array of all the routes and controllers in the app.
  */
@@ -306,6 +308,28 @@ const routes: ServerRoute[] = [
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET the public part of our elliptic curve JWK.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/public-key`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Grab a copy of our public key.
+        const publicKey = await jwk.getPublicKey({type: 'jwk'});
+
+        // Send it to the client.
+        return h.response(publicKey).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
