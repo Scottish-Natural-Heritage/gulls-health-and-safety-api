@@ -177,6 +177,19 @@ const routes: ServerRoute[] = [
         // Clean the fields on the application.
         const incomingApplication = CleaningFunctions.cleanApplication(application);
 
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // Grab the 'forwarding' url from the request.
+        const {confirmBaseUrl} = request.query;
+
+        // Check there's actually one there, otherwise we'll have to make one up.
+        const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
+
         // Call the controllers create function to write the cleaned data to the DB.
         const newApplication: any = await Application.create(
           onBehalfContact,
@@ -191,13 +204,7 @@ const routes: ServerRoute[] = [
           lesserBlackBackedActivity,
           measure,
           incomingApplication,
-        );
-
-        // Create baseUrl.
-        const baseUrl = new URL(
-          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
-            request.url.pathname.endsWith('/') ? '' : '/'
-          }`,
+          urlInvalid ? `${baseUrl.toString()}confirm?token=` : confirmBaseUrl,
         );
 
         // If there is a newApplication object and it has the ID property then...
