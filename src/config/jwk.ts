@@ -55,7 +55,7 @@ const getPublicKey = async (options: KeyOptions): Promise<string | JsonWebKey> =
   // If they've asked us for a PEM encoded string.
   if (options && options.type === 'pem') {
     // Export the public key to pem format.
-    const result = publicKey.export({type: 'spki', format: 'pem'});
+    const result = publicKey.export({format: 'pem', type: 'pkcs8'});
 
     // Result could be a string or a Buffer, so we make sure to convert it to a
     // string, regardless.
@@ -97,7 +97,7 @@ const getPrivateKey = async (options?: KeyOptions): Promise<string | JsonWebKey>
       format: 'jwk',
       key: testKeyPair,
     });
-    return testPrivateKey.export({format: 'pem', type: 'spki'}).toString();
+    return testPrivateKey.export({format: 'pem', type: 'pkcs8'}).toString();
   }
 
   // We're running in production mode, so use the real private key.
