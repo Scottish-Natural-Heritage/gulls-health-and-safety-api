@@ -86,7 +86,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application",
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application?confirmBaseUrl=https://example.org/confirm?token=",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -96,6 +96,12 @@
 						"gulls-health-and-safety-api",
 						"v1",
 						"application"
+					],
+					"query": [
+						{
+							"key": "confirmBaseUrl",
+							"value": "https://example.org/confirm?token="
+						}
 					]
 				}
 			},
