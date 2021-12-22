@@ -116,7 +116,6 @@ const routes: ServerRoute[] = [
         const application = request.payload as any;
 
         let onBehalfContact;
-        let address;
         let siteAddress;
         let herringActivity;
         let blackHeadedActivity;
@@ -126,7 +125,7 @@ const routes: ServerRoute[] = [
 
         // Clean the incoming data.
         const licenceHolderContact = CleaningFunctions.cleanLicenseHolderContact(application);
-        address = CleaningFunctions.cleanAddress(application);
+        const address = CleaningFunctions.cleanAddress(application);
 
         const issue = CleaningFunctions.cleanIssue(application);
         const measure = CleaningFunctions.cleanMeasure(application);
