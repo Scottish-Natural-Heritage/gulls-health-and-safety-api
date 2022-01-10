@@ -286,6 +286,48 @@ const cleanAssessment = (body: any): any => {
   return cleanedBody;
 };
 
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * TODO: implement some form of cleaning function in R2 as this is not required in R1 due to all Conditions now being mandatory.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+ const cleanCondition = (body: any): any => {
+  return {};
+};
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * TODO: implement some form of cleaning function in R2 as this is not required in R1 due to all Advisories now being mandatory.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+ const cleanAdvisory = (body: any): any => {
+  return {};
+};
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+ const cleanLicence = (body: any, ApplicationId: any): any => {
+  return {
+    ApplicationId: ApplicationId,
+    periodFrom: body.periodFrom,
+    periodTo: body.periodTo,
+    licenseDetails: body.licenseDetails ? body.licenseDetails.trim() : undefined,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -299,6 +341,9 @@ const CleaningFunctions = {
   cleanMeasure,
   cleanAddressFromUprn,
   cleanAssessment,
+  cleanCondition,
+  cleanAdvisory,
+  cleanLicence,
 };
 
 export default CleaningFunctions;
