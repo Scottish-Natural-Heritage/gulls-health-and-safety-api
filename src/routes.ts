@@ -2,6 +2,7 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
+import Licence from './controllers/licence';
 import Assessment from './controllers/assessment';
 import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
@@ -303,6 +304,104 @@ const routes: ServerRoute[] = [
 
         // If they are, send back the updated fields.
         return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * POST new licence endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/licence`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Get the payload from the request.
+        const licence = request.payload as any;
+
+        let herringActivity;
+        let blackHeadedActivity;
+        let commonActivity;
+        let greatBlackBackedActivity;
+        let lesserBlackBackedActivity;
+
+        // These are not required for R1 as we have made the decision to make all conditions and advisories mandatory.
+        // const condition = CleaningFunctions.cleanCondition(licence);
+        // const advisory = CleaningFunctions.cleanAdvisory(licence);
+
+        // Clean all the possible species activities.
+        if (licence.species.herringGull.requiresLicense) {
+          herringActivity = CleaningFunctions.cleanActivity(licence, 'herringGull');
+        }
+
+        if (licence.species.blackHeadedGull.requiresLicense) {
+          blackHeadedActivity = CleaningFunctions.cleanActivity(licence, 'blackHeadedGull');
+        }
+
+        if (licence.species.commonGull.requiresLicense) {
+          commonActivity = CleaningFunctions.cleanActivity(licence, 'commonGull');
+        }
+
+        if (licence.species.greatBlackBackedGull.requiresLicense) {
+          greatBlackBackedActivity = CleaningFunctions.cleanActivity(licence, 'greatBlackBackedGull');
+        }
+
+        if (licence.species.lesserBlackBackedGull.requiresLicense) {
+          lesserBlackBackedActivity = CleaningFunctions.cleanActivity(licence, 'lesserBlackBackedGull');
+        }
+
+        // Clean the fields on the licence.
+        const incomingLicence = CleaningFunctions.cleanLicence(licence, existingId);
+
+        // Call the controllers create function to write the cleaned data to the DB.
+        const newLicence: any = await Licence.create(
+          existingId,
+          herringActivity,
+          blackHeadedActivity,
+          commonActivity,
+          greatBlackBackedActivity,
+          lesserBlackBackedActivity,
+          incomingLicence
+        );
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is a newLicence object and it has the ApplicationId property then...
+        if (newLicence?.ApplicationId) {
+          // Set a string representation of the ID to this local variable.
+          const newLicenceId = newLicence.ApplicationId.toString();
+          // Construct a new URL object with the baseUrl declared above and the newId.
+          const locationUrl = new URL(newLicenceId, baseUrl);
+          // If all is well return the Licence, location and 201 created.
+          return h.response(newLicence).location(locationUrl.href).code(201);
+        }
+
+        // If we get here the Licence was not created successfully.
+        return h.response({message: `Failed to create Licence.`}).code(500);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
