@@ -319,9 +319,8 @@ const cleanAssessment = (body: any): any => {
  * @param {any} body The incoming request's body.
  * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
  */
- const cleanLicence = (body: any, ApplicationId: any): any => {
+ const cleanLicence = (body: any): any => {
   return {
-    ApplicationId: ApplicationId,
     periodFrom: body.periodFrom,
     periodTo: body.periodTo,
     licenseDetails: body.licenseDetails ? body.licenseDetails.trim() : undefined,

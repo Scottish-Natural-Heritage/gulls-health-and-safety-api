@@ -370,7 +370,7 @@ const routes: ServerRoute[] = [
         }
 
         // Clean the fields on the licence.
-        const incomingLicence = CleaningFunctions.cleanLicence(licence, existingId);
+        const incomingLicence = CleaningFunctions.cleanLicence(licence);
 
         // Call the controllers create function to write the cleaned data to the DB.
         const newLicence: any = await Licence.create(
