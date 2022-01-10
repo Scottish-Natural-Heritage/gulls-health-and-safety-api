@@ -42,6 +42,9 @@ const LicenceModel = (sequelize: Sequelize) => {
       licenseDetails: {
         type: DataTypes.STRING,
       },
+      PermittedSpeciesId: {
+        type: DataTypes.INTEGER,
+      },
     },
     {
       sequelize,
