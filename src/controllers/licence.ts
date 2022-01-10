@@ -1,6 +1,5 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
-import config from '../config/app';
 
 const {Licence, PermittedSpecies, PermittedActivity, LicensedCondition, LicensedAdvisory, Advisory, Condition} =
   database;

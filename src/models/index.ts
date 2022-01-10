@@ -12,9 +12,9 @@ import Activity from './activity';
 import PermittedSpecies from './permitted-species';
 import PermittedActivity from './permitted-activity';
 import Licence from './licence';
-import LicensedAdvisory from './licensed-adivsory';
+import LicensedAdvisory from './licensed-advisory';
 import LicensedCondition from './licensed-condition';
-import Advisory from './adivsory';
+import Advisory from './advisory';
 import Condition from './condition';
 
 const Sequelize = require('sequelize');
@@ -90,15 +90,30 @@ database.Activity.hasOne(database.Species, {as: 'LesserBlackBackedGull', foreign
 database.PermittedSpecies.hasOne(database.Licence, {as: 'PermittedSpecies', foreignKey: 'PermittedSpeciesId'});
 
 database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'HerringGull', foreignKey: 'HerringGullId'});
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'BlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
+database.PermittedSpecies.belongsTo(database.PermittedActivity, {
+  as: 'BlackHeadedGull',
+  foreignKey: 'BlackHeadedGullId',
+});
 database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'CommonGull', foreignKey: 'CommonGullId'});
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'GreatBlackBackedGull', foreignKey: 'GreatBlackBackedGullId'});
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'LesserBlackBackedGull', foreignKey: 'LesserBlackBackedGullId'});
+database.PermittedSpecies.belongsTo(database.PermittedActivity, {
+  as: 'GreatBlackBackedGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.PermittedSpecies.belongsTo(database.PermittedActivity, {
+  as: 'LesserBlackBackedGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
 
 database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'HerringGull', foreignKey: 'HerringGullId'});
 database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'BlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
 database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'CommonGull', foreignKey: 'CommonGullId'});
-database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'GreatBlackBackedGull', foreignKey: 'GreatBlackBackedGullId'});
-database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'LesserBlackBackedGull', foreignKey: 'LesserBlackBackedGullId'});
+database.PermittedActivity.hasOne(database.PermittedSpecies, {
+  as: 'GreatBlackBackedGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.PermittedActivity.hasOne(database.PermittedSpecies, {
+  as: 'LesserBlackBackedGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
 
 export {database as default};

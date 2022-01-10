@@ -292,10 +292,10 @@ const cleanAssessment = (body: any): any => {
  *
  * TODO: implement some form of cleaning function in R2 as this is not required in R1 due to all Conditions now being mandatory.
  *
- * @param {any} body The incoming request's body.
+ * @param {any} _body The incoming request's body.
  * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
  */
- const cleanCondition = (body: any): any => {
+const cleanCondition = (_body: any): any => {
   return {};
 };
 
@@ -305,10 +305,10 @@ const cleanAssessment = (body: any): any => {
  *
  * TODO: implement some form of cleaning function in R2 as this is not required in R1 due to all Advisories now being mandatory.
  *
- * @param {any} body The incoming request's body.
+ * @param {any} _body The incoming request's body.
  * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
  */
- const cleanAdvisory = (body: any): any => {
+const cleanAdvisory = (_body: any): any => {
   return {};
 };
 
@@ -319,7 +319,7 @@ const cleanAssessment = (body: any): any => {
  * @param {any} body The incoming request's body.
  * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
  */
- const cleanLicence = (body: any): any => {
+const cleanLicence = (body: any): any => {
   return {
     periodFrom: body.periodFrom,
     periodTo: body.periodTo,

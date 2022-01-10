@@ -380,7 +380,7 @@ const routes: ServerRoute[] = [
           commonActivity,
           greatBlackBackedActivity,
           lesserBlackBackedActivity,
-          incomingLicence
+          incomingLicence,
         );
 
         // Create baseUrl.
