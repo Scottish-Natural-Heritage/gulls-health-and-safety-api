@@ -1,8 +1,7 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 
-const {License, PermittedSpecies, PermittedActivity, LicenseCondition, LicenseAdvisory, Advisory, Condition} =
-  database;
+const {License, PermittedSpecies, PermittedActivity, LicenseCondition, LicenseAdvisory, Advisory, Condition} = database;
 
 /**
  * Local interface to hold the permitted species ID foreign keys.

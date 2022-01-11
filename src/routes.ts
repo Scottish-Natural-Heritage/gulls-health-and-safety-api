@@ -341,8 +341,10 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} has not been assessed.`}).code(404);
         }
 
-        if (assessment.decision !== true) {
-          return h.response({message: `Application ${existingId} can not be issued as a license as it was not approved.`}).code(404);
+        if (!assessment.decision) {
+          return h
+            .response({message: `Application ${existingId} can not be issued as a license as it was not approved.`})
+            .code(404);
         }
 
         // Get the payload from the request.
