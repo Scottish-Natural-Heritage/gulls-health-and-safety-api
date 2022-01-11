@@ -319,7 +319,7 @@ const cleanAdvisory = (_body: any): any => {
  * @param {any} body The incoming request's body.
  * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
  */
-const cleanLicence = (body: any): any => {
+const cleanLicense = (body: any): any => {
   return {
     periodFrom: body.periodFrom,
     periodTo: body.periodTo,
@@ -342,7 +342,7 @@ const CleaningFunctions = {
   cleanAssessment,
   cleanCondition,
   cleanAdvisory,
-  cleanLicence,
+  cleanLicense,
 };
 
 export default CleaningFunctions;

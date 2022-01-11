@@ -4,7 +4,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * Local interface to hold the Condition.
  */
 interface ConditionInterface {
-  Id?: number;
+  id?: number;
   condition?: string;
   orderNumber?: number;
   default?: boolean;
@@ -18,7 +18,7 @@ interface ConditionInterface {
  */
 const ConditionModel = (sequelize: Sequelize) => {
   class Condition extends Model {
-    public Id!: number;
+    public id!: number;
     public condition!: string;
     public orderNumber!: number;
     public default!: boolean;
@@ -26,13 +26,6 @@ const ConditionModel = (sequelize: Sequelize) => {
 
   Condition.init(
     {
-      Id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        validate: {
-          notEmpty: true,
-        },
-      },
       condition: {
         type: DataTypes.STRING,
       },

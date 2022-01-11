@@ -1,9 +1,9 @@
 import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
- * Local interface to hold the Licence.
+ * Local interface to hold the License.
  */
-interface LicenceInterface {
+interface LicenseInterface {
   ApplicationId?: number;
   periodFrom?: Date;
   periodTo?: Date;
@@ -11,20 +11,20 @@ interface LicenceInterface {
 }
 
 /**
- * Build a Licence model.
+ * Build a License model.
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
- * @returns {Sequelize.Model} An Licence model.
+ * @returns {Sequelize.Model} An License model.
  */
-const LicenceModel = (sequelize: Sequelize) => {
-  class Licence extends Model {
+const LicenseModel = (sequelize: Sequelize) => {
+  class License extends Model {
     public ApplicationId!: number;
     public periodFrom!: Date;
     public periodTo!: Date;
     public licenseDetails!: string;
   }
 
-  Licence.init(
+  License.init(
     {
       ApplicationId: {
         type: DataTypes.INTEGER,
@@ -48,14 +48,14 @@ const LicenceModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'Licence',
+      modelName: 'License',
       timestamps: true,
       paranoid: true,
     },
   );
 
-  return Licence;
+  return License;
 };
 
-export {LicenceModel as default};
-export {LicenceInterface};
+export {LicenseModel as default};
+export {LicenseInterface};

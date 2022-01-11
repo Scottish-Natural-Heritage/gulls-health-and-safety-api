@@ -1,7 +1,7 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 
-const {Licence, PermittedSpecies, PermittedActivity, LicensedCondition, LicensedAdvisory, Advisory, Condition} =
+const {License, PermittedSpecies, PermittedActivity, LicenseCondition, LicenseAdvisory, Advisory, Condition} =
   database;
 
 /**
@@ -18,17 +18,17 @@ interface PermittedSpeciesIds {
 /**
  * Local interface of the application.
  */
-interface LicenceInterface {
+interface LicenseInterface {
   ApplicationId: number;
   periodFrom: string;
   periodTo: string;
-  licenceDetails: string;
+  licenseDetails: string;
   PermittedSpeciesId: number;
 }
 
-const LicenceController = {
+const LicenseController = {
   findOne: async (id: number) => {
-    return Licence.findByPk(id, {
+    return License.findByPk(id, {
       include: [
         {
           model: PermittedSpecies,
@@ -57,32 +57,32 @@ const LicenceController = {
           ],
         },
         {
-          model: LicensedCondition,
-          as: 'LicensedCondition',
+          model: LicenseCondition,
+          as: 'LicenseCondition',
         },
         {
-          model: LicensedAdvisory,
-          as: 'LicensedAdvisory',
+          model: LicenseAdvisory,
+          as: 'LicenseAdvisory',
         },
       ],
     });
   },
 
   findAll: async () => {
-    return Licence.findAll();
+    return License.findAll();
   },
 
   /**
-   * The create function writes the incoming licence to the appropriate database tables.
+   * The create function writes the incoming license to the appropriate database tables.
    *
-   * @param {any } applicationId The application that the licence will be based on.
+   * @param {any } applicationId The application that the license will be based on.
    * @param {any | undefined} herringActivity The herring gull activities to be licensed.
    * @param {any | undefined} blackHeadedActivity The black-headed gull activities to be licensed.
    * @param {any | undefined} commonActivity The common gull activities to be licensed.
    * @param {any | undefined} greatBlackBackedActivity The great black-backed gull activities to be licensed.
    * @param {any | undefined} lesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
-   * @param {any | undefined} incomingLicence The Licence details.
-   * @returns {any} Returns newLicence, the newly created Licence.
+   * @param {any | undefined} incomingLicense The License details.
+   * @returns {any} Returns newLicense, the newly created License.
    */
   create: async (
     applicationId: any,
@@ -91,7 +91,7 @@ const LicenceController = {
     commonActivity: any | undefined,
     greatBlackBackedActivity: any | undefined,
     lesserBlackBackedActivity: any | undefined,
-    incomingLicence: any,
+    incomingLicense: any,
   ) => {
     const speciesIds: PermittedSpeciesIds = {
       HerringGullId: undefined,
@@ -100,7 +100,7 @@ const LicenceController = {
       GreatBlackBackedGullId: undefined,
       LesserBlackBackedGullId: undefined,
     };
-    let newLicence;
+    let newLicense;
     // Start a transaction.
     await database.sequelize.transaction(async (t: transaction) => {
       // Add any species specific activities to the DB and get their IDs.
@@ -132,21 +132,21 @@ const LicenceController = {
       // Set the species foreign keys in the DB.
       const newPermittedSpecies = await PermittedSpecies.create(speciesIds, {transaction: t});
 
-      incomingLicence.ApplicationId = applicationId;
-      incomingLicence.PermittedSpeciesId = newPermittedSpecies.id;
+      incomingLicense.ApplicationId = applicationId;
+      incomingLicense.PermittedSpeciesId = newPermittedSpecies.id;
 
       // Add the Licence to the DB.
-      newLicence = await Licence.create(incomingLicence, {transaction: t});
+      newLicense = await License.create(incomingLicense, {transaction: t});
 
-      const conditions = await Condition.findAll();
-      const advisories = await Advisory.findAll();
+      const conditions = await Condition.findAll({where: {default: true}});
+      const advisories = await Advisory.findAll({where: {default: true}});
       // Add any conditions to the DB.
       await Promise.all(
         conditions.map(async (jsonCondition) => {
-          await LicensedCondition.create(
+          await LicenseCondition.create(
             {
-              LicenceId: applicationId,
-              ConditionId: jsonCondition.Id,
+              LicenseId: applicationId,
+              ConditionId: jsonCondition.id,
             },
             {transaction: t},
           );
@@ -155,10 +155,10 @@ const LicenceController = {
       // Add any advisories to the DB.
       await Promise.all(
         advisories.map(async (jsonAdvisory) => {
-          await LicensedAdvisory.create(
+          await LicenseAdvisory.create(
             {
-              LicenceId: applicationId,
-              AdvisoryId: jsonAdvisory.Id,
+              LicenseId: applicationId,
+              AdvisoryId: jsonAdvisory.id,
             },
             {transaction: t},
           );
@@ -167,8 +167,8 @@ const LicenceController = {
     });
 
     // If all went well and we have a new application return it.
-    if (newLicence) {
-      return newLicence;
+    if (newLicense) {
+      return newLicense;
     }
 
     // If no new application was added to the DB return undefined.
@@ -176,5 +176,5 @@ const LicenceController = {
   },
 };
 
-export {LicenceController as default};
-export {LicenceInterface};
+export {LicenseController as default};
+export {LicenseInterface};

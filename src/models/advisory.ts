@@ -4,7 +4,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * Local interface to hold the Advisory Notes.
  */
 interface AdvisoryInterface {
-  Id?: number;
+  id?: number;
   advisory?: string;
   orderNumber?: number;
   default?: boolean;
@@ -18,7 +18,7 @@ interface AdvisoryInterface {
  */
 const AdvisoryModel = (sequelize: Sequelize) => {
   class Advisory extends Model {
-    public Id!: number;
+    public id!: number;
     public advisory!: string;
     public orderNumber!: number;
     public default!: boolean;
@@ -26,13 +26,6 @@ const AdvisoryModel = (sequelize: Sequelize) => {
 
   Advisory.init(
     {
-      Id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        validate: {
-          notEmpty: true,
-        },
-      },
       advisory: {
         type: DataTypes.STRING,
       },

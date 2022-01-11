@@ -1,26 +1,26 @@
 import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
- * Local interface to hold the LicensedAdvisory.
+ * Local interface to hold the LicenseCondition.
  */
-interface LicensedAdvisoryInterface {
+interface LicenseConditionInterface {
   LicenseId?: number;
-  AdvisoryId?: number;
+  ConditionId?: number;
 }
 
 /**
- * Build an LicensedAdvisory model.
+ * Build an LicenseCondition model.
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
- * @returns {Sequelize.Model} An LicensedAdvisory model.
+ * @returns {Sequelize.Model} An LicenseCondition model.
  */
-const LicensedAdvisoryModel = (sequelize: Sequelize) => {
-  class LicensedAdvisory extends Model {
+const LicenseConditionModel = (sequelize: Sequelize) => {
+  class LicenseCondition extends Model {
     public LicenseId!: number;
-    public AdvisoryId!: string;
+    public ConditionId!: string;
   }
 
-  LicensedAdvisory.init(
+  LicenseCondition.init(
     {
       LicenseId: {
         type: DataTypes.INTEGER,
@@ -29,7 +29,7 @@ const LicensedAdvisoryModel = (sequelize: Sequelize) => {
           notEmpty: true,
         },
       },
-      AdvisoryId: {
+      ConditionId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         validate: {
@@ -39,14 +39,14 @@ const LicensedAdvisoryModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'LicensedAdvisory',
+      modelName: 'LicenseCondition',
       timestamps: true,
       paranoid: true,
     },
   );
 
-  return LicensedAdvisory;
+  return LicenseCondition;
 };
 
-export {LicensedAdvisoryModel as default};
-export {LicensedAdvisoryInterface};
+export {LicenseConditionModel as default};
+export {LicenseConditionInterface};

@@ -2,7 +2,7 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
-import Licence from './controllers/licence';
+import License from './controllers/license';
 import Assessment from './controllers/assessment';
 import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
@@ -314,11 +314,11 @@ const routes: ServerRoute[] = [
   },
 
   /**
-   * POST new licence endpoint.
+   * POST new license endpoint.
    */
   {
     method: 'post',
-    path: `${config.pathPrefix}/application/{id}/licence`,
+    path: `${config.pathPrefix}/application/{id}/license`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // Is the ID a number?
@@ -335,8 +335,18 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
+        const assessment = await Assessment.findOne(existingId);
+        // Did we assess the application?
+        if (assessment === undefined || assessment === null) {
+          return h.response({message: `Application ${existingId} has not been assessed.`}).code(404);
+        }
+
+        if (assessment.decision !== true) {
+          return h.response({message: `Application ${existingId} can not be issued as a license as it was not approved.`}).code(404);
+        }
+
         // Get the payload from the request.
-        const licence = request.payload as any;
+        const license = request.payload as any;
 
         let herringActivity;
         let blackHeadedActivity;
@@ -345,42 +355,42 @@ const routes: ServerRoute[] = [
         let lesserBlackBackedActivity;
 
         // These are not required for R1 as we have made the decision to make all conditions and advisories mandatory.
-        // const condition = CleaningFunctions.cleanCondition(licence);
-        // const advisory = CleaningFunctions.cleanAdvisory(licence);
+        // const condition = CleaningFunctions.cleanCondition(license);
+        // const advisory = CleaningFunctions.cleanAdvisory(license);
 
         // Clean all the possible species activities.
-        if (licence.species.herringGull.requiresLicense) {
-          herringActivity = CleaningFunctions.cleanActivity(licence, 'herringGull');
+        if (license.species.herringGull.requiresLicense) {
+          herringActivity = CleaningFunctions.cleanActivity(license, 'herringGull');
         }
 
-        if (licence.species.blackHeadedGull.requiresLicense) {
-          blackHeadedActivity = CleaningFunctions.cleanActivity(licence, 'blackHeadedGull');
+        if (license.species.blackHeadedGull.requiresLicense) {
+          blackHeadedActivity = CleaningFunctions.cleanActivity(license, 'blackHeadedGull');
         }
 
-        if (licence.species.commonGull.requiresLicense) {
-          commonActivity = CleaningFunctions.cleanActivity(licence, 'commonGull');
+        if (license.species.commonGull.requiresLicense) {
+          commonActivity = CleaningFunctions.cleanActivity(license, 'commonGull');
         }
 
-        if (licence.species.greatBlackBackedGull.requiresLicense) {
-          greatBlackBackedActivity = CleaningFunctions.cleanActivity(licence, 'greatBlackBackedGull');
+        if (license.species.greatBlackBackedGull.requiresLicense) {
+          greatBlackBackedActivity = CleaningFunctions.cleanActivity(license, 'greatBlackBackedGull');
         }
 
-        if (licence.species.lesserBlackBackedGull.requiresLicense) {
-          lesserBlackBackedActivity = CleaningFunctions.cleanActivity(licence, 'lesserBlackBackedGull');
+        if (license.species.lesserBlackBackedGull.requiresLicense) {
+          lesserBlackBackedActivity = CleaningFunctions.cleanActivity(license, 'lesserBlackBackedGull');
         }
 
-        // Clean the fields on the licence.
-        const incomingLicence = CleaningFunctions.cleanLicence(licence);
+        // Clean the fields on the license.
+        const incomingLicense = CleaningFunctions.cleanLicense(license);
 
         // Call the controllers create function to write the cleaned data to the DB.
-        const newLicence: any = await Licence.create(
+        const newLicense: any = await License.create(
           existingId,
           herringActivity,
           blackHeadedActivity,
           commonActivity,
           greatBlackBackedActivity,
           lesserBlackBackedActivity,
-          incomingLicence,
+          incomingLicense,
         );
 
         // Create baseUrl.
@@ -390,18 +400,18 @@ const routes: ServerRoute[] = [
           }`,
         );
 
-        // If there is a newLicence object and it has the ApplicationId property then...
-        if (newLicence?.ApplicationId) {
+        // If there is a newLicense object and it has the ApplicationId property then...
+        if (newLicense?.ApplicationId) {
           // Set a string representation of the ID to this local variable.
-          const newLicenceId = newLicence.ApplicationId.toString();
+          const newLicenseId = newLicense.ApplicationId.toString();
           // Construct a new URL object with the baseUrl declared above and the newId.
-          const locationUrl = new URL(newLicenceId, baseUrl);
-          // If all is well return the Licence, location and 201 created.
-          return h.response(newLicence).location(locationUrl.href).code(201);
+          const locationUrl = new URL(newLicenseId, baseUrl);
+          // If all is well return the License, location and 201 created.
+          return h.response(newLicense).location(locationUrl.href).code(201);
         }
 
-        // If we get here the Licence was not created successfully.
-        return h.response({message: `Failed to create Licence.`}).code(500);
+        // If we get here the License was not created successfully.
+        return h.response({message: `Failed to create License.`}).code(500);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

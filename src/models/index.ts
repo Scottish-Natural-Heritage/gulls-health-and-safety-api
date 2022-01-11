@@ -11,9 +11,9 @@ import Species from './species';
 import Activity from './activity';
 import PermittedSpecies from './permitted-species';
 import PermittedActivity from './permitted-activity';
-import Licence from './licence';
-import LicensedAdvisory from './licensed-advisory';
-import LicensedCondition from './licensed-condition';
+import License from './license';
+import LicenseAdvisory from './license-advisory';
+import LicenseCondition from './license-condition';
 import Advisory from './advisory';
 import Condition from './condition';
 
@@ -39,9 +39,9 @@ const database = {
   Activity: Activity(sequelize),
   PermittedSpecies: PermittedSpecies(sequelize),
   PermittedActivity: PermittedActivity(sequelize),
-  Licence: Licence(sequelize),
-  LicensedAdvisory: LicensedAdvisory(sequelize),
-  LicensedCondition: LicensedCondition(sequelize),
+  License: License(sequelize),
+  LicenseAdvisory: LicenseAdvisory(sequelize),
+  LicenseCondition: LicenseCondition(sequelize),
   Advisory: Advisory(sequelize),
   Condition: Condition(sequelize),
 };
@@ -60,20 +60,20 @@ database.Address.hasOne(database.Application, {as: 'SiteAddress', foreignKey: 'S
 database.Species.hasOne(database.Application, {as: 'Species', foreignKey: 'SpeciesId'});
 
 database.Assessment.belongsTo(database.Application, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
-database.Licence.belongsTo(database.Application, {as: 'Licence', foreignKey: 'ApplicationId'});
+database.License.belongsTo(database.Application, {as: 'Licence', foreignKey: 'ApplicationId'});
 database.Issue.belongsTo(database.Application, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Measure.belongsTo(database.Application, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
 
 database.Application.hasOne(database.Assessment, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
-database.Application.hasOne(database.Licence, {as: 'Licence', foreignKey: 'ApplicationId'});
+database.Application.hasOne(database.License, {as: 'Licence', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Issue, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Measure, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
 
-database.LicensedAdvisory.belongsTo(database.Licence, {as: 'LicensedAdvisory', foreignKey: 'LicenseId'});
-database.LicensedCondition.belongsTo(database.Licence, {as: 'LicensedCondition', foreignKey: 'LicenseId'});
+database.LicenseAdvisory.belongsTo(database.License, {as: 'LicenseAdvisory', foreignKey: 'LicenseId'});
+database.LicenseCondition.belongsTo(database.License, {as: 'LicenseCondition', foreignKey: 'LicenseId'});
 
-database.Licence.hasMany(database.LicensedAdvisory, {as: 'LicensedAdvisory', foreignKey: 'LicenseId'});
-database.Licence.hasMany(database.LicensedCondition, {as: 'LicensedCondition', foreignKey: 'LicenseId'});
+database.License.hasMany(database.LicenseAdvisory, {as: 'LicenseAdvisory', foreignKey: 'LicenseId'});
+database.License.hasMany(database.LicenseCondition, {as: 'LicenseCondition', foreignKey: 'LicenseId'});
 
 database.Species.belongsTo(database.Activity, {as: 'HerringGull', foreignKey: 'HerringGullId'});
 database.Species.belongsTo(database.Activity, {as: 'BlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
@@ -87,7 +87,7 @@ database.Activity.hasOne(database.Species, {as: 'CommonGull', foreignKey: 'Commo
 database.Activity.hasOne(database.Species, {as: 'GreatBlackBackedGull', foreignKey: 'GreatBlackBackedGullId'});
 database.Activity.hasOne(database.Species, {as: 'LesserBlackBackedGull', foreignKey: 'LesserBlackBackedGullId'});
 
-database.PermittedSpecies.hasOne(database.Licence, {as: 'PermittedSpecies', foreignKey: 'PermittedSpeciesId'});
+database.PermittedSpecies.hasOne(database.License, {as: 'PermittedSpecies', foreignKey: 'PermittedSpeciesId'});
 
 database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'HerringGull', foreignKey: 'HerringGullId'});
 database.PermittedSpecies.belongsTo(database.PermittedActivity, {
