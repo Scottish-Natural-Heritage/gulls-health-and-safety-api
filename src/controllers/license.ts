@@ -167,7 +167,7 @@ const LicenseController = {
 
     // If all went well and we have a new application return it.
     if (newLicense) {
-      return newLicense;
+      return newLicense as LicenseInterface;
     }
 
     // If no new application was added to the DB return undefined.
