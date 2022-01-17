@@ -118,7 +118,6 @@ const routes: ServerRoute[] = [
         const application = request.payload as any;
 
         let onBehalfContact;
-        let address;
         let siteAddress;
         let herringActivity;
         let blackHeadedActivity;
@@ -128,12 +127,7 @@ const routes: ServerRoute[] = [
 
         // Clean the incoming data.
         const licenceHolderContact = CleaningFunctions.cleanLicenseHolderContact(application);
-        address = CleaningFunctions.cleanAddress(application);
-
-        // If we only have a UPRN get the rest of the address.
-        if (address.uprn) {
-          address = await CleaningFunctions.cleanAddressFromUprn(address.uprn);
-        }
+        const address = CleaningFunctions.cleanAddress(application);
 
         const issue = CleaningFunctions.cleanIssue(application);
         const measure = CleaningFunctions.cleanMeasure(application);
@@ -146,11 +140,6 @@ const routes: ServerRoute[] = [
         // If site address is different from licence holder's address clean it.
         if (!application.sameAddressAsLicenceHolder) {
           siteAddress = CleaningFunctions.cleanSiteAddress(application);
-        }
-
-        // If we only have a UPRN get the rest of the site's address.
-        if (siteAddress?.uprn) {
-          siteAddress = await CleaningFunctions.cleanAddressFromUprn(siteAddress.uprn);
         }
 
         // Clean all the possible species activities.

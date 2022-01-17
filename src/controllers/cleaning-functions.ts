@@ -1,7 +1,5 @@
 import utils from 'naturescot-utils';
 import {AssessmentInterface} from 'models/assessment';
-import axios from '../config/axios';
-import config from '../config/app';
 
 /**
  * Cleans the on behalf contact details into something the database can use.
@@ -205,52 +203,6 @@ const cleanMeasure = (body: any): any => {
  * @param {number} uprn The UPRN to resolve to an address.
  * @returns {any} The address details for the passed UPRN.
  */
-const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
-  // Send axios GET request to the Postcode lookup service with the auth token.
-  const serverResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
-    params: {
-      uprn,
-      fieldset: 'all',
-    },
-    headers: {
-      Authorization: `Bearer ${config.postcodeApiKey}`,
-    },
-  });
-
-  const subBuildingName = serverResponse.data.results[0].address[0].sub_building_name
-    ? String(serverResponse.data.results[0].address[0].sub_building_name)
-    : '';
-  const organisationName = serverResponse.data.results[0].address[0].rm_organisation_name
-    ? String(serverResponse.data.results[0].address[0].rm_organisation_name)
-    : '';
-  const buildingNumber = serverResponse.data.results[0].address[0].building_number
-    ? String(serverResponse.data.results[0].address[0].building_number)
-    : '';
-  const buildingName = serverResponse.data.results[0].address[0].building_name
-    ? String(serverResponse.data.results[0].address[0].building_name)
-    : '';
-
-  const addressLine1 = `${subBuildingName} ${organisationName} ${buildingNumber} ${buildingName}`;
-
-  const uprnString = String(serverResponse.data.results[0].address[0].uprn);
-
-  return {
-    uprn: uprnString,
-    postcode: serverResponse.data.results[0].address[0].postcode
-      ? serverResponse.data.results[0].address[0].postcode
-      : '',
-    addressLine1,
-    addressLine2: serverResponse.data.results[0].address[0].street_description
-      ? serverResponse.data.results[0].address[0].street_description
-      : '',
-    addressTown: serverResponse.data.results[0].address[0].post_town
-      ? serverResponse.data.results[0].address[0].post_town
-      : '',
-    addressCounty: serverResponse.data.results[0].address[0].administrative_area
-      ? serverResponse.data.results[0].address[0].administrative_area
-      : '',
-  };
-};
 
 /**
  * Clean an incoming PATCH request body to make it more compatible with the
@@ -297,7 +249,6 @@ const CleaningFunctions = {
   cleanIssue,
   cleanActivity,
   cleanMeasure,
-  cleanAddressFromUprn,
   cleanAssessment,
 };
 
