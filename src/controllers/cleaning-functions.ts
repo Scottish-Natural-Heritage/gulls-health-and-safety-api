@@ -2,6 +2,8 @@ import utils from 'naturescot-utils';
 import {AssessmentInterface} from 'models/assessment';
 import axios from '../config/axios';
 import config from '../config/app';
+import Condition from './condition';
+import Advisory from './advisory';
 
 /**
  * Cleans the on behalf contact details into something the database can use.
@@ -290,27 +292,50 @@ const cleanAssessment = (body: any): any => {
  * Clean an incoming request body to make it more compatible with the
  * database and its validation rules.
  *
- * TODO: implement some form of cleaning function in R2 as this is not required in R1 due to all Conditions now being mandatory.
- *
- * @param {any} _body The incoming request's body.
- * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ * @param {any} body The incoming request's body.
+ * @returns {Condition[] | undefined} CleanedBody a json object that's just got our cleaned up fields on it.
  */
-const cleanCondition = (_body: any): any => {
-  return {};
+const cleanCondition = async (body: any) => {
+  const optionalConditions = [];
+  /* eslint-disable no-await-in-loop */
+  for (const condition of body.conditions) {
+    const findOptionalCondition = await Condition.findOne(condition);
+    if (findOptionalCondition) {
+      optionalConditions.push(findOptionalCondition);
+    }
+  }
+
+  if (optionalConditions.length > 0) {
+    return optionalConditions;
+  }
+
+  return undefined;
 };
 
 /**
  * Clean an incoming request body to make it more compatible with the
  * database and its validation rules.
  *
- * TODO: implement some form of cleaning function in R2 as this is not required in R1 due to all Advisories now being mandatory.
- *
- * @param {any} _body The incoming request's body.
- * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ * @param {any} body The incoming request's body.
+ * @returns {Advisory[] | undefined} CleanedBody a json object that's just got our cleaned up fields on it.
  */
-const cleanAdvisory = (_body: any): any => {
-  return {};
+const cleanAdvisory = async (body: any) => {
+  const optionalAdvisories = [];
+
+  for (const advisory of body.advisories) {
+    const findOptionalAdvisory = await Advisory.findOne(advisory);
+    if (findOptionalAdvisory) {
+      optionalAdvisories.push(findOptionalAdvisory);
+    }
+  }
+
+  if (optionalAdvisories.length > 0) {
+    return optionalAdvisories;
+  }
+
+  return undefined;
 };
+/* eslint-enable no-await-in-loop */
 
 /**
  * Clean an incoming request body to make it more compatible with the

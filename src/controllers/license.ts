@@ -1,5 +1,7 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
+import {AdvisoryInterface} from '../models/advisory.js';
+import {ConditionInterface} from '../models/condition.js';
 
 const {License, PermittedSpecies, PermittedActivity, LicenseCondition, LicenseAdvisory, Advisory, Condition} = database;
 
@@ -80,6 +82,8 @@ const LicenseController = {
    * @param {any | undefined} commonActivity The common gull activities to be licensed.
    * @param {any | undefined} greatBlackBackedActivity The great black-backed gull activities to be licensed.
    * @param {any | undefined} lesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
+   * @param {Condition | undefined} optionalConditions The optional Conditions submitted by the LO.
+   * @param {any | undefined} optionalAdvisories The optional Advisory notes submitted by the LO.
    * @param {any | undefined} incomingLicense The License details.
    * @returns {any} Returns newLicense, the newly created License.
    */
@@ -90,6 +94,8 @@ const LicenseController = {
     commonActivity: any | undefined,
     greatBlackBackedActivity: any | undefined,
     lesserBlackBackedActivity: any | undefined,
+    optionalConditions: ConditionInterface[] | undefined,
+    optionalAdvisories: AdvisoryInterface[] | undefined,
     incomingLicense: any,
   ) => {
     const speciesIds: PermittedSpeciesIds = {
@@ -134,9 +140,10 @@ const LicenseController = {
       incomingLicense.ApplicationId = applicationId;
       incomingLicense.PermittedSpeciesId = newPermittedSpecies.id;
 
-      // Add the Licence to the DB.
+      // Add the License to the DB.
       newLicense = await License.create(incomingLicense, {transaction: t});
 
+      // Fetch all the default conditions.
       const conditions = await Condition.findAll({where: {default: true}});
       const advisories = await Advisory.findAll({where: {default: true}});
       // Add any conditions to the DB.
@@ -151,6 +158,20 @@ const LicenseController = {
           );
         }),
       );
+      if (optionalConditions) {
+        await Promise.all(
+          optionalConditions.map(async (optionalJsonCondition) => {
+            await LicenseCondition.create(
+              {
+                LicenseId: applicationId,
+                ConditionId: optionalJsonCondition.id,
+              },
+              {transaction: t},
+            );
+          }),
+        );
+      }
+
       // Add any advisories to the DB.
       await Promise.all(
         advisories.map(async (jsonAdvisory) => {
@@ -163,6 +184,20 @@ const LicenseController = {
           );
         }),
       );
+
+      if (optionalAdvisories) {
+        await Promise.all(
+          optionalAdvisories.map(async (optionalJsonAdvisory) => {
+            await LicenseAdvisory.create(
+              {
+                LicenseId: applicationId,
+                AdvisoryId: optionalJsonAdvisory.id,
+              },
+              {transaction: t},
+            );
+          }),
+        );
+      }
     });
 
     // If all went well and we have a new application return it.

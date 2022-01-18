@@ -142,7 +142,7 @@ const routes: ServerRoute[] = [
           onBehalfContact = CleaningFunctions.cleanOnBehalfContact(application);
         }
 
-        // If site address is different from licence holder's address clean it.
+        // If site address is different from license holder's address clean it.
         if (!application.sameAddressAsLicenceHolder) {
           siteAddress = CleaningFunctions.cleanSiteAddress(application);
         }
@@ -381,6 +381,9 @@ const routes: ServerRoute[] = [
           lesserBlackBackedActivity = CleaningFunctions.cleanActivity(license, 'lesserBlackBackedGull');
         }
 
+        const optionalConditions = await CleaningFunctions.cleanCondition(license);
+        const optionalAdvisories = await CleaningFunctions.cleanAdvisory(license);
+
         // Clean the fields on the license.
         const incomingLicense = CleaningFunctions.cleanLicense(license);
 
@@ -392,6 +395,8 @@ const routes: ServerRoute[] = [
           commonActivity,
           greatBlackBackedActivity,
           lesserBlackBackedActivity,
+          optionalConditions,
+          optionalAdvisories,
           incomingLicense,
         );
 
