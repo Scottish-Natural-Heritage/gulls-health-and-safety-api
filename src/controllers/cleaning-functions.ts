@@ -1,5 +1,7 @@
 import utils from 'naturescot-utils';
 import {AssessmentInterface} from 'models/assessment';
+import Condition from './condition';
+import Advisory from './advisory';
 
 /**
  * Cleans the on behalf contact details into something the database can use.
@@ -238,6 +240,70 @@ const cleanAssessment = (body: any): any => {
   return cleanedBody;
 };
 
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {Condition[] | undefined} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanCondition = async (body: any) => {
+  const optionalConditions = [];
+  /* eslint-disable no-await-in-loop */
+  for (const condition of body.conditions) {
+    const findOptionalCondition = await Condition.findOne(condition);
+    if (findOptionalCondition) {
+      optionalConditions.push(findOptionalCondition);
+    }
+  }
+
+  if (optionalConditions.length > 0) {
+    return optionalConditions;
+  }
+
+  return undefined;
+};
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {Advisory[] | undefined} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanAdvisory = async (body: any) => {
+  const optionalAdvisories = [];
+
+  for (const advisory of body.advisories) {
+    const findOptionalAdvisory = await Advisory.findOne(advisory);
+    if (findOptionalAdvisory) {
+      optionalAdvisories.push(findOptionalAdvisory);
+    }
+  }
+
+  if (optionalAdvisories.length > 0) {
+    return optionalAdvisories;
+  }
+
+  return undefined;
+};
+/* eslint-enable no-await-in-loop */
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanLicense = (body: any): any => {
+  return {
+    periodFrom: body.periodFrom,
+    periodTo: body.periodTo,
+    licenseDetails: body.licenseDetails ? body.licenseDetails.trim() : undefined,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -250,6 +316,9 @@ const CleaningFunctions = {
   cleanActivity,
   cleanMeasure,
   cleanAssessment,
+  cleanCondition,
+  cleanAdvisory,
+  cleanLicense,
 };
 
 export default CleaningFunctions;

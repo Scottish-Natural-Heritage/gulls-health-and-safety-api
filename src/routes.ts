@@ -2,6 +2,9 @@ import {ServerRoute, Request, ResponseToolkit} from '@hapi/hapi';
 import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
+import License from './controllers/license';
+import Advisory from './controllers/advisory';
+import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
 import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
@@ -21,6 +24,156 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/`,
     handler: (_request: Request, h: ResponseToolkit) => {
       return h.response({message: 'Hello, world!'});
+    },
+  },
+  /**
+   * GET all advisories endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/advisories`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const advisories = await Advisory.findAll();
+
+        // Did we get any advisories?
+        if (advisories === undefined || advisories === null) {
+          return h.response({message: `No advisories found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(advisories).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all default advisories endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/default-advisories`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const defaultAdvisories = await Advisory.findAllDefault();
+
+        // Did we get any default advisories?
+        if (defaultAdvisories === undefined || defaultAdvisories === null) {
+          return h.response({message: `No default advisories found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(defaultAdvisories).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all optional advisories endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/optional-advisories`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const optionalAdvisories = await Advisory.findAllOptional();
+
+        // Did we get any optional advisories?
+        if (optionalAdvisories === undefined || optionalAdvisories === null) {
+          return h.response({message: `No optional advisories found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(optionalAdvisories).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all conditions endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/conditions`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const conditions = await Condition.findAll();
+
+        // Did we get any conditions?
+        if (conditions === undefined || conditions === null) {
+          return h.response({message: `No conditions found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(conditions).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all default conditions endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/default-conditions`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const defaultConditions = await Condition.findAllDefault();
+
+        // Did we get any default conditions?
+        if (defaultConditions === undefined || defaultConditions === null) {
+          return h.response({message: `No default conditions found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(defaultConditions).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all optional conditions endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/optional-conditions`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const optionalConditions = await Condition.findAllOptional();
+
+        // Did we get any optional conditions?
+        if (optionalConditions === undefined || optionalConditions === null) {
+          return h.response({message: `No optional conditions found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(optionalConditions).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
     },
   },
   /**
@@ -137,7 +290,7 @@ const routes: ServerRoute[] = [
           onBehalfContact = CleaningFunctions.cleanOnBehalfContact(application);
         }
 
-        // If site address is different from licence holder's address clean it.
+        // If site address is different from license holder's address clean it.
         if (!application.sameAddressAsLicenceHolder) {
           siteAddress = CleaningFunctions.cleanSiteAddress(application);
         }
@@ -301,6 +454,121 @@ const routes: ServerRoute[] = [
 
         // If they are, send back the updated fields.
         return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * POST new license endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/license`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        const assessment = await Assessment.findOne(existingId);
+        // Did we assess the application?
+        if (assessment === undefined || assessment === null) {
+          return h.response({message: `Application ${existingId} has not been assessed.`}).code(404);
+        }
+
+        if (!assessment.decision) {
+          return h
+            .response({message: `Application ${existingId} can not be issued as a license as it was not approved.`})
+            .code(404);
+        }
+
+        // Get the payload from the request.
+        const license = request.payload as any;
+
+        let herringActivity;
+        let blackHeadedActivity;
+        let commonActivity;
+        let greatBlackBackedActivity;
+        let lesserBlackBackedActivity;
+
+        // These are not required for R1 as we have made the decision to make all conditions and advisories mandatory.
+        // const condition = CleaningFunctions.cleanCondition(license);
+        // const advisory = CleaningFunctions.cleanAdvisory(license);
+
+        // Clean all the possible species activities.
+        if (license.species.herringGull.requiresLicense) {
+          herringActivity = CleaningFunctions.cleanActivity(license, 'herringGull');
+        }
+
+        if (license.species.blackHeadedGull.requiresLicense) {
+          blackHeadedActivity = CleaningFunctions.cleanActivity(license, 'blackHeadedGull');
+        }
+
+        if (license.species.commonGull.requiresLicense) {
+          commonActivity = CleaningFunctions.cleanActivity(license, 'commonGull');
+        }
+
+        if (license.species.greatBlackBackedGull.requiresLicense) {
+          greatBlackBackedActivity = CleaningFunctions.cleanActivity(license, 'greatBlackBackedGull');
+        }
+
+        if (license.species.lesserBlackBackedGull.requiresLicense) {
+          lesserBlackBackedActivity = CleaningFunctions.cleanActivity(license, 'lesserBlackBackedGull');
+        }
+
+        const optionalConditions = await CleaningFunctions.cleanCondition(license);
+        const optionalAdvisories = await CleaningFunctions.cleanAdvisory(license);
+
+        // Clean the fields on the license.
+        const incomingLicense = CleaningFunctions.cleanLicense(license);
+
+        // Call the controllers create function to write the cleaned data to the DB.
+        const newLicense: any = await License.create(
+          existingId,
+          herringActivity,
+          blackHeadedActivity,
+          commonActivity,
+          greatBlackBackedActivity,
+          lesserBlackBackedActivity,
+          optionalConditions,
+          optionalAdvisories,
+          incomingLicense,
+        );
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is a newLicense object and it has the ApplicationId property then...
+        if (newLicense?.ApplicationId) {
+          // Set a string representation of the ID to this local variable.
+          const newLicenseId = newLicense.ApplicationId.toString();
+          // Construct a new URL object with the baseUrl declared above and the newId.
+          const locationUrl = new URL(newLicenseId, baseUrl);
+          // If all is well return the License, location and 201 created.
+          return h.response(newLicense).location(locationUrl.href).code(201);
+        }
+
+        // If we get here the License was not created successfully.
+        return h.response({message: `Failed to create License.`}).code(500);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
