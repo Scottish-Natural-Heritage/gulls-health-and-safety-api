@@ -108,7 +108,7 @@ module.exports = {
       {
         id: 9,
         condition:
-          'You must implement preventative measures as detailed on the licence as soon as possible and by the end date of this licence. You must provide details of the preventative measures implemented on the licence return.',
+          'You must implement preventative measures as detailed in the Statement of Reason Test 2 (detailed below) as soon as possible and by the end date of this licence. You must provide details of the preventative measures implemented on the licence return.',
         orderNumber: 9,
         default: true,
         createdAt: new Date(),
