@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "192e9783-6acf-443a-bf00-2de6e451f459",
+		"_postman_id": "48963579-f7c5-4173-a050-c3d672f9645e",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -86,7 +86,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application?confirmBaseUrl=https://example.org/confirm?token=",
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -96,12 +96,6 @@
 						"gulls-health-and-safety-api",
 						"v1",
 						"application"
-					],
-					"query": [
-						{
-							"key": "confirmBaseUrl",
-							"value": "https://example.org/confirm?token="
-						}
 					]
 				}
 			},
@@ -496,6 +490,354 @@
 						"v1",
 						"application",
 						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new License from an approved application as a staff member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"licenseDetails\": \"this is a test\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/license",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"license"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a Visitor's Application That is now a License",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returned object matches posted object', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData.License).to.have.property('periodFrom');\r",
+							"    pm.expect(jsonData.License).to.have.property('periodTo');\r",
+							"    pm.expect(jsonData.License).to.have.property('PermittedSpecies');\r",
+							"\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('HerringGullId');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('BlackHeadedGullId');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('CommonGullId');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('GreatBlackBackedGullId');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('LesserBlackBackedGullId');\r",
+							"\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('PermittedHerringGull');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('PermittedBlackHeadedGull');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('PermittedCommonGull');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('PermittedGreatBlackBackedGull');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies).to.have.property('PermittedLesserBlackBackedGull');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('removeNests');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('quantityNestsToRemove');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('eggDestruction');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('quantityNestsWhereEggsDestroyed');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('chicksToRescueCentre');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('quantityChicksToRescue');\r",
+							"        pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('chicksRelocateNearby');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('quantityChicksToRelocate');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('killChicks');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('quantityChicksToKill');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('killAdults');\r",
+							"    pm.expect(jsonData.License.PermittedSpecies.PermittedHerringGull).to.have.property('quantityAdultsToKill');\r",
+							"\r",
+							"    pm.expect(jsonData.License.LicenseAdvisories[0]).to.have.property('AdvisoryId');\r",
+							"    pm.expect(jsonData.License.LicenseAdvisories[0]).to.have.property('Advisory');\r",
+							"    pm.expect(jsonData.License.LicenseAdvisories[0].Advisory).to.have.property('advisory');\r",
+							"    \r",
+							"    pm.expect(jsonData.License.LicenseConditions[0]).to.have.property('ConditionId');\r",
+							"    pm.expect(jsonData.License.LicenseConditions[0]).to.have.property('Condition');\r",
+							"    pm.expect(jsonData.License.LicenseConditions[0].Condition).to.have.property('condition');\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All conditions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/conditions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"conditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All advisories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/advisories",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"advisories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Default conditions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/default-conditions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"default-conditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Optional conditions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/optional-conditions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"optional-conditions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All default advisories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/default-advisories",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"default-advisories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All optional advisories",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/optional-advisories",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"optional-advisories"
 					]
 				}
 			},
