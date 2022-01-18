@@ -3,6 +3,8 @@ import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
 import License from './controllers/license';
+import Advisory from './controllers/advisory';
+import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
 import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
@@ -20,6 +22,156 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/`,
     handler: (_request: Request, h: ResponseToolkit) => {
       return h.response({message: 'Hello, world!'});
+    },
+  },
+  /**
+   * GET all advisories endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/advisories`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const advisories = await Advisory.findAll();
+
+        // Did we get any advisories?
+        if (advisories === undefined || advisories === null) {
+          return h.response({message: `No advisories found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(advisories).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all default advisories endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/default-advisories`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const defaultAdvisories = await Advisory.findAllDefault();
+
+        // Did we get any default advisories?
+        if (defaultAdvisories === undefined || defaultAdvisories === null) {
+          return h.response({message: `No default advisories found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(defaultAdvisories).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all optional advisories endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/optional-advisories`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const optionalAdvisories = await Advisory.findAllOptional();
+
+        // Did we get any optional advisories?
+        if (optionalAdvisories === undefined || optionalAdvisories === null) {
+          return h.response({message: `No optional advisories found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(optionalAdvisories).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all conditions endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/conditions`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const conditions = await Condition.findAll();
+
+        // Did we get any conditions?
+        if (conditions === undefined || conditions === null) {
+          return h.response({message: `No conditions found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(conditions).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all default conditions endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/default-conditions`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const defaultConditions = await Condition.findAllDefault();
+
+        // Did we get any default conditions?
+        if (defaultConditions === undefined || defaultConditions === null) {
+          return h.response({message: `No default conditions found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(defaultConditions).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET all optional conditions endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/optional-conditions`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const optionalConditions = await Condition.findAllOptional();
+
+        // Did we get any optional conditions?
+        if (optionalConditions === undefined || optionalConditions === null) {
+          return h.response({message: `No optional conditions found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(optionalConditions).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
     },
   },
   /**
