@@ -1,6 +1,9 @@
+import * as jwt from 'jsonwebtoken';
+
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
+import jwk from '../config/jwk.js';
 
 const {
   Application,
@@ -152,19 +155,40 @@ const sendLicenceApplicantNotificationEmail = async (emailDetails: any, emailAdd
 };
 
 /**
- * This function returns an object containing the details required for the license holders magic link email.
+ * This function returns an object containing the details required for the licence holders magic link email.
  *
+ * @param {string} confirmBaseUrl The micro-frontend we want to send the lh to to confirm their licence.
+ * @param {number} applicationId The application we want the lh to confirm.
  * @param {any} licenceHolderContact The licence holder's contact details.
  * @param {any} licenceApplicantContact The licence applicant's contact details.
  * @returns {any} An object with the required details set.
  */
-const setLicenceHolderMagicLinkDetails = (licenceHolderContact: any, licenceApplicantContact: any) => {
+const setLicenceHolderMagicLinkDetails = async (
+  confirmBaseUrl: string,
+  applicationId: number,
+  licenceHolderContact: any,
+  licenceApplicantContact: any,
+) => {
+  // Get the private key.
+  const privateKey = await jwk.getPrivateKey({type: 'pem'});
+
+  // Create JWT.
+  const token = jwt.sign({}, privateKey as string, {
+    algorithm: 'ES256',
+    expiresIn: '28 days',
+    noTimestamp: true,
+    subject: `${applicationId}`,
+  });
+
+  // Append JWT to confirm url.
+  const magicLink = `${confirmBaseUrl}${token}`;
+
   return {
     lhName: licenceHolderContact.name,
     onBehalfName: licenceApplicantContact.name,
     onBehalfOrg: licenceApplicantContact.organisation,
     onBehalfEmail: licenceApplicantContact.emailAddress,
-    magicLink: 'http://localhost:3017/gulls-health-and-safety/on-behalf-approve',
+    magicLink,
   };
 };
 
@@ -359,6 +383,7 @@ const ApplicationController = {
    * @param {any | undefined} lesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
    * @param {any | undefined} measure The measures taken / not taken details.
    * @param {any | undefined} incomingApplication The application details.
+   * @param {string} confirmBaseUrl The micro-frontend we want to send the lh to to confirm their licence.
    * @returns {ApplicationInterface} Returns newApplication, the newly created application.
    */
   create: async (
@@ -374,6 +399,7 @@ const ApplicationController = {
     lesserBlackBackedActivity: any | undefined,
     measure: any,
     incomingApplication: any,
+    confirmBaseUrl: string,
   ) => {
     const speciesIds: SpeciesIds = {
       HerringGullId: undefined,
@@ -472,10 +498,15 @@ const ApplicationController = {
 
     // If the licence applicant applied on the license holder behalf so send them a confirmation email
     // and send the email to the license holder containing the magic link.
-    if (onBehalfContact) {
+    if (newApplication && onBehalfContact) {
       // Set the details of the emails.
       const emailDetails = setLicenceApplicantNotificationDetails(onBehalfContact, licenceHolderContact);
-      const magicLinkEmailDetails = setLicenceHolderMagicLinkDetails(licenceHolderContact, onBehalfContact);
+      const magicLinkEmailDetails = await setLicenceHolderMagicLinkDetails(
+        confirmBaseUrl,
+        (newApplication as any).id,
+        licenceHolderContact,
+        onBehalfContact,
+      );
       try {
         // Send the email using the Notify service's API.
         await sendLicenceApplicantNotificationEmail(emailDetails, onBehalfContact.emailAddress);

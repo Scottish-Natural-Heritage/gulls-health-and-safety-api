@@ -10,6 +10,8 @@ import CleaningFunctions from './controllers/cleaning-functions';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
+import jwk from './config/jwk';
+
 /**
  * An array of all the routes and controllers in the app.
  */
@@ -269,7 +271,6 @@ const routes: ServerRoute[] = [
         const application = request.payload as any;
 
         let onBehalfContact;
-        let address;
         let siteAddress;
         let herringActivity;
         let blackHeadedActivity;
@@ -279,12 +280,7 @@ const routes: ServerRoute[] = [
 
         // Clean the incoming data.
         const licenceHolderContact = CleaningFunctions.cleanLicenseHolderContact(application);
-        address = CleaningFunctions.cleanAddress(application);
-
-        // If we only have a UPRN get the rest of the address.
-        if (address.uprn) {
-          address = await CleaningFunctions.cleanAddressFromUprn(address.uprn);
-        }
+        const address = CleaningFunctions.cleanAddress(application);
 
         const issue = CleaningFunctions.cleanIssue(application);
         const measure = CleaningFunctions.cleanMeasure(application);
@@ -297,11 +293,6 @@ const routes: ServerRoute[] = [
         // If site address is different from license holder's address clean it.
         if (!application.sameAddressAsLicenceHolder) {
           siteAddress = CleaningFunctions.cleanSiteAddress(application);
-        }
-
-        // If we only have a UPRN get the rest of the site's address.
-        if (siteAddress?.uprn) {
-          siteAddress = await CleaningFunctions.cleanAddressFromUprn(siteAddress.uprn);
         }
 
         // Clean all the possible species activities.
@@ -328,6 +319,19 @@ const routes: ServerRoute[] = [
         // Clean the fields on the application.
         const incomingApplication = CleaningFunctions.cleanApplication(application);
 
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // Grab the 'forwarding' url from the request.
+        const {confirmBaseUrl} = request.query;
+
+        // Check there's actually one there, otherwise we'll have to make one up.
+        const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
+
         // Call the controllers create function to write the cleaned data to the DB.
         const newApplication: any = await Application.create(
           onBehalfContact,
@@ -342,13 +346,7 @@ const routes: ServerRoute[] = [
           lesserBlackBackedActivity,
           measure,
           incomingApplication,
-        );
-
-        // Create baseUrl.
-        const baseUrl = new URL(
-          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
-            request.url.pathname.endsWith('/') ? '' : '/'
-          }`,
+          urlInvalid ? `${baseUrl.toString()}confirm?token=` : confirmBaseUrl,
         );
 
         // If there is a newApplication object and it has the ID property then...
@@ -574,6 +572,28 @@ const routes: ServerRoute[] = [
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+  /**
+   * GET the public part of our elliptic curve JWK.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/public-key`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Grab a copy of our public key.
+        const publicKey = await jwk.getPublicKey({type: 'jwk'});
+
+        // Send it to the client.
+        return h.response(publicKey).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
