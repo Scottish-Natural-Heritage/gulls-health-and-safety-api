@@ -10,7 +10,7 @@ module.exports = {
         autoIncrement: true,
       },
       advisory: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       orderNumber: {
         type: Sequelize.INTEGER,
