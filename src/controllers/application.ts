@@ -2,7 +2,23 @@ import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
 
-const {Application, Contact, Address, Activity, Issue, Measure, Species, Assessment} = database;
+const {
+  Application,
+  Contact,
+  Address,
+  Activity,
+  PermittedActivity,
+  Issue,
+  Measure,
+  Species,
+  PermittedSpecies,
+  Assessment,
+  License,
+  LicenseAdvisory,
+  Advisory,
+  LicenseCondition,
+  Condition,
+} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -242,6 +258,58 @@ const ApplicationController = {
         {
           model: Assessment,
           as: 'ApplicationAssessment',
+        },
+        {
+          model: License,
+          as: 'License',
+          include: [
+            {
+              model: PermittedSpecies,
+              as: 'PermittedSpecies',
+              include: [
+                {
+                  model: PermittedActivity,
+                  as: 'PermittedHerringGull',
+                },
+                {
+                  model: PermittedActivity,
+                  as: 'PermittedBlackHeadedGull',
+                },
+                {
+                  model: PermittedActivity,
+                  as: 'PermittedCommonGull',
+                },
+                {
+                  model: PermittedActivity,
+                  as: 'PermittedGreatBlackBackedGull',
+                },
+                {
+                  model: PermittedActivity,
+                  as: 'PermittedLesserBlackBackedGull',
+                },
+              ],
+            },
+            {
+              model: LicenseAdvisory,
+              as: 'LicenseAdvisories',
+              include: [
+                {
+                  model: Advisory,
+                  as: 'Advisory',
+                },
+              ],
+            },
+            {
+              model: LicenseCondition,
+              as: 'LicenseConditions',
+              include: [
+                {
+                  model: Condition,
+                  as: 'Condition',
+                },
+              ],
+            },
+          ],
         },
       ],
     });
