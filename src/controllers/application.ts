@@ -157,10 +157,11 @@ const setLicenceHolderMagicLinkDetails = async (
   const privateKey = await jwk.getPrivateKey({type: 'pem'});
 
   // Create JWT.
-  const token = jwt.sign({subject: `${applicationId}`}, privateKey as string, {
+  const token = jwt.sign({}, privateKey as string, {
     algorithm: 'ES256',
     expiresIn: '28 days',
     noTimestamp: true,
+    subject: `${applicationId}`,
   });
 
   // Append JWT to confirm url.
