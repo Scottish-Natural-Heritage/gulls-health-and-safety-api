@@ -60,20 +60,26 @@ database.Address.hasOne(database.Application, {as: 'SiteAddress', foreignKey: 'S
 database.Species.hasOne(database.Application, {as: 'Species', foreignKey: 'SpeciesId'});
 
 database.Assessment.belongsTo(database.Application, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
-database.License.belongsTo(database.Application, {as: 'Licence', foreignKey: 'ApplicationId'});
+database.License.belongsTo(database.Application, {as: 'License', foreignKey: 'ApplicationId'});
 database.Issue.belongsTo(database.Application, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Measure.belongsTo(database.Application, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
 
 database.Application.hasOne(database.Assessment, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
-database.Application.hasOne(database.License, {as: 'Licence', foreignKey: 'ApplicationId'});
+database.Application.hasOne(database.License, {as: 'License', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Issue, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Measure, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
 
-database.LicenseAdvisory.belongsTo(database.License, {as: 'LicenseAdvisory', foreignKey: 'LicenseId'});
-database.LicenseCondition.belongsTo(database.License, {as: 'LicenseCondition', foreignKey: 'LicenseId'});
+database.LicenseAdvisory.belongsTo(database.License, {as: 'LicenseAdvisories', foreignKey: 'LicenseId'});
+database.LicenseCondition.belongsTo(database.License, {as: 'LicenseConditions', foreignKey: 'LicenseId'});
 
-database.License.hasMany(database.LicenseAdvisory, {as: 'LicenseAdvisory', foreignKey: 'LicenseId'});
-database.License.hasMany(database.LicenseCondition, {as: 'LicenseCondition', foreignKey: 'LicenseId'});
+database.License.hasMany(database.LicenseAdvisory, {as: 'LicenseAdvisories', foreignKey: 'LicenseId'});
+database.License.hasMany(database.LicenseCondition, {as: 'LicenseConditions', foreignKey: 'LicenseId'});
+
+database.LicenseAdvisory.belongsTo(database.Advisory, {as: 'Advisory', foreignKey: 'AdvisoryId'});
+database.LicenseCondition.belongsTo(database.Condition, {as: 'Condition', foreignKey: 'ConditionId'});
+
+database.Advisory.hasMany(database.LicenseAdvisory, {as: 'Advisory', foreignKey: 'AdvisoryId'});
+database.Condition.hasMany(database.LicenseCondition, {as: 'Condition', foreignKey: 'ConditionId'});
 
 database.Species.belongsTo(database.Activity, {as: 'HerringGull', foreignKey: 'HerringGullId'});
 database.Species.belongsTo(database.Activity, {as: 'BlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
@@ -87,32 +93,42 @@ database.Activity.hasOne(database.Species, {as: 'CommonGull', foreignKey: 'Commo
 database.Activity.hasOne(database.Species, {as: 'GreatBlackBackedGull', foreignKey: 'GreatBlackBackedGullId'});
 database.Activity.hasOne(database.Species, {as: 'LesserBlackBackedGull', foreignKey: 'LesserBlackBackedGullId'});
 
+database.License.belongsTo(database.PermittedSpecies, {as: 'PermittedSpecies', foreignKey: 'PermittedSpeciesId'});
 database.PermittedSpecies.hasOne(database.License, {as: 'PermittedSpecies', foreignKey: 'PermittedSpeciesId'});
 
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'HerringGull', foreignKey: 'HerringGullId'});
 database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'BlackHeadedGull',
+  as: 'PermittedHerringGull',
+  foreignKey: 'HerringGullId',
+});
+database.PermittedSpecies.belongsTo(database.PermittedActivity, {
+  as: 'PermittedBlackHeadedGull',
   foreignKey: 'BlackHeadedGullId',
 });
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {as: 'CommonGull', foreignKey: 'CommonGullId'});
 database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'GreatBlackBackedGull',
+  as: 'PermittedCommonGull',
+  foreignKey: 'CommonGullId',
+});
+database.PermittedSpecies.belongsTo(database.PermittedActivity, {
+  as: 'PermittedGreatBlackBackedGull',
   foreignKey: 'GreatBlackBackedGullId',
 });
 database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'LesserBlackBackedGull',
+  as: 'PermittedLesserBlackBackedGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 
-database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'HerringGull', foreignKey: 'HerringGullId'});
-database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'BlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
-database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'CommonGull', foreignKey: 'CommonGullId'});
+database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'PermittedHerringGull', foreignKey: 'HerringGullId'});
 database.PermittedActivity.hasOne(database.PermittedSpecies, {
-  as: 'GreatBlackBackedGull',
+  as: 'PermittedBlackHeadedGull',
+  foreignKey: 'BlackHeadedGullId',
+});
+database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'PermittedCommonGull', foreignKey: 'CommonGullId'});
+database.PermittedActivity.hasOne(database.PermittedSpecies, {
+  as: 'PermittedGreatBlackBackedGull',
   foreignKey: 'GreatBlackBackedGullId',
 });
 database.PermittedActivity.hasOne(database.PermittedSpecies, {
-  as: 'LesserBlackBackedGull',
+  as: 'PermittedLesserBlackBackedGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 
