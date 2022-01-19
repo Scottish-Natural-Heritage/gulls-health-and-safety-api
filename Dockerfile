@@ -47,6 +47,7 @@ COPY --chown=node:node --from=builder /home/node/package.json ./
 COPY --chown=node:node ./src ./src
 COPY --chown=node:node ./util ./util
 COPY --chown=node:node .sequelizerc ./
+COPY --chown=node:node ./.secrets ./.secrets
 
 # These variables are for overriding but keep them consistent between image and
 # run.
