@@ -14,12 +14,14 @@ const ApplicationModel = (sequelize: Sequelize) => {
     public LicenceHolderAddressId!: number;
     public SiteAddressId!: number;
     public SpeciesId!: number;
+    public PermittedSpeciesId!: number;
     public isResidentialSite!: boolean;
     public siteType!: string;
     public previousLicence!: boolean;
     public previousLicenceNumber!: string;
     public supportingInformation!: string;
-    public confirmedByLicensingHolder!: string;
+    public confirmedByLicensingHolder!: boolean;
+    public staffNumber!: string;
   }
 
   Application.init(
@@ -39,6 +41,9 @@ const ApplicationModel = (sequelize: Sequelize) => {
       SpeciesId: {
         type: DataTypes.INTEGER,
       },
+      PermittedSpeciesId: {
+        type: DataTypes.INTEGER,
+      },
       isResidentialSite: {
         type: DataTypes.BOOLEAN,
       },
@@ -56,6 +61,9 @@ const ApplicationModel = (sequelize: Sequelize) => {
       },
       confirmedByLicensingHolder: {
         type: DataTypes.BOOLEAN,
+      },
+      staffNumber: {
+        type: DataTypes.STRING,
       },
     },
     {

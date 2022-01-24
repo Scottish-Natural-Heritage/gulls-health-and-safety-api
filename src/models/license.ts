@@ -7,7 +7,6 @@ interface LicenseInterface {
   ApplicationId?: number;
   periodFrom?: Date;
   periodTo?: Date;
-  licenseDetails?: string;
 }
 
 /**
@@ -21,7 +20,6 @@ const LicenseModel = (sequelize: Sequelize) => {
     public ApplicationId!: number;
     public periodFrom!: Date;
     public periodTo!: Date;
-    public licenseDetails!: string;
   }
 
   License.init(
@@ -38,12 +36,6 @@ const LicenseModel = (sequelize: Sequelize) => {
       },
       periodTo: {
         type: DataTypes.DATE,
-      },
-      licenseDetails: {
-        type: DataTypes.STRING,
-      },
-      PermittedSpeciesId: {
-        type: DataTypes.INTEGER,
       },
     },
     {

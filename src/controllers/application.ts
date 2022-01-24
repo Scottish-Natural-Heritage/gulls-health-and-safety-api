@@ -49,12 +49,14 @@ interface ApplicationInterface {
   LicenceHolderAddressId: number;
   SiteAddressId: number;
   SpeciesId: number;
+  PermittedSpeciesId: number;
   isResidentialSite: boolean;
   siteType: string;
   previousLicence: boolean;
   previousLicenceNumber: string;
   supportingInformation: string;
   confirmedByLicensingHolder: boolean;
+  staffNumber: string;
 }
 
 // Create a more user friendly displayable date from a date object.
@@ -272,6 +274,32 @@ const ApplicationController = {
           ],
         },
         {
+          model: PermittedSpecies,
+          as: 'PermittedSpecies',
+          include: [
+            {
+              model: PermittedActivity,
+              as: 'PermittedHerringGull',
+            },
+            {
+              model: PermittedActivity,
+              as: 'PermittedBlackHeadedGull',
+            },
+            {
+              model: PermittedActivity,
+              as: 'PermittedCommonGull',
+            },
+            {
+              model: PermittedActivity,
+              as: 'PermittedGreatBlackBackedGull',
+            },
+            {
+              model: PermittedActivity,
+              as: 'PermittedLesserBlackBackedGull',
+            },
+          ],
+        },
+        {
           model: Issue,
           as: 'ApplicationIssue',
         },
@@ -287,32 +315,6 @@ const ApplicationController = {
           model: License,
           as: 'License',
           include: [
-            {
-              model: PermittedSpecies,
-              as: 'PermittedSpecies',
-              include: [
-                {
-                  model: PermittedActivity,
-                  as: 'PermittedHerringGull',
-                },
-                {
-                  model: PermittedActivity,
-                  as: 'PermittedBlackHeadedGull',
-                },
-                {
-                  model: PermittedActivity,
-                  as: 'PermittedCommonGull',
-                },
-                {
-                  model: PermittedActivity,
-                  as: 'PermittedGreatBlackBackedGull',
-                },
-                {
-                  model: PermittedActivity,
-                  as: 'PermittedLesserBlackBackedGull',
-                },
-              ],
-            },
             {
               model: LicenseAdvisory,
               as: 'LicenseAdvisories',
@@ -381,6 +383,11 @@ const ApplicationController = {
    * @param {any | undefined} commonActivity The common gull activities to be licensed.
    * @param {any | undefined} greatBlackBackedActivity The great black-backed gull activities to be licensed.
    * @param {any | undefined} lesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
+   * @param {any | undefined} permittedHerringActivity The herring gull activities to be licensed.
+   * @param {any | undefined} permittedBlackHeadedActivity The black-headed gull activities to be licensed.
+   * @param {any | undefined} permittedCommonActivity The common gull activities to be licensed.
+   * @param {any | undefined} permittedGreatBlackBackedActivity The great black-backed gull activities to be licensed.
+   * @param {any | undefined} permittedLesserBlackBackedActivity The lesser black-backed gull activities to be licensed.
    * @param {any | undefined} measure The measures taken / not taken details.
    * @param {any | undefined} incomingApplication The application details.
    * @param {string} confirmBaseUrl The micro-frontend we want to send the lh to to confirm their licence.
@@ -397,11 +404,23 @@ const ApplicationController = {
     commonActivity: any | undefined,
     greatBlackBackedActivity: any | undefined,
     lesserBlackBackedActivity: any | undefined,
+    permittedHerringActivity: any | undefined,
+    permittedBlackHeadedActivity: any | undefined,
+    permittedCommonActivity: any | undefined,
+    permittedGreatBlackBackedActivity: any | undefined,
+    permittedLesserBlackBackedActivity: any | undefined,
     measure: any,
     incomingApplication: any,
     confirmBaseUrl: string,
   ) => {
     const speciesIds: SpeciesIds = {
+      HerringGullId: undefined,
+      BlackHeadedGullId: undefined,
+      CommonGullId: undefined,
+      GreatBlackBackedGullId: undefined,
+      LesserBlackBackedGullId: undefined,
+    };
+    const permittedSpeciesIds: SpeciesIds = {
       HerringGullId: undefined,
       BlackHeadedGullId: undefined,
       CommonGullId: undefined,
@@ -430,38 +449,53 @@ const ApplicationController = {
       // Add any species specific activities to the DB and get their IDs.
       if (herringActivity) {
         const herringGull = await Activity.create(herringActivity, {transaction: t});
+        const permittedHerringGull = await PermittedActivity.create(permittedHerringActivity, {transaction: t});
         speciesIds.HerringGullId = herringGull.id;
+        permittedSpeciesIds.HerringGullId = permittedHerringGull.id;
       }
 
       if (blackHeadedActivity) {
         const blackHeadedGull = await Activity.create(blackHeadedActivity, {transaction: t});
+        const permittedBlackHeadedGull = await PermittedActivity.create(permittedBlackHeadedActivity, {transaction: t});
         speciesIds.BlackHeadedGullId = blackHeadedGull.id;
+        permittedSpeciesIds.BlackHeadedGullId = permittedBlackHeadedGull.id;
       }
 
       if (commonActivity) {
         const commonGull = await Activity.create(commonActivity, {transaction: t});
+        const permittedCommonGull = await PermittedActivity.create(permittedCommonActivity, {transaction: t});
         speciesIds.CommonGullId = commonGull.id;
+        permittedSpeciesIds.CommonGullId = permittedCommonGull.id;
       }
 
       if (greatBlackBackedActivity) {
         const greatBlackBackedGull = await Activity.create(greatBlackBackedActivity, {transaction: t});
+        const permittedGreatBlackBackedGull = await PermittedActivity.create(permittedGreatBlackBackedActivity, {
+          transaction: t,
+        });
         speciesIds.GreatBlackBackedGullId = greatBlackBackedGull.id;
+        permittedSpeciesIds.GreatBlackBackedGullId = permittedGreatBlackBackedGull.id;
       }
 
       if (lesserBlackBackedActivity) {
         const lesserBlackBackedGull = await Activity.create(lesserBlackBackedActivity, {transaction: t});
+        const permittedLesserBlackBackedGull = await PermittedActivity.create(permittedLesserBlackBackedActivity, {
+          transaction: t,
+        });
         speciesIds.LesserBlackBackedGullId = lesserBlackBackedGull.id;
+        permittedSpeciesIds.LesserBlackBackedGullId = permittedLesserBlackBackedGull.id;
       }
 
       // Set the species foreign keys in the DB.
       const newSpecies = await Species.create(speciesIds, {transaction: t});
-
+      const newPermittedSpecies = await PermittedSpecies.create(permittedSpeciesIds, {transaction: t});
       // Set the application's foreign keys.
       incomingApplication.LicenceHolderId = newLicenceHolderContact.id;
       incomingApplication.LicenceApplicantId = newOnBehalfContact ? newOnBehalfContact.id : newLicenceHolderContact.id;
       incomingApplication.LicenceHolderAddressId = newAddress.id;
       incomingApplication.SiteAddressId = newSiteAddress ? newSiteAddress.id : newAddress.id;
       incomingApplication.SpeciesId = newSpecies.id;
+      incomingApplication.PermittedSpeciesId = newPermittedSpecies.id;
 
       let newId; // The prospective random ID of the new application.
       let existingApplication; // Possible already assigned application.
@@ -588,6 +622,23 @@ const ApplicationController = {
     // If all went well and we have confirmed a application return it.
     if (confirmedApplication) {
       return confirmedApplication as ApplicationInterface;
+    }
+
+    // If no application was confirmed return undefined.
+    return undefined;
+  },
+
+  assign: async (id: number, assignTo: any) => {
+    let assign;
+    // Start the transaction.
+    await database.sequelize.transaction(async (t: transaction) => {
+      // Save the new values to the database.
+      assign = await Application.update(assignTo, {where: {id}, transaction: t});
+    });
+
+    // If all went well and we have confirmed a application return it.
+    if (assign) {
+      return assign as ApplicationInterface;
     }
 
     // If no application was confirmed return undefined.

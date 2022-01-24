@@ -277,6 +277,11 @@ const routes: ServerRoute[] = [
         let commonActivity;
         let greatBlackBackedActivity;
         let lesserBlackBackedActivity;
+        let permittedHerringActivity;
+        let permittedBlackHeadedActivity;
+        let permittedCommonActivity;
+        let permittedGreatBlackBackedActivity;
+        let permittedLesserBlackBackedActivity;
 
         // Clean the incoming data.
         const licenceHolderContact = CleaningFunctions.cleanLicenseHolderContact(application);
@@ -298,22 +303,33 @@ const routes: ServerRoute[] = [
         // Clean all the possible species activities.
         if (application.species.herringGull.requiresLicense) {
           herringActivity = CleaningFunctions.cleanActivity(application, 'herringGull');
+          permittedHerringActivity = CleaningFunctions.cleanPermittedActivity(application, 'herringGull');
         }
 
         if (application.species.blackHeadedGull.requiresLicense) {
           blackHeadedActivity = CleaningFunctions.cleanActivity(application, 'blackHeadedGull');
+          permittedBlackHeadedActivity = CleaningFunctions.cleanPermittedActivity(application, 'blackHeadedGull');
         }
 
         if (application.species.commonGull.requiresLicense) {
           commonActivity = CleaningFunctions.cleanActivity(application, 'commonGull');
+          permittedCommonActivity = CleaningFunctions.cleanPermittedActivity(application, 'commonGull');
         }
 
         if (application.species.greatBlackBackedGull.requiresLicense) {
           greatBlackBackedActivity = CleaningFunctions.cleanActivity(application, 'greatBlackBackedGull');
+          permittedGreatBlackBackedActivity = CleaningFunctions.cleanPermittedActivity(
+            application,
+            'greatBlackBackedGull',
+          );
         }
 
         if (application.species.lesserBlackBackedGull.requiresLicense) {
           lesserBlackBackedActivity = CleaningFunctions.cleanActivity(application, 'lesserBlackBackedGull');
+          permittedLesserBlackBackedActivity = CleaningFunctions.cleanPermittedActivity(
+            application,
+            'lesserBlackBackedGull',
+          );
         }
 
         // Clean the fields on the application.
@@ -344,6 +360,11 @@ const routes: ServerRoute[] = [
           commonActivity,
           greatBlackBackedActivity,
           lesserBlackBackedActivity,
+          permittedHerringActivity,
+          permittedBlackHeadedActivity,
+          permittedCommonActivity,
+          permittedGreatBlackBackedActivity,
+          permittedLesserBlackBackedActivity,
           measure,
           incomingApplication,
           urlInvalid ? `${baseUrl.toString()}confirm?token=` : confirmBaseUrl,
@@ -400,6 +421,54 @@ const routes: ServerRoute[] = [
         // Update the application in the database with confirmedByLicensingHolder set to true.
         const confirmApplication: any = request.payload as any;
         const updatedApplication = await Application.confirm(existingId, confirmApplication);
+
+        // If they're not successful, send a 500 error.
+        if (updatedApplication === undefined) {
+          return h.response({message: `Could not update application ${existingId}.`}).code(500);
+        }
+
+        // If they are, send back the updated fields.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * PATCH application confirmed endpoint.
+   */
+  {
+    method: 'patch',
+    path: `${config.pathPrefix}/application/{id}/assign`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Update the application in the database with staff number.
+        const assignTo: any = request.payload as any;
+
+        // Did we get an application that has already been confirmed?
+        if (application.staffNumber && assignTo.staffNumber !== null) {
+          return h.response({message: `Application ${existingId} has already been assigned.`}).code(400);
+        }
+
+        const updatedApplication = await Application.assign(existingId, assignTo);
 
         // If they're not successful, send a 500 error.
         if (updatedApplication === undefined) {
@@ -500,37 +569,6 @@ const routes: ServerRoute[] = [
         // Get the payload from the request.
         const license = request.payload as any;
 
-        let herringActivity;
-        let blackHeadedActivity;
-        let commonActivity;
-        let greatBlackBackedActivity;
-        let lesserBlackBackedActivity;
-
-        // These are not required for R1 as we have made the decision to make all conditions and advisories mandatory.
-        // const condition = CleaningFunctions.cleanCondition(license);
-        // const advisory = CleaningFunctions.cleanAdvisory(license);
-
-        // Clean all the possible species activities.
-        if (license.species.herringGull.requiresLicense) {
-          herringActivity = CleaningFunctions.cleanActivity(license, 'herringGull');
-        }
-
-        if (license.species.blackHeadedGull.requiresLicense) {
-          blackHeadedActivity = CleaningFunctions.cleanActivity(license, 'blackHeadedGull');
-        }
-
-        if (license.species.commonGull.requiresLicense) {
-          commonActivity = CleaningFunctions.cleanActivity(license, 'commonGull');
-        }
-
-        if (license.species.greatBlackBackedGull.requiresLicense) {
-          greatBlackBackedActivity = CleaningFunctions.cleanActivity(license, 'greatBlackBackedGull');
-        }
-
-        if (license.species.lesserBlackBackedGull.requiresLicense) {
-          lesserBlackBackedActivity = CleaningFunctions.cleanActivity(license, 'lesserBlackBackedGull');
-        }
-
         const optionalConditions = await CleaningFunctions.cleanCondition(license);
         const optionalAdvisories = await CleaningFunctions.cleanAdvisory(license);
 
@@ -540,11 +578,6 @@ const routes: ServerRoute[] = [
         // Call the controllers create function to write the cleaned data to the DB.
         const newLicense: any = await License.create(
           existingId,
-          herringActivity,
-          blackHeadedActivity,
-          commonActivity,
-          greatBlackBackedActivity,
-          lesserBlackBackedActivity,
           optionalConditions,
           optionalAdvisories,
           incomingLicense,
