@@ -69,7 +69,7 @@ if (process.env.NODE_ENV === 'production') {
 
         updateActivitiesQueries.push(
           queryInterface.sequelize.query(
-            `INSERT INTO gulls."PermittedActivities" ("id" "removeNests", "quantityNestsToRemove", "eggDestruction", "quantityNestsWhereEggsDestroyed", "chicksToRescueCentre", "quantityChicksToRescue", "chicksRelocateNearby", "quantityChicksToRelocate", "killChicks", "quantityChicksToKill", "killAdults", "quantityAdultsToKill", "createdAt", "updatedAt") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`,
+            `INSERT INTO gulls."PermittedActivities" ("id", "removeNests", "quantityNestsToRemove", "eggDestruction", "quantityNestsWhereEggsDestroyed", "chicksToRescueCentre", "quantityChicksToRescue", "chicksRelocateNearby", "quantityChicksToRelocate", "killChicks", "quantityChicksToKill", "killAdults", "quantityAdultsToKill", "createdAt", "updatedAt") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`,
             {
               replacements: [
                 result.id,
@@ -101,7 +101,7 @@ if (process.env.NODE_ENV === 'production') {
       for (const result of speciesResultsArray) {
         updateSpeciesQueries.push(
           queryInterface.sequelize.query(
-            `INSERT INTO gulls."PermittedSpecies" ("id" "HerringGullId", "BlackHeadedGullId", "CommonGullId", "GreatBlackBackedGullId", "LesserBlackBackedGullId", "createdAt", "updatedAt") VALUES (?,?,?,?,?,?,?,?);`,
+            `INSERT INTO gulls."PermittedSpecies" ("id", "HerringGullId", "BlackHeadedGullId", "CommonGullId", "GreatBlackBackedGullId", "LesserBlackBackedGullId", "createdAt", "updatedAt") VALUES (?,?,?,?,?,?,?,?);`,
             {
               replacements: [
                 result.id,
