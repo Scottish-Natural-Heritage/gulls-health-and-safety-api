@@ -56,6 +56,7 @@ interface ApplicationInterface {
   previousLicenceNumber: string;
   supportingInformation: string;
   confirmedByLicensingHolder: boolean;
+  staffNumber: string;
 }
 
 // Create a more user friendly displayable date from a date object.
@@ -621,6 +622,23 @@ const ApplicationController = {
     // If all went well and we have confirmed a application return it.
     if (confirmedApplication) {
       return confirmedApplication as ApplicationInterface;
+    }
+
+    // If no application was confirmed return undefined.
+    return undefined;
+  },
+
+  assign: async (id: number, assignTo: any) => {
+    let assign;
+    // Start the transaction.
+    await database.sequelize.transaction(async (t: transaction) => {
+      // Save the new values to the database.
+      assign = await Application.update(assignTo, {where: {id}, transaction: t});
+    });
+
+    // If all went well and we have confirmed a application return it.
+    if (assign) {
+      return assign as ApplicationInterface;
     }
 
     // If no application was confirmed return undefined.
