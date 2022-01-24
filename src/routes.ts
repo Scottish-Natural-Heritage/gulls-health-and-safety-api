@@ -439,6 +439,54 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * PATCH application confirmed endpoint.
+   */
+  {
+    method: 'patch',
+    path: `${config.pathPrefix}/application/{id}/assign`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Update the application in the database with staff number.
+        const assignTo: any = request.payload as any;
+
+        // Did we get an application that has already been confirmed?
+        if (application.staffNumber && assignTo.staffNumber !== null) {
+          return h.response({message: `Application ${existingId} has already been assigned.`}).code(400);
+        }
+
+        const updatedApplication = await Application.assign(existingId, assignTo);
+
+        // If they're not successful, send a 500 error.
+        if (updatedApplication === undefined) {
+          return h.response({message: `Could not update application ${existingId}.`}).code(500);
+        }
+
+        // If they are, send back the updated fields.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * PATCH application assessment endpoint.
    */
   {
