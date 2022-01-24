@@ -157,6 +157,74 @@ const cleanActivity = (body: any, gullType: string): any => {
   };
 };
 
+/**
+ * Cleans the permitted activity details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @param {string} gullType The type of gull the activities relate to.
+ * @returns {any} The cleaned activity details.
+ */
+const cleanPermittedActivity = (body: any, gullType: string): any => {
+  return {
+    removeNests: body.species?.[gullType].activities.removeNests,
+    quantityNestsToRemove: body.species?.[gullType].activities.quantityNestsToRemove
+      ? rangesIntoIntegers(body.species?.[gullType].activities.quantityNestsToRemove)
+      : undefined,
+    eggDestruction: body.species?.[gullType].activities.eggDestruction,
+    quantityNestsWhereEggsDestroyed: body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
+      ? rangesIntoIntegers(body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed)
+      : undefined,
+    chicksToRescueCentre: body.species?.[gullType].activities.chicksToRescueCentre,
+    quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
+      ? body.species?.[gullType].activities.quantityChicksToRescue
+      : undefined,
+    chicksRelocateNearby: body.species?.[gullType].activities.chicksRelocateNearby,
+    quantityChicksToRelocate: body.species?.[gullType].activities.quantityChicksToRelocate
+      ? body.species?.[gullType].activities.quantityChicksToRelocate
+      : undefined,
+    killChicks: body.species?.[gullType].activities.killChicks,
+    quantityChicksToKill: body.species?.[gullType].activities.quantityChicksToKill
+      ? body.species?.[gullType].activities.quantityChicksToKill
+      : undefined,
+    killAdults: body.species?.[gullType].activities.killAdults,
+    quantityAdultsToKill: body.species?.[gullType].activities.quantityAdultsToKill
+      ? body.species?.[gullType].activities.quantityAdultsToKill
+      : undefined,
+  };
+};
+
+/**
+ * This function returns a integer value instead of a string range.
+ *
+ * @param {string} range The range to made more readable.
+ * @returns {string} A more accurate and readable range as a string.
+ */
+const rangesIntoIntegers = (range: string | undefined): number => {
+  let displayableRange;
+  switch (range) {
+    case 'upTo10':
+      displayableRange = 10;
+      break;
+    case 'upTo50':
+      displayableRange = 50;
+      break;
+    case 'upTo100':
+      displayableRange = 100;
+      break;
+    case 'upTo500':
+      displayableRange = 500;
+      break;
+    case 'upTo1000':
+      displayableRange = 1000;
+      break;
+    default:
+      displayableRange = 0;
+      break;
+  }
+
+  return displayableRange;
+};
+
 // Disabled because of conflict between editorconfig and prettier.
 /* eslint-disable editorconfig/indent */
 /**
@@ -200,13 +268,6 @@ const cleanMeasure = (body: any): any => {
 };
 
 /**
- * This function returns an address object for a supplied UPRN.
- *
- * @param {number} uprn The UPRN to resolve to an address.
- * @returns {any} The address details for the passed UPRN.
- */
-
-/**
  * Clean an incoming PATCH request body to make it more compatible with the
  * database and its validation rules.
  *
@@ -235,6 +296,10 @@ const cleanAssessment = (body: any): any => {
 
   if ('decision' in body) {
     cleanedBody.decision = body.decision;
+  }
+
+  if (body.refusalReason) {
+    cleanedBody.refusalReason = body.refusalReason;
   }
 
   return cleanedBody;
@@ -300,7 +365,6 @@ const cleanLicense = (body: any): any => {
   return {
     periodFrom: body.periodFrom,
     periodTo: body.periodTo,
-    licenseDetails: body.licenseDetails ? body.licenseDetails.trim() : undefined,
   };
 };
 
@@ -314,6 +378,7 @@ const CleaningFunctions = {
   cleanApplication,
   cleanIssue,
   cleanActivity,
+  cleanPermittedActivity,
   cleanMeasure,
   cleanAssessment,
   cleanCondition,
