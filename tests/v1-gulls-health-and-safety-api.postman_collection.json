@@ -227,7 +227,7 @@
 			"response": []
 		},
 		{
-			"name": "Assess an application - test one",
+			"name": "Assess an application - pass test one",
 			"event": [
 				{
 					"listen": "test",
@@ -274,7 +274,7 @@
 			"response": []
 		},
 		{
-			"name": "Get a partial assessed application - test one",
+			"name": "Get a partial assessed application - pass test one",
 			"event": [
 				{
 					"listen": "test",
@@ -317,7 +317,7 @@
 			"response": []
 		},
 		{
-			"name": "Assess an application - test two",
+			"name": "Assess an application - pass test two",
 			"event": [
 				{
 					"listen": "test",
@@ -364,7 +364,7 @@
 			"response": []
 		},
 		{
-			"name": "Get a partial assessed application - test two",
+			"name": "Get a partial assessed application - pass test two",
 			"event": [
 				{
 					"listen": "test",
@@ -407,7 +407,7 @@
 			"response": []
 		},
 		{
-			"name": "Assess an application - decision",
+			"name": "Assess an application - pass decision",
 			"event": [
 				{
 					"listen": "test",
@@ -454,7 +454,7 @@
 			"response": []
 		},
 		{
-			"name": "Get a partial assessed application - decision",
+			"name": "Get a fully assessed application",
 			"event": [
 				{
 					"listen": "test",
@@ -658,7 +658,7 @@
 			"response": []
 		},
 		{
-			"name": "Accept an application on behalf of Copy",
+			"name": "Accept an application on behalf of to refuse",
 			"event": [
 				{
 					"listen": "test",
@@ -704,7 +704,54 @@
 			"response": []
 		},
 		{
-			"name": "Get a confirmed Application",
+			"name": "Assign the application to a staff member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"staffNumber\": \"9394699\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/assign",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"assign"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a confirmed and assigned Application",
 			"event": [
 				{
 					"listen": "test",
@@ -719,6 +766,7 @@
 							"    var jsonData = pm.response.json();\r",
 							"\r",
 							"    pm.expect(jsonData).to.have.property('confirmedByLicensingHolder');\r",
+							"    pm.expect(jsonData).to.have.property('staffNumber');\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -746,7 +794,91 @@
 			"response": []
 		},
 		{
-			"name": "Assess an application - test one pass",
+			"name": "Unassign the application from the staff member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"staffNumber\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/assign",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"assign"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a unassigned Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assess an application - pass test one",
 			"event": [
 				{
 					"listen": "test",
