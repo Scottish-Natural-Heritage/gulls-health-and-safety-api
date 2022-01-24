@@ -10,6 +10,7 @@ interface AssessmentInterface {
   testTwoAssessment?: string;
   testTwoDecision?: boolean;
   decision?: boolean;
+  refusalReason?: string;
 }
 
 /**
@@ -26,6 +27,7 @@ const AssessmentModel = (sequelize: Sequelize) => {
     public testTwoAssessment!: string;
     public testTwoDecision!: boolean;
     public decision!: boolean;
+    public refusalReason!: string;
   }
 
   Assessment.init(
@@ -51,6 +53,9 @@ const AssessmentModel = (sequelize: Sequelize) => {
       },
       decision: {
         type: DataTypes.BOOLEAN,
+      },
+      refusalReason: {
+        type: DataTypes.STRING,
       },
     },
     {
