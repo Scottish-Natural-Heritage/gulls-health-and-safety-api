@@ -20,7 +20,8 @@ const ApplicationModel = (sequelize: Sequelize) => {
     public previousLicence!: boolean;
     public previousLicenceNumber!: string;
     public supportingInformation!: string;
-    public confirmedByLicensingHolder!: string;
+    public confirmedByLicensingHolder!: boolean;
+    public staffNumber!: string;
   }
 
   Application.init(
@@ -60,6 +61,9 @@ const ApplicationModel = (sequelize: Sequelize) => {
       },
       confirmedByLicensingHolder: {
         type: DataTypes.BOOLEAN,
+      },
+      staffNumber: {
+        type: DataTypes.STRING,
       },
     },
     {
