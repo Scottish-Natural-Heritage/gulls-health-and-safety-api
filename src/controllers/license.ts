@@ -20,11 +20,11 @@ const LicenseController = {
       include: [
         {
           model: LicenseCondition,
-          as: 'LicenseCondition',
+          as: 'LicenseConditions',
         },
         {
           model: LicenseAdvisory,
-          as: 'LicenseAdvisory',
+          as: 'LicenseAdvisories',
         },
       ],
     });
