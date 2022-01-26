@@ -439,6 +439,112 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * DELETEs a single application and all child records (withdraw).
+   */
+  {
+    method: 'delete',
+    path: `${config.pathPrefix}/application/{id}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get the requested licence sd we can only withdraw a application if the license hasn't been issued.
+        const licence = await License.findOne(existingId);
+        // Did we get an License?
+        if (licence) {
+          return h.response({message: `Licence ${existingId} has already been issued you need to revoke.`}).code(400);
+        }
+
+        // Get the payload from the request.
+        const withdrawal = request.payload as any;
+        // Clean up the user's input before we store it in the database.
+        const cleanObject = CleaningFunctions.cleanWithdrawOrRevokeInput(existingId, withdrawal);
+        // Attempt to delete the application and all child records.
+        const withdrawApplication = await Application.withdraw(existingId, cleanObject);
+
+        // If we were unable to delete the application we need to return a 500 with a suitable error message.
+        if (!withdrawApplication) {
+          return h.response({message: `Could not withdraw application ${existingId}.`}).code(500);
+        }
+
+        // If we were able to delete the application we need to return a 200.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Soft DELETEs a single licence and all child records (revoke).
+   */
+  {
+    method: 'delete',
+    path: `${config.pathPrefix}/application/{id}/revoke`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get the requested licence sd we can only revoke a licence.
+        const licence = await License.findOne(existingId);
+        // Did we get an application?
+        if (licence === undefined || licence === null) {
+          return h
+            .response({
+              message: `Licence ${existingId} not found so you will need to withdraw the application instead.`,
+            })
+            .code(404);
+        }
+
+        // Get the payload from the request.
+        const revocation = request.payload as any;
+        // Clean up the user's input before we store it in the database.
+        const cleanObject = CleaningFunctions.cleanWithdrawOrRevokeInput(existingId, revocation);
+        // Attempt to delete the application and all child records.
+        const deleteApplication = await Application.delete(existingId, cleanObject);
+
+        // If we were unable to delete the application we need to return a 500 with a suitable error message.
+        if (!deleteApplication) {
+          return h.response({message: `Could not revoke application ${existingId}.`}).code(500);
+        }
+
+        // If we were able to delete the application we need to return a 200.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * PATCH application confirmed endpoint.
    */
   {
