@@ -378,7 +378,7 @@ const ApplicationController = {
         },
         {
           model: License,
-          as: 'License'
+          as: 'License',
         },
         {
           model: Revocation,
