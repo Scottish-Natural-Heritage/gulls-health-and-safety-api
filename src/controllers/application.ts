@@ -234,6 +234,14 @@ const ApplicationController = {
     return Application.findByPk(id, {
       include: [
         {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+        {
           model: Contact,
           as: 'LicenceHolder',
         },
@@ -367,6 +375,18 @@ const ApplicationController = {
         {
           model: Address,
           as: 'SiteAddress',
+        },
+        {
+          model: License,
+          as: 'License'
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
         },
       ],
     });
