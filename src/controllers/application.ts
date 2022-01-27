@@ -135,7 +135,7 @@ const setLicenceApplicantNotificationDetails = (licenceApplicantContact: any, li
   return {
     laName: licenceApplicantContact.name,
     lhName: licenceHolderContact.name,
-    lhOrg: licenceHolderContact.organisation,
+    lhOrg: licenceHolderContact.organisation ? licenceHolderContact.organisation : 'No organisation entered',
     lhEmail: licenceHolderContact.emailAddress,
   };
 };
@@ -188,7 +188,7 @@ const setLicenceHolderMagicLinkDetails = async (
   return {
     lhName: licenceHolderContact.name,
     onBehalfName: licenceApplicantContact.name,
-    onBehalfOrg: licenceApplicantContact.organisation,
+    onBehalfOrg: licenceApplicantContact.organisation ? licenceApplicantContact.organisation : 'No organisation entered',
     onBehalfEmail: licenceApplicantContact.emailAddress,
     magicLink,
   };
