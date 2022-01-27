@@ -21,6 +21,7 @@ const {
   Advisory,
   LicenseCondition,
   Condition,
+  Note,
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -312,6 +313,10 @@ const ApplicationController = {
         {
           model: Assessment,
           as: 'ApplicationAssessment',
+        },
+        {
+          model: Note,
+          as: 'ApplicationNotes',
         },
         {
           model: License,
