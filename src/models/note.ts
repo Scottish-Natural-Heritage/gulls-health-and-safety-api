@@ -26,13 +26,6 @@ const NoteModel = (sequelize: Sequelize) => {
 
   Note.init(
     {
-      ApplicationId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        validate: {
-          notEmpty: true,
-        },
-      },
       note: {
         type: DataTypes.TEXT,
       },

@@ -22,7 +22,7 @@ const NoteController = {
   },
 
   findAllApplicationNotes: async (id: number) => {
-    return Note.findAll({where: {id}});
+    return Note.findAll({where: {ApplicationId: id}});
   },
 
   /**
