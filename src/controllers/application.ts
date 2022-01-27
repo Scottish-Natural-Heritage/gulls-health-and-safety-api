@@ -188,7 +188,9 @@ const setLicenceHolderMagicLinkDetails = async (
   return {
     lhName: licenceHolderContact.name,
     onBehalfName: licenceApplicantContact.name,
-    onBehalfOrg: licenceApplicantContact.organisation ? licenceApplicantContact.organisation : 'No organisation entered',
+    onBehalfOrg: licenceApplicantContact.organisation
+      ? licenceApplicantContact.organisation
+      : 'No organisation entered',
     onBehalfEmail: licenceApplicantContact.emailAddress,
     magicLink,
   };
