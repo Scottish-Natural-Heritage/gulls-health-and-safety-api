@@ -542,6 +542,104 @@
 			"response": []
 		},
 		{
+			"name": "Create new Application Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"note\": \"This is a test note\",\r\n  \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/note",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"note"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get application with note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returned object matches posted object', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData).to.have.property('ApplicationNotes');\r",
+							"    pm.expect(jsonData.ApplicationNotes[0]).to.have.property('note');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create new License from an approved application as a staff member",
 			"event": [
 				{
@@ -571,7 +669,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"9391234\"\r\n}",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"989745\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1219,7 +1317,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"9391234\"\r\n}",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"989745\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
