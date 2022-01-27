@@ -366,6 +366,26 @@ const cleanLicense = (body: any): any => {
   return {
     periodFrom: body.periodFrom,
     periodTo: body.periodTo,
+    createdBy: body.createdBy,
+  };
+};
+
+/**
+ * Clean the incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {number} existingId The application that is being revoked.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
+ */
+const cleanWithdrawOrRevokeInput = (existingId: number, body: any) => {
+  return {
+    ApplicationId: existingId,
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    reason: body.reason === undefined ? undefined : body.reason.trim(),
+    createdBy: body.createdBy === undefined ? undefined : body.createdBy.trim(),
   };
 };
 
@@ -400,6 +420,7 @@ const CleaningFunctions = {
   cleanAdvisory,
   cleanLicense,
   cleanNote,
+  cleanWithdrawOrRevokeInput,
 };
 
 export default CleaningFunctions;

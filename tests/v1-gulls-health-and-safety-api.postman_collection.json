@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4dfd2198-832e-49a6-8ad6-9ab907714613",
+		"_postman_id": "48963579-f7c5-4173-a050-c3d672f9645e",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -78,7 +78,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n  \"manualAddress\": {\r\n    \"addressLine1\": \"NATURESCOT\",\r\n    \"addressLine2\": \"4 Leachkin Road\",\r\n    \"addressTown\": \"Inverness\",\r\n    \"addressCounty\": \"Highland\"\r\n  },\r\n  \"sameAddressAsLicenceHolder\": false,\r\n  \"sitePostcode\": \"IV38NW\",\r\n  \"siteUprn\": 10092032547,\r\n  \"siteManualAddress\": {\r\n    \"addressLine1\": \"NATURESCOT\",\r\n    \"addressLine2\": \"4 Leachkin Road\",\r\n    \"addressTown\": \"Inverness\",\r\n    \"addressCounty\": \"Highland\"\r\n  },\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
+					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n   \"manualAddress\": {\r\n   \"addressLine1\": \"KATTEDAL FARM   AULDEARN\",\r\n   \"addressLine2\": \"WATERLOO - EASTERTON - INSHOCH\",\r\n   \"addressTown\": \"NAIRN\",\r\n   \"addressCounty\": \"HIGHLAND\"\r\n   },\r\n  \"sameAddressAsLicenceHolder\": false,\r\n  \"sitePostcode\": \"IV38NW\",\r\n  \"siteUprn\": 10092032547,\r\n  \"siteManualAddress\": {\r\n  \"addressLine1\": \" FORESTRY & LAND SCOTLAND  \",\r\n  \"addressLine2\": \"AUCHTERAW ROAD\",\r\n  \"addressTown\": \"FORT AUGUSTUS\",\r\n  \"addressCounty\": \"HIGHLAND\"\r\n  },\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -133,6 +133,52 @@
 						"v1",
 						"application",
 						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke Licence before its a licence should return 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404 Not Found', function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"    pm.response.to.have.status('Not Found');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/revoke",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"revoke"
 					]
 				}
 			},
@@ -525,7 +571,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6]\r\n}",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"9391234\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -603,6 +649,97 @@
 			"response": []
 		},
 		{
+			"name": "Withdraw Application should fail as its now a licence",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status('Bad Request');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke Licence",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/revoke",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"revoke"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create new Application as Visitor to refuse",
 			"event": [
 				{
@@ -634,7 +771,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n  \"sameAddressAsLicenceHolder\": false,\r\n  \"sitePostcode\": \"IV38NW\",\r\n  \"siteUprn\": 10092032547,\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
+					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n   \"manualAddress\": {\r\n   \"addressLine1\": \"KATTEDAL FARM   AULDEARN\",\r\n   \"addressLine2\": \"WATERLOO - EASTERTON - INSHOCH\",\r\n   \"addressTown\": \"NAIRN\",\r\n   \"addressCounty\": \"HIGHLAND\"\r\n   },\r\n  \"sameAddressAsLicenceHolder\": false,\r\n  \"sitePostcode\": \"IV38NW\",\r\n  \"siteUprn\": 10092032547,\r\n  \"siteManualAddress\": {\r\n  \"addressLine1\": \" FORESTRY & LAND SCOTLAND  \",\r\n  \"addressLine2\": \"AUCHTERAW ROAD\",\r\n  \"addressTown\": \"FORT AUGUSTUS\",\r\n  \"addressCounty\": \"HIGHLAND\"\r\n  },\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1082,7 +1219,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6]\r\n}",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"9391234\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1102,6 +1239,106 @@
 						"application",
 						"{{GULLS_NEW_APP_ID}}",
 						"license"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Application as Visitor to withdraw",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"GULLS_NEW_APP_ID\", pm.response.headers.get('Location').split('/').pop());\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n   \"manualAddress\": {\r\n   \"addressLine1\": \"KATTEDAL FARM   AULDEARN\",\r\n   \"addressLine2\": \"WATERLOO - EASTERTON - INSHOCH\",\r\n   \"addressTown\": \"NAIRN\",\r\n   \"addressCounty\": \"HIGHLAND\"\r\n   },\r\n  \"sameAddressAsLicenceHolder\": false,\r\n  \"sitePostcode\": \"IV38NW\",\r\n  \"siteUprn\": 10092032547,\r\n  \"siteManualAddress\": {\r\n  \"addressLine1\": \" FORESTRY & LAND SCOTLAND  \",\r\n  \"addressLine2\": \"AUCHTERAW ROAD\",\r\n  \"addressTown\": \"FORT AUGUSTUS\",\r\n  \"addressCounty\": \"HIGHLAND\"\r\n  },\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Withdraw Application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reason\": \"Nature Scot Reason\",\r\n    \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
 					]
 				}
 			},
