@@ -3,6 +3,7 @@ import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
 import License from './controllers/license';
+import Note from './controllers/note';
 import Advisory from './controllers/advisory';
 import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
@@ -602,6 +603,65 @@ const routes: ServerRoute[] = [
 
         // If we get here the License was not created successfully.
         return h.response({message: `Failed to create License.`}).code(500);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * POST new application note endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/note`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Get the payload from the request.
+        const note = request.payload as any;
+
+        // Clean the fields on the note.
+        const incomingNote = CleaningFunctions.cleanNote(note);
+
+        // Call the controllers create function to write the cleaned data to the DB.
+        const newNote: any = await Note.create(existingId, incomingNote);
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is a newNote object and it has the ApplicationId property then...
+        if (newNote?.ApplicationId) {
+          // Set a string representation of the ID to this local variable.
+          const newNoteId = newNote.ApplicationId.toString();
+          // Construct a new URL object with the baseUrl declared above and the newId.
+          const locationUrl = new URL(newNoteId, baseUrl);
+          // If all is well return the Note, location and 201 created.
+          return h.response(newNote).location(locationUrl.href).code(201);
+        }
+
+        // If we get here the Note was not created successfully.
+        return h.response({message: `Failed to create Application Note.`}).code(500);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
