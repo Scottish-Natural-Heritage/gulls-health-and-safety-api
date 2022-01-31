@@ -90,7 +90,7 @@ const cleanApplication = (body: any): any => {
     previousLicence: body.previousLicense,
     previousLicenceNumber: body.previousLicenseNumber ? body.previousLicenseNumber.trim() : undefined,
     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
-    confirmedByLicensingHolder: !body.onBehalf,
+    confirmedByLicenseHolder: !body.onBehalf,
     staffNumber: body.staffNumber ? body.staffNumber : undefined,
   };
 };
