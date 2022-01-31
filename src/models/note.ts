@@ -6,7 +6,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
 interface NoteInterface {
   id?: number;
   ApplicationId?: number;
-  note?: string;
+  Note?: string;
   createdBy?: string;
 }
 
@@ -20,13 +20,13 @@ const NoteModel = (sequelize: Sequelize) => {
   class Note extends Model {
     public id!: number;
     public ApplicationId!: number;
-    public note!: string;
+    public Note!: string;
     public createdBy!: string;
   }
 
   Note.init(
     {
-      note: {
+      Note: {
         type: DataTypes.TEXT,
       },
       createdBy: {

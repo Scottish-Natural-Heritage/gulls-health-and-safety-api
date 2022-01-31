@@ -398,7 +398,7 @@ const cleanWithdrawOrRevokeInput = (existingId: number, body: any) => {
  */
 const cleanNote = (body: any): any => {
   return {
-    note: body.note.trim(),
+    Note: body.note.trim(),
     createdBy: body.createdBy,
   };
 };
