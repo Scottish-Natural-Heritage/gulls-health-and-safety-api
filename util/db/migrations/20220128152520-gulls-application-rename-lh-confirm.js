@@ -2,7 +2,7 @@
 const databaseConfig = require('../database.js');
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.renameColumn(
       {
         schema: databaseConfig.database.schema,
