@@ -8,7 +8,7 @@ const {Note} = database;
  */
 interface NoteInterface {
   ApplicationId: number;
-  note: string;
+  Note: string;
   createdBy: string;
 }
 
