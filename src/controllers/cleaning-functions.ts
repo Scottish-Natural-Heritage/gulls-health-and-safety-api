@@ -389,6 +389,20 @@ const cleanWithdrawOrRevokeInput = (existingId: number, body: any) => {
   };
 };
 
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanNote = (body: any): any => {
+  return {
+    note: body.note.trim(),
+    createdBy: body.createdBy,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -405,6 +419,7 @@ const CleaningFunctions = {
   cleanCondition,
   cleanAdvisory,
   cleanLicense,
+  cleanNote,
   cleanWithdrawOrRevokeInput,
 };
 
