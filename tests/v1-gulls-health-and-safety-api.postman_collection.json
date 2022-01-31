@@ -206,7 +206,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"confirmedByLicensingHolder\": true\r\n}",
+					"raw": "{\r\n    \"confirmedByLicenseHolder\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -245,7 +245,7 @@
 							"pm.test('Returned object matches posted object', function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"\r",
-							"    pm.expect(jsonData).to.have.property('confirmedByLicensingHolder');\r",
+							"    pm.expect(jsonData).to.have.property('confirmedByLicenseHolder');\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -914,7 +914,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"confirmedByLicensingHolder\": true\r\n}",
+					"raw": "{\r\n    \"confirmedByLicenseHolder\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1000,7 +1000,7 @@
 							"pm.test('Returned object matches posted object', function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"\r",
-							"    pm.expect(jsonData).to.have.property('confirmedByLicensingHolder');\r",
+							"    pm.expect(jsonData).to.have.property('confirmedByLicenseHolder');\r",
 							"    pm.expect(jsonData).to.have.property('staffNumber');\r",
 							"});"
 						],

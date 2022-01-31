@@ -415,11 +415,11 @@ const routes: ServerRoute[] = [
         }
 
         // Did we get an application that has already been confirmed?
-        if (application.confirmedByLicensingHolder) {
+        if (application.confirmedByLicenseHolder) {
           return h.response({message: `Application ${existingId} has already been confirmed.`}).code(400);
         }
 
-        // Update the application in the database with confirmedByLicensingHolder set to true.
+        // Update the application in the database with confirmedByLicenseHolder set to true.
         const confirmApplication: any = request.payload as any;
         const updatedApplication = await Application.confirm(existingId, confirmApplication);
 

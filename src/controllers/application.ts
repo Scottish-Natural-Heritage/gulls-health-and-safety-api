@@ -58,7 +58,7 @@ interface ApplicationInterface {
   previousLicence: boolean;
   previousLicenceNumber: string;
   supportingInformation: string;
-  confirmedByLicensingHolder: boolean;
+  confirmedByLicenseHolder: boolean;
   staffNumber: string;
 }
 
@@ -840,7 +840,7 @@ const ApplicationController = {
           siteType: null,
           previousLicenceNumber: null,
           supportingInformation: null,
-          confirmedByLicensingHolder: null,
+          confirmedByLicenseHolder: null,
           previousLicence: null,
           PermittedSpeciesId: null,
           staffNumber: null,

@@ -20,7 +20,7 @@ const ApplicationModel = (sequelize: Sequelize) => {
     public previousLicence!: boolean;
     public previousLicenceNumber!: string;
     public supportingInformation!: string;
-    public confirmedByLicensingHolder!: boolean;
+    public confirmedByLicenseHolder!: boolean;
     public staffNumber!: string;
   }
 
@@ -59,7 +59,7 @@ const ApplicationModel = (sequelize: Sequelize) => {
       supportingInformation: {
         type: DataTypes.STRING,
       },
-      confirmedByLicensingHolder: {
+      confirmedByLicenseHolder: {
         type: DataTypes.BOOLEAN,
       },
       staffNumber: {
