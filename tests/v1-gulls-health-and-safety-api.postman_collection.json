@@ -612,7 +612,7 @@
 							"    var jsonData = pm.response.json();\r",
 							"\r",
 							"    pm.expect(jsonData).to.have.property('ApplicationNotes');\r",
-							"    pm.expect(jsonData.ApplicationNotes[0]).to.have.property('note');\r",
+							"    pm.expect(jsonData.ApplicationNotes[0]).to.have.property('Note');\r",
 							"});"
 						],
 						"type": "text/javascript"
