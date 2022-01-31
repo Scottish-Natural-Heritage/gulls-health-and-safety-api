@@ -299,6 +299,10 @@ const cleanAssessment = (body: any): any => {
     cleanedBody.decision = body.decision;
   }
 
+  if ('assessedBy' in body) {
+    cleanedBody.assessedBy = body.assessedBy;
+  }
+
   if (body.refusalReason) {
     cleanedBody.refusalReason = body.refusalReason;
   }

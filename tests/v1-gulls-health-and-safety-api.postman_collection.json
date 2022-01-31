@@ -474,7 +474,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"decision\": true\r\n}",
+					"raw": "{\r\n    \"assessedBy\": \"989745\",\r\n    \"decision\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -514,6 +514,7 @@
 							"pm.test('Returned object matches posted object', function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"\r",
+							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('assessedBy');\r",
 							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('decision');\r",
 							"});"
 						],
@@ -1228,7 +1229,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"refusalReason\": \"This is a test\",\r\n    \"decision\": false\r\n}",
+					"raw": "{\r\n    \"assessedBy\": \"989745\",\r\n    \"refusalReason\": \"This is a test\",\r\n    \"decision\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1267,8 +1268,9 @@
 							"\r",
 							"pm.test('Returned object matches posted object', function () {\r",
 							"    var jsonData = pm.response.json();\r",
-							"\r",
+							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('assessedBy');\r",
 							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('refusalReason');\r",
+							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('decision');\r",
 							"});"
 						],
 						"type": "text/javascript"
