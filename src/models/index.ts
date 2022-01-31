@@ -16,6 +16,7 @@ import LicenseAdvisory from './license-advisory';
 import LicenseCondition from './license-condition';
 import Advisory from './advisory';
 import Condition from './condition';
+import Note from './note';
 import Revocation from './revocation';
 import Withdrawal from './withdrawal';
 
@@ -46,6 +47,7 @@ const database = {
   LicenseCondition: LicenseCondition(sequelize),
   Advisory: Advisory(sequelize),
   Condition: Condition(sequelize),
+  Note: Note(sequelize),
   Revocation: Revocation(sequelize),
   Withdrawal: Withdrawal(sequelize),
 };
@@ -69,6 +71,7 @@ database.Assessment.belongsTo(database.Application, {as: 'ApplicationAssessment'
 database.License.belongsTo(database.Application, {as: 'License', foreignKey: 'ApplicationId'});
 database.Issue.belongsTo(database.Application, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Measure.belongsTo(database.Application, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
+database.Note.belongsTo(database.Application, {as: 'ApplicationNotes', foreignKey: 'ApplicationId'});
 database.Revocation.belongsTo(database.Application, {as: 'Revocation', foreignKey: 'ApplicationId'});
 database.Withdrawal.belongsTo(database.Application, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
 
@@ -76,6 +79,7 @@ database.Application.hasOne(database.Assessment, {as: 'ApplicationAssessment', f
 database.Application.hasOne(database.License, {as: 'License', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Issue, {as: 'ApplicationIssue', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Measure, {as: 'ApplicationMeasure', foreignKey: 'ApplicationId'});
+database.Application.hasMany(database.Note, {as: 'ApplicationNotes', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Revocation, {as: 'Revocation', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Withdrawal, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
 

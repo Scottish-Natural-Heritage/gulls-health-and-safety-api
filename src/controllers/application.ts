@@ -21,6 +21,7 @@ const {
   Advisory,
   LicenseCondition,
   Condition,
+  Note,
   Revocation,
   Withdrawal,
 } = database;
@@ -322,6 +323,10 @@ const ApplicationController = {
         {
           model: Assessment,
           as: 'ApplicationAssessment',
+        },
+        {
+          model: Note,
+          as: 'ApplicationNotes',
         },
         {
           model: License,
