@@ -325,8 +325,16 @@ const addProposalResults = (species: any, speciesType: string): string => {
 
 const createOptionalAdvisoriesList = (advisories: any): string => {
   const optionalAdvisoryIds = [1, 2, 7];
+  // const optionalWhatMustBeDoneConditionIds = [4, 6, 7];
+  // const optionalGeneralConditionIds = [12, 13];
+  const advisoryList = [];
 
-  return '';
+  const optionalAdvisories = advisories.filter((optional: any) => optionalAdvisoryIds.includes(optional.Advisory.id));
+  for (const advisory of optionalAdvisories){
+    advisoryList.push(advisory.Advisory.advisory)
+  }
+
+  return advisoryList.join('\n\n');
 };
 
 const LicenseController = {
