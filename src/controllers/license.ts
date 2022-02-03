@@ -27,17 +27,28 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
   return {
     licenceNumber: application.id,
     siteAddressLine1: application.SiteAddress.addressLine1,
-    siteAddressLine2: application.SiteAddress.addressLine2 ? application.SiteAddress.addressLine2 : 'No address line 2 entered',
+    siteAddressLine2: application.SiteAddress.addressLine2
+      ? application.SiteAddress.addressLine2
+      : 'No address line 2 entered',
     siteAddressTown: application.SiteAddress.addressTown,
     sitePostcode: application.SiteAddress.postcode,
     dateFrom: createDisplayDate(new Date(licence.periodFrom)),
     dateTo: createDisplayDate(new Date(licence.periodTo)),
     lhName: application.LicenceHolder.name,
     addressLine1: application.LicenceHolderAddress.addressLine1,
-    addressLine2: application.LicenceHolderAddress.addressLine2 ? application.LicenceHolderAddress.addressLine2 : 'No address line 2 entered',
+    addressLine2: application.LicenceHolderAddress.addressLine2
+      ? application.LicenceHolderAddress.addressLine2
+      : 'No address line 2 entered',
     addressTown: application.LicenceHolderAddress.addressTown,
     postcode: application.LicenceHolderAddress.postcode,
-    permittedSpeciesActivitiesList: createPermittedSpeciesActivitiesList(application.PermittedSpecies)
+    permittedSpeciesActivitiesList: createPermittedSpeciesActivitiesList(application.PermittedSpecies),
+    identifiedSpecies: createIdentifiedSpecies(application.Species),
+    issuesList: createIssues(application.ApplicationIssue),
+    measuresTried: createMeasures(application.ApplicationMeasure, 'Tried'),
+    measuresIntended: createMeasures(application.ApplicationMeasure, 'Intend'),
+    measuresNotTried: createMeasures(application.ApplicationMeasure, 'No'),
+    proposalResult: createProposalResult(application.Species),
+    optionalAdvisoriesList: createOptionalAdvisoriesList(application.License.LicenseAdvisories),
   };
 };
 
@@ -47,7 +58,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
- const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any) => {
+const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     notifyClient.sendEmail('82e220c4-4534-4da1-940b-353883e5dbab', emailAddress, {
@@ -68,30 +79,28 @@ const createDisplayDate = (date: Date) => {
  * @param {string} range The range to made more readable.
  * @returns {string} A more accurate and readable range as a string.
  */
- const displayableRanges = (range: string | undefined): string => {
-  let displayableRange = '';
-  switch (range) {
-    case 'upTo10':
-      displayableRange = '1 - 10';
-      break;
-    case 'upTo50':
-      displayableRange = '11 - 50';
-      break;
-    case 'upTo100':
-      displayableRange = '51 - 100';
-      break;
-    case 'upTo500':
-      displayableRange = '101 - 500';
-      break;
-    case 'upTo1000':
-      displayableRange = '501 - 1000';
-      break;
-    default:
-      displayableRange = '';
-      break;
+const displayableRanges = (range: string | undefined): string => {
+  if (range === '10' || range === 'upTo10') {
+    return '1 - 10';
   }
 
-  return displayableRange;
+  if (range === '50' || range === 'upTo50') {
+    return '11 - 50';
+  }
+
+  if (range === '100' || range === 'upTo100') {
+    return '51 - 100';
+  }
+
+  if (range === '500' || range === 'upTo500') {
+    return '101 - 500';
+  }
+
+  if (range === '1000' || range === 'upTo1000') {
+    return '501 - 1000';
+  }
+
+  return '';
 };
 
 const createPermittedSpeciesActivitiesList = (species: any): string => {
@@ -117,29 +126,29 @@ const createPermittedSpeciesActivitiesList = (species: any): string => {
   }
 
   return permittedActivities.join('\n');
-}
+};
 
 const addActivities = (species: any, speciesType: string): string => {
   const activities: string[] = [];
   if (species.removeNests) {
     activities.push(
       `${speciesType}: To remove ${displayableRanges(
-        species.quantityNestsToRemove
-      )} nests and any eggs they contain by hand.`
+        species.quantityNestsToRemove,
+      )} nests and any eggs they contain by hand.`,
     );
   }
 
   if (species.eggDestruction) {
     activities.push(
       `${speciesType}: To destroy eggs by oiling, pricking or replacing with dummy eggs from ${displayableRanges(
-        species.quantityNestsWhereEggsDestroyed
-      )} nests.`
+        species.quantityNestsWhereEggsDestroyed,
+      )} nests.`,
     );
   }
 
   if (species.chicksToRescueCentre) {
     activities.push(
-      `${speciesType}: To take ${String(species.quantityChicksToRescue)} chicks to a wildlife rescue centre.`
+      `${speciesType}: To take ${String(species.quantityChicksToRescue)} chicks to a wildlife rescue centre.`,
     );
   }
 
@@ -156,6 +165,168 @@ const addActivities = (species: any, speciesType: string): string => {
   }
 
   return activities.join('\n');
+};
+
+const createIdentifiedSpecies = (species: any): string => {
+  const identifiedSpecies: string[] = [];
+  if (species.HerringGullId) {
+    identifiedSpecies.push('* Herring gull');
+  }
+
+  if (species.BlackHeadedGullId) {
+    identifiedSpecies.push('* Black-headed gull');
+  }
+
+  if (species.CommonGullId) {
+    identifiedSpecies.push('* Common gull');
+  }
+
+  if (species.GreatBlackBackedGullId) {
+    identifiedSpecies.push('* Great black-backed gull');
+  }
+
+  if (species.LesserBlackBackedGullId) {
+    identifiedSpecies.push('* Lesser black-backed gull');
+  }
+
+  return identifiedSpecies.join('\n');
+};
+
+const createIssues = (applicationIssues: any): string => {
+  const issues: string[] = [];
+  if (applicationIssues.aggression) {
+    issues.push('* Aggression resulting in direct strikes');
+  }
+
+  if (applicationIssues.diveBombing) {
+    issues.push('* Frequent dive-bombing');
+  }
+
+  if (applicationIssues.noise) {
+    issues.push('* Noise disturbance');
+  }
+
+  if (applicationIssues.droppings) {
+    issues.push('* Droppings contaminating foodstuffs');
+  }
+
+  if (applicationIssues.nestingMaterial) {
+    issues.push(
+      '* Build-up of nesting material in gas flues, air-conditioning units, active chimney pots or drainage systems',
+    );
+  }
+
+  if (applicationIssues.atHeightAggression) {
+    issues.push('* Disturbance or aggression on sites where people are working at height or with machinery');
+  }
+
+  if (applicationIssues.other) {
+    issues.push('* Other issues');
+  }
+
+  return issues.join('\n');
+};
+
+const createMeasures = (applicationMeasures: any, measuresStatus: string): string => {
+  const measures: string[] = [];
+
+  if (applicationMeasures.preventNesting === measuresStatus) {
+    measures.push('* Physically preventing nesting');
+  }
+
+  if (applicationMeasures.removeOldNests === measuresStatus) {
+    measures.push('* Removing old nests and potential nesting material');
+  }
+
+  if (applicationMeasures.removeLitter === measuresStatus) {
+    measures.push('* Removing or preventing access to attractants such as litter and food waste');
+  }
+
+  if (applicationMeasures.humanDisturbance === measuresStatus) {
+    measures.push('* Human disturbance');
+  }
+
+  if (applicationMeasures.scaringDevices === measuresStatus) {
+    measures.push('* Scaring devices - static or automatic');
+  }
+
+  if (applicationMeasures.hawking === measuresStatus) {
+    measures.push('* Hawking by birds of prey');
+  }
+
+  if (applicationMeasures.disturbanceByDogs === measuresStatus) {
+    measures.push('* Disturbance by dogs');
+  }
+
+  if (measures.length > 0) {
+    return measures.join('\n');
+  }
+
+  return '* Nothing';
+};
+
+const createProposalResult = (species: any): string => {
+  const proposalResult = [];
+  if (species.HerringGullId) {
+    proposalResult.push(addProposalResults(species.HerringGull, 'Herring gull'));
+  }
+
+  if (species.BlackHeadedGullId) {
+    proposalResult.push(addProposalResults(species.BlackHeadedGull, 'Black-headed gull'));
+  }
+
+  if (species.CommonGullId) {
+    proposalResult.push(addProposalResults(species.CommonGull, 'Common gull'));
+  }
+
+  if (species.GreatBlackBackedGullId) {
+    proposalResult.push(addProposalResults(species.GreatBlackBackedGull, 'Great black-backed gull'));
+  }
+
+  if (species.LesserBlackBackedGullId) {
+    proposalResult.push(addProposalResults(species.LesserBlackBackedGull, 'Lesser black-backed gull'));
+  }
+
+  return proposalResult.join('\n');
+};
+
+const addProposalResults = (species: any, speciesType: string): string => {
+  const proposalResults: string[] = [];
+  if (species.removeNests) {
+    proposalResults.push(`* ${speciesType} - ${displayableRanges(species.quantityNestsToRemove)} nests removed.`);
+  }
+
+  if (species.eggDestruction) {
+    proposalResults.push(
+      `* ${speciesType} - ${displayableRanges(species.quantityNestsWhereEggsDestroyed)} eggs destroyed.`,
+    );
+  }
+
+  if (species.chicksToRescueCentre) {
+    proposalResults.push(
+      `* ${speciesType} - ${String(species.quantityChicksToRescue)} chicks taken to a wildlife rescue centre.`,
+    );
+  }
+
+  if (species.chicksRelocateNearby) {
+    proposalResults.push(`* ${speciesType} - ${String(species.quantityChicksToRelocate)} chicks relocated nearby.`);
+  }
+
+  if (species.killChicks) {
+    proposalResults.push(`* ${speciesType} - ${String(species.quantityChicksToKill)} chicks killed.`);
+  }
+
+  if (species.killAdults) {
+    proposalResults.push(`* ${speciesType} - ${String(species.quantityAdultsToKill)} adults killed.`);
+  }
+
+  return proposalResults.join('\n');
+};
+
+const createOptionalAdvisoriesList = (advisories: any): string => {
+  const optionalAdvisoryIds = [1, 2, 7];
+
+  return '';
 };
 
 const LicenseController = {
