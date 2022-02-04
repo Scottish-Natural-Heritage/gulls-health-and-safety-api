@@ -36,7 +36,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     siteAddressLine1: application.SiteAddress.addressLine1,
     siteAddressLine2: application.SiteAddress.addressLine2
       ? application.SiteAddress.addressLine2
-      : 'No address line 2 entered',
+      : 'No address line 2',
     siteAddressTown: application.SiteAddress.addressTown,
     sitePostcode: application.SiteAddress.postcode,
     dateFrom: createDisplayDate(new Date(licence.periodFrom)),
@@ -45,7 +45,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     addressLine1: application.LicenceHolderAddress.addressLine1,
     addressLine2: application.LicenceHolderAddress.addressLine2
       ? application.LicenceHolderAddress.addressLine2
-      : 'No address line 2 entered',
+      : 'No address line 2',
     addressTown: application.LicenceHolderAddress.addressTown,
     postcode: application.LicenceHolderAddress.postcode,
     permittedSpeciesActivitiesList: createPermittedSpeciesActivitiesList(application.PermittedSpecies),
