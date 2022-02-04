@@ -49,6 +49,8 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     measuresNotTried: createMeasures(application.ApplicationMeasure, 'No'),
     proposalResult: createProposalResult(application.Species),
     optionalAdvisoriesList: createOptionalAdvisoriesList(application.License.LicenseAdvisories),
+    optionalWhatYouMustDoConditionsList: createWhatYouMustDoOptionalConditionsList(application.License.LicenseConditions),
+    optionalGeneralConditionsList: createGeneralOptionalConditionsList(application.License.LicenseConditions),
   };
 };
 
@@ -325,8 +327,7 @@ const addProposalResults = (species: any, speciesType: string): string => {
 
 const createOptionalAdvisoriesList = (advisories: any): string => {
   const optionalAdvisoryIds = [1, 2, 7];
-  // const optionalWhatMustBeDoneConditionIds = [4, 6, 7];
-  // const optionalGeneralConditionIds = [12, 13];
+
   const advisoryList = [];
 
   const optionalAdvisories = advisories.filter((optional: any) => optionalAdvisoryIds.includes(optional.Advisory.id));
@@ -336,6 +337,32 @@ const createOptionalAdvisoriesList = (advisories: any): string => {
 
   return advisoryList.join('\n\n');
 };
+
+const createGeneralOptionalConditionsList = (conditions: any): string => {
+  const optionalGeneralConditionIds = [12, 13];
+
+  const conditionList = [];
+
+  const optionalConditions = conditions.filter((optional: any) => optionalGeneralConditionIds.includes(optional.Condition.id));
+  for (const condition of optionalConditions){
+    conditionList.push(condition.Condition.condition)
+  }
+
+  return conditionList.join('\n\n');
+}
+
+const createWhatYouMustDoOptionalConditionsList = (conditions: any): string => {
+  const optionalWhatMustBeDoneConditionIds = [4, 6, 7];
+
+  const conditionList = [];
+
+  const optionalConditions = conditions.filter((optional: any) => optionalWhatMustBeDoneConditionIds.includes(optional.Condition.id));
+  for (const condition of optionalConditions){
+    conditionList.push(condition.Condition.condition)
+  }
+
+  return conditionList.join('\n\n');
+}
 
 const LicenseController = {
   findOne: async (id: number) => {
