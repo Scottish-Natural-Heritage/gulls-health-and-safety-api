@@ -23,6 +23,14 @@ interface LicenseInterface {
   periodTo: string;
 }
 
+/**
+ * This function creates a personalisation object to be used by the notify API to create
+ * the licence email.
+ *
+ * @param {any} application The licence application details.
+ * @param {any} licence The licence details.
+ * @returns {any} Returns a personalisation shaped object for notify.
+ */
 const setLicenceNotificationDetails = (application: any, licence: any) => {
   return {
     licenceNumber: application.id,
@@ -105,6 +113,13 @@ const displayableRanges = (range: string | undefined): string => {
   return '';
 };
 
+/**
+ * This function creates a formatted string of species and the activities permitted
+ * in the licence to be issued.
+ *
+ * @param {any} species The species the activities pertain to.
+ * @returns {string} Returns a string with all species and licenced activities.
+ */
 const createPermittedSpeciesActivitiesList = (species: any): string => {
   const permittedActivities = [];
   if (species.HerringGullId) {
@@ -130,6 +145,13 @@ const createPermittedSpeciesActivitiesList = (species: any): string => {
   return permittedActivities.join('\n');
 };
 
+/**
+ * This function adds the activities to a supplied species string.
+ *
+ * @param {any} species The species for which the activities to be licenced pertains.
+ * @param {string} speciesType A string representing the species name.
+ * @returns {string} Returns a formatted string of all activities for the given species.
+ */
 const addActivities = (species: any, speciesType: string): string => {
   const activities: string[] = [];
   if (species.removeNests) {
@@ -169,6 +191,14 @@ const addActivities = (species: any, speciesType: string): string => {
   return activities.join('\n');
 };
 
+/**
+ * This function creates a list of the species identified in the licence application, using
+ * a `*` (star) to signify a bullet point to the Notify API.
+ *
+ * @param {any} species The list of species associated with the licence application.
+ * @returns {string} Returns the list of species to which the licence pertains, formatted
+ * as bullet points for the Notify API.
+ */
 const createIdentifiedSpecies = (species: any): string => {
   const identifiedSpecies: string[] = [];
   if (species.HerringGullId) {
@@ -194,6 +224,14 @@ const createIdentifiedSpecies = (species: any): string => {
   return identifiedSpecies.join('\n');
 };
 
+/**
+ * This function returns a list of issues declared in the licence application, formatted
+ * with a `*` (star) to represent bullet points with the Notify API.
+ *
+ * @param {any} applicationIssues The list of issues associated with the application.
+ * @returns {string} Returns a list of issues to which the licence application
+ * pertains, formatted as bullet points for the Notify API.
+ */
 const createIssues = (applicationIssues: any): string => {
   const issues: string[] = [];
   if (applicationIssues.aggression) {
@@ -229,6 +267,14 @@ const createIssues = (applicationIssues: any): string => {
   return issues.join('\n');
 };
 
+/**
+ * This function returns a list of measures, either tried, intended to be tried, or not intended
+ * to be tried, formatted as bullet points for the notify API.
+ *
+ * @param {any} applicationMeasures The list of measures.
+ * @param {string} measuresStatus Either `Tried`, `Intend` or `No`.
+ * @returns {string} Returns a formatted list of bullet pointed measures.
+ */
 const createMeasures = (applicationMeasures: any, measuresStatus: string): string => {
   const measures: string[] = [];
 
@@ -267,6 +313,12 @@ const createMeasures = (applicationMeasures: any, measuresStatus: string): strin
   return '* Nothing';
 };
 
+/**
+ * This function creates a list of the proposed licence activities results.
+ *
+ * @param {any} species The species and activities which the licence will pertain to.
+ * @returns {string} Returns a list of the proposal results, formatted for the Notify API.
+ */
 const createProposalResult = (species: any): string => {
   const proposalResult = [];
   if (species.HerringGullId) {
@@ -292,6 +344,14 @@ const createProposalResult = (species: any): string => {
   return proposalResult.join('\n');
 };
 
+/**
+ * This function adds proposal results to the list of proposal results.
+ *
+ * @param {any} species The species and activities the licence pertains to.
+ * @param {string} speciesType The specific species to create the list of proposal results for.
+ * @returns {string} Returns a list of proposal results for a given species, formatted as bullet
+ * points for the Notify API.
+ */
 const addProposalResults = (species: any, speciesType: string): string => {
   const proposalResults: string[] = [];
   if (species.removeNests) {
@@ -325,6 +385,12 @@ const addProposalResults = (species: any, speciesType: string): string => {
   return proposalResults.join('\n');
 };
 
+/**
+ * This function returns a list of optional advisory notes.
+ *
+ * @param {any} advisories The list of advisories associated with the licence.
+ * @returns {string} Returns a formatted list of optional advisories.
+ */
 const createOptionalAdvisoriesList = (advisories: any): string => {
   const optionalAdvisoryIds = [1, 2, 7];
 
@@ -338,6 +404,12 @@ const createOptionalAdvisoriesList = (advisories: any): string => {
   return advisoryList.join('\n\n');
 };
 
+/**
+ * This function returns a list of optional general conditions.
+ *
+ * @param {any} conditions The list of conditions associated with the licence.
+ * @returns {string} Returns a formatted list of optional general conditions.
+ */
 const createGeneralOptionalConditionsList = (conditions: any): string => {
   const optionalGeneralConditionIds = [12, 13];
 
@@ -351,6 +423,12 @@ const createGeneralOptionalConditionsList = (conditions: any): string => {
   return conditionList.join('\n\n');
 }
 
+/**
+ * This function returns a list of optional what you must do conditions.
+ *
+ * @param {any} conditions The list of conditions associated with the licence.
+ * @returns {string} Returns a formatted list of optional what you must do conditions.
+ */
 const createWhatYouMustDoOptionalConditionsList = (conditions: any): string => {
   const optionalWhatMustBeDoneConditionIds = [4, 6, 7];
 
@@ -464,13 +542,19 @@ const LicenseController = {
       }
     });
 
+    // If we have a new licence we need to send an email to the licence holder with a copy of the licence.
     if (newLicense) {
+      // Get the application details.
       const applicationDetails: any = await Application.findOne(applicationId);
 
+      // Set the email details personalisation.
       const emailDetails = setLicenceNotificationDetails(applicationDetails, incomingLicense);
 
       try {
+        // Try to send the email to the licence holder.
         await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
+        // And send a copy to the licensing team too.
+        await sendLicenceNotificationEmail(emailDetails, 'licensing@nature.scot');
       } catch (error: unknown) {
         return error;
       }
