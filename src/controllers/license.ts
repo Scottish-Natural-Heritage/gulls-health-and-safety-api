@@ -4,8 +4,7 @@ import config from '../config/app';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 
-import Application from '../controllers/application';
-// import Contact from '../controllers/contact';
+import Application from './application';
 
 const {License, LicenseCondition, LicenseAdvisory, Advisory, Condition} = database;
 
@@ -57,7 +56,9 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     measuresNotTried: createMeasures(application.ApplicationMeasure, 'No'),
     proposalResult: createProposalResult(application.Species),
     optionalAdvisoriesList: createOptionalAdvisoriesList(application.License.LicenseAdvisories),
-    optionalWhatYouMustDoConditionsList: createWhatYouMustDoOptionalConditionsList(application.License.LicenseConditions),
+    optionalWhatYouMustDoConditionsList: createWhatYouMustDoOptionalConditionsList(
+      application.License.LicenseConditions,
+    ),
     optionalGeneralConditionsList: createGeneralOptionalConditionsList(application.License.LicenseConditions),
   };
 };
@@ -392,13 +393,15 @@ const addProposalResults = (species: any, speciesType: string): string => {
  * @returns {string} Returns a formatted list of optional advisories.
  */
 const createOptionalAdvisoriesList = (advisories: any): string => {
-  const optionalAdvisoryIds = [1, 2, 7];
+  const optionalAdvisoryIds = new Set([1, 2, 7]);
 
   const advisoryList = [];
 
-  const optionalAdvisories = advisories.filter((optional: any) => optionalAdvisoryIds.includes(optional.Advisory.id));
-  for (const advisory of optionalAdvisories){
-    advisoryList.push(advisory.Advisory.advisory)
+  const optionalAdvisories = advisories.filter((optional: any) => {
+    return optionalAdvisoryIds.has(optional.Advisory.id);
+  });
+  for (const advisory of optionalAdvisories) {
+    advisoryList.push(advisory.Advisory.advisory);
   }
 
   return advisoryList.join('\n\n');
@@ -411,17 +414,19 @@ const createOptionalAdvisoriesList = (advisories: any): string => {
  * @returns {string} Returns a formatted list of optional general conditions.
  */
 const createGeneralOptionalConditionsList = (conditions: any): string => {
-  const optionalGeneralConditionIds = [12, 13];
+  const optionalGeneralConditionIds = new Set([12, 13]);
 
   const conditionList = [];
 
-  const optionalConditions = conditions.filter((optional: any) => optionalGeneralConditionIds.includes(optional.Condition.id));
-  for (const condition of optionalConditions){
-    conditionList.push(condition.Condition.condition)
+  const optionalConditions = conditions.filter((optional: any) => {
+    return optionalGeneralConditionIds.has(optional.Condition.id);
+  });
+  for (const condition of optionalConditions) {
+    conditionList.push(condition.Condition.condition);
   }
 
   return conditionList.join('\n\n');
-}
+};
 
 /**
  * This function returns a list of optional what you must do conditions.
@@ -430,17 +435,19 @@ const createGeneralOptionalConditionsList = (conditions: any): string => {
  * @returns {string} Returns a formatted list of optional what you must do conditions.
  */
 const createWhatYouMustDoOptionalConditionsList = (conditions: any): string => {
-  const optionalWhatMustBeDoneConditionIds = [4, 6, 7];
+  const optionalWhatMustBeDoneConditionIds = new Set([4, 6, 7]);
 
   const conditionList = [];
 
-  const optionalConditions = conditions.filter((optional: any) => optionalWhatMustBeDoneConditionIds.includes(optional.Condition.id));
-  for (const condition of optionalConditions){
-    conditionList.push(condition.Condition.condition)
+  const optionalConditions = conditions.filter((optional: any) => {
+    return optionalWhatMustBeDoneConditionIds.has(optional.Condition.id);
+  });
+  for (const condition of optionalConditions) {
+    conditionList.push(condition.Condition.condition);
   }
 
   return conditionList.join('\n\n');
-}
+};
 
 const LicenseController = {
   findOne: async (id: number) => {
