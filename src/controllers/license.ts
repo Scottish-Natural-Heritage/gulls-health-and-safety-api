@@ -34,9 +34,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
   return {
     licenceNumber: application.id,
     siteAddressLine1: application.SiteAddress.addressLine1,
-    siteAddressLine2: application.SiteAddress.addressLine2
-      ? application.SiteAddress.addressLine2
-      : 'No address line 2',
+    siteAddressLine2: application.SiteAddress.addressLine2 ? application.SiteAddress.addressLine2 : 'No address line 2',
     siteAddressTown: application.SiteAddress.addressTown,
     sitePostcode: application.SiteAddress.postcode,
     dateFrom: createDisplayDate(new Date(licence.periodFrom)),
