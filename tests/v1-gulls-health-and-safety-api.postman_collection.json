@@ -894,6 +894,53 @@
 			"response": []
 		},
 		{
+			"name": "Create new License before LH approval as a staff member - should fail as not approved",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status('Bad Request');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/license",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"license"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Accept an application on behalf of to refuse",
 			"event": [
 				{
@@ -1114,6 +1161,53 @@
 			"response": []
 		},
 		{
+			"name": "Create new License before assessment as a staff member - should fail as not assessed",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status('Bad Request');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/license",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"license"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Assess an application - pass test one",
 			"event": [
 				{
@@ -1202,6 +1296,53 @@
 						"application",
 						"{{GULLS_NEW_APP_ID}}",
 						"assessment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new License before decision as a staff member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status('Bad Request');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"989745\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/license",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"license"
 					]
 				}
 			},
@@ -1304,9 +1445,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('Status code is 404 Not Found', function () {\r",
-							"    pm.response.to.have.status(404);\r",
-							"    pm.response.to.have.status('Not Found');\r",
+							"pm.test('Status code is 400 Bad Request', function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status('Bad Request');\r",
 							"});\r",
 							""
 						],

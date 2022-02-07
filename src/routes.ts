@@ -661,16 +661,32 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
+        if (!application.confirmedByLicenseHolder) {
+          return h
+            .response({
+              message: `Application ${existingId} has still to be confirmed by the license holder, you can not issue license until they confirm.`,
+            })
+            .code(400);
+        }
+
         const assessment = await Assessment.findOne(existingId);
         // Did we assess the application?
         if (assessment === undefined || assessment === null) {
-          return h.response({message: `Application ${existingId} has not been assessed.`}).code(404);
+          return h.response({message: `Application ${existingId} has not been assessed.`}).code(400);
+        }
+
+        if (assessment.decision === undefined || assessment.decision === null) {
+          return h
+            .response({
+              message: `Application ${existingId} can not be issued as a license as it has no assessment decision has been made.`,
+            })
+            .code(400);
         }
 
         if (!assessment.decision) {
           return h
             .response({message: `Application ${existingId} can not be issued as a license as it was not approved.`})
-            .code(404);
+            .code(400);
         }
 
         // Get the payload from the request.
