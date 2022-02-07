@@ -23,6 +23,16 @@ module.exports = {
         type: Sequelize.TEXT,
       },
     );
+    await queryInterface.changeColumn(
+      {
+        schema: databaseConfig.database.schema,
+        tableName: 'Assessments',
+      },
+      'refusalReason',
+      {
+        type: Sequelize.TEXT,
+      },
+    );
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.changeColumn(
@@ -41,6 +51,16 @@ module.exports = {
         tableName: 'Assessments',
       },
       'testTwoAssessment',
+      {
+        type: Sequelize.STRING,
+      },
+    );
+    await queryInterface.changeColumn(
+      {
+        schema: databaseConfig.database.schema,
+        tableName: 'Assessments',
+      },
+      'refusalReason',
       {
         type: Sequelize.STRING,
       },
