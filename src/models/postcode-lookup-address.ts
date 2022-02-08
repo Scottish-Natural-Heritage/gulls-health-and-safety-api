@@ -1,5 +1,5 @@
 interface Address {
-  uprn: number;
+  uprn: string;
   summary_address: string;
   matchscore: number;
 }

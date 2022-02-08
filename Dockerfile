@@ -2,8 +2,8 @@
 # Builder Stage
 ################################################################################
 
-# We're deploying to the 14-alpine image, so do our building on it too.
-FROM node:14-alpine as builder
+# We're deploying to the 16-alpine image, so do our building on it too.
+FROM node:16-alpine as builder
 
 # By default, we want to do everything in a non-privileged user, so go to their
 # home dir and drop to their account.
@@ -28,8 +28,8 @@ RUN npm prune --production
 # Deployable Image
 ################################################################################
 
-# We built on the 14-alpine image, so we need to deploy on it too.
-FROM node:14-alpine
+# We built on the 16-alpine image, so we need to deploy on it too.
+FROM node:16-alpine
 
 # Drop back to the non-privileged user for run-time.
 WORKDIR /home/node
@@ -47,6 +47,7 @@ COPY --chown=node:node --from=builder /home/node/package.json ./
 COPY --chown=node:node ./src ./src
 COPY --chown=node:node ./util ./util
 COPY --chown=node:node .sequelizerc ./
+COPY --chown=node:node ./.secrets ./.secrets
 
 # These variables are for overriding but keep them consistent between image and
 # run.
@@ -59,7 +60,7 @@ ENV LICENSING_DB_PASS override_this_value
 ENV GULLS_DB_PASS override_this_value
 ENV RO_GULLS_DB_PASS override_this_value
 ENV PC_LOOKUP_API_KEY override_this_value
-# ENV GULLS_NOTIFY_API_KEY override_this_value
+ENV GULLS_NOTIFY_API_KEY override_this_value
 
 # Let docker know about our listening port.
 EXPOSE $GULLS_API_PORT

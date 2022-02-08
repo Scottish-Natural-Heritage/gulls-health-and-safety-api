@@ -7,7 +7,7 @@
   ],
   "repository": "github:Scottish-Natural-Heritage/gulls-health-and-safety-api",
   "engines": {
-    "node": "^14.6.0 || >=16.0.0"
+    "node": "^16.13.0"
   },
   "scripts": {
     "lint:spelling": "cspell \"{src/**/*.ts,**/*.json}\"",
@@ -19,27 +19,36 @@
     "start": "node dist/server.js",
     "premigrations": "npx sequelize-cli db:migrate --env preMigrations --migrations-path util/db/pre-migrations",
     "migrations": "npx sequelize-cli db:migrate --env database",
-    "prestart": "npm run migrations"
+    "prestart": "npm run migrations",
+    "test": "UNDER_TEST=true start-server-and-test start http://localhost:3017/gulls-health-and-safety-api/v1/ nm:run",
+    "nm:run": "UNDER_TEST=true newman run tests/v1-gulls-health-and-safety-api.postman_collection.json"
   },
   "license": "(MIT OR OGL-UK-3.0)",
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
     "@types/hapi__hapi": "^20.0.8",
+    "@types/hapi-pino": "^8.0.5",
+    "@types/jsonwebtoken": "^8.5.6",
     "@types/node": "^16.0.0",
     "@types/validator": "13.6.6",
     "ava": "^3.15.0",
     "cspell": "^5.6.6",
     "eslint-plugin-editorconfig": "^3.0.2",
     "eslint-plugin-jsdoc": "^35.4.1",
+    "newman": "^5.3.0",
     "prettier": "^2.3.2",
+    "start-server-and-test": "^1.14.0",
     "typescript": "^4.3.5",
     "xo": "^0.42.0"
   },
   "dependencies": {
     "@hapi/hapi": "^20.1.5",
     "axios": "^0.21.1",
-    "naturescot-utils": "^1.2.0",
     "axios-mock-adapter": "^1.19.0",
+    "hapi-pino": "^8.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "naturescot-utils": "^1.2.0",
+    "notifications-node-client": "^5.1.0",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.8.0",

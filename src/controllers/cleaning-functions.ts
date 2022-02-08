@@ -1,6 +1,7 @@
 import utils from 'naturescot-utils';
-import axios, {AxiosResponse} from 'axios';
-import config from '../config/app';
+import {AssessmentInterface} from 'models/assessment';
+import Condition from './condition';
+import Advisory from './advisory';
 
 /**
  * Cleans the on behalf contact details into something the database can use.
@@ -45,7 +46,7 @@ const cleanLicenseHolderContact = (body: any): any => {
  */
 const cleanAddress = (body: any): any => {
   return {
-    uprn: body.uprn === undefined ? undefined : body.uprn,
+    uprn: body.uprn === undefined ? undefined : (body.uprn as string),
     postcode: body.postcode.trim(),
     addressLine1: body.manualAddress?.addressLine1 === undefined ? undefined : body.manualAddress?.addressLine1.trim(),
     addressLine2: body.manualAddress?.addressLine2 === undefined ? undefined : body.manualAddress?.addressLine2.trim(),
@@ -63,7 +64,7 @@ const cleanAddress = (body: any): any => {
  */
 const cleanSiteAddress = (body: any): any => {
   return {
-    uprn: body.siteUprn === undefined ? undefined : body.siteUprn,
+    uprn: body.siteUprn === undefined ? undefined : (body.siteUprn as string),
     postcode: body.sitePostcode.trim(),
     addressLine1:
       body.siteManualAddress?.addressLine1 === undefined ? undefined : body.siteManualAddress?.addressLine1.trim(),
@@ -86,8 +87,11 @@ const cleanApplication = (body: any): any => {
   return {
     isResidentialSite: body.isResidentialSite,
     siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
-    previousLicenceNumber: body.previousLicence ? body.previousLicenceNumber.trim() : undefined,
+    previousLicence: body.previousLicense,
+    previousLicenceNumber: body.previousLicenseNumber ? body.previousLicenseNumber.trim() : undefined,
     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
+    confirmedByLicenseHolder: !body.onBehalf,
+    staffNumber: body.staffNumber ? body.staffNumber : undefined,
   };
 };
 
@@ -154,6 +158,74 @@ const cleanActivity = (body: any, gullType: string): any => {
   };
 };
 
+/**
+ * Cleans the permitted activity details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @param {string} gullType The type of gull the activities relate to.
+ * @returns {any} The cleaned activity details.
+ */
+const cleanPermittedActivity = (body: any, gullType: string): any => {
+  return {
+    removeNests: body.species?.[gullType].activities.removeNests,
+    quantityNestsToRemove: body.species?.[gullType].activities.quantityNestsToRemove
+      ? rangesIntoIntegers(body.species?.[gullType].activities.quantityNestsToRemove)
+      : undefined,
+    eggDestruction: body.species?.[gullType].activities.eggDestruction,
+    quantityNestsWhereEggsDestroyed: body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed
+      ? rangesIntoIntegers(body.species?.[gullType].activities.quantityNestsWhereEggsDestroyed)
+      : undefined,
+    chicksToRescueCentre: body.species?.[gullType].activities.chicksToRescueCentre,
+    quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
+      ? body.species?.[gullType].activities.quantityChicksToRescue
+      : undefined,
+    chicksRelocateNearby: body.species?.[gullType].activities.chicksRelocateNearby,
+    quantityChicksToRelocate: body.species?.[gullType].activities.quantityChicksToRelocate
+      ? body.species?.[gullType].activities.quantityChicksToRelocate
+      : undefined,
+    killChicks: body.species?.[gullType].activities.killChicks,
+    quantityChicksToKill: body.species?.[gullType].activities.quantityChicksToKill
+      ? body.species?.[gullType].activities.quantityChicksToKill
+      : undefined,
+    killAdults: body.species?.[gullType].activities.killAdults,
+    quantityAdultsToKill: body.species?.[gullType].activities.quantityAdultsToKill
+      ? body.species?.[gullType].activities.quantityAdultsToKill
+      : undefined,
+  };
+};
+
+/**
+ * This function returns a integer value instead of a string range.
+ *
+ * @param {string} range The range to made more readable.
+ * @returns {string} A more accurate and readable range as a string.
+ */
+const rangesIntoIntegers = (range: string | undefined): number => {
+  let displayableRange;
+  switch (range) {
+    case 'upTo10':
+      displayableRange = 10;
+      break;
+    case 'upTo50':
+      displayableRange = 50;
+      break;
+    case 'upTo100':
+      displayableRange = 100;
+      break;
+    case 'upTo500':
+      displayableRange = 500;
+      break;
+    case 'upTo1000':
+      displayableRange = 1000;
+      break;
+    default:
+      displayableRange = 0;
+      break;
+  }
+
+  return displayableRange;
+};
+
 // Disabled because of conflict between editorconfig and prettier.
 /* eslint-disable editorconfig/indent */
 /**
@@ -191,61 +263,150 @@ const cleanMeasure = (body: any): any => {
       : body.measuresIntendToTry.disturbanceByDogs
       ? 'Intend'
       : 'No',
-    measuresTriedDetail: body.measuresTriedMoreDetail.trim(),
-    measuresWillNotTryDetail: body.measuresIntendNotToTry.trim(),
+    measuresTriedDetail: body.measuresTriedMoreDetail ? body.measuresTriedMoreDetail.trim() : undefined,
+    measuresWillNotTryDetail: body.measuresIntendNotToTry ? body.measuresIntendNotToTry.trim() : undefined,
   };
 };
 
 /**
- * This function returns an address object for a supplied UPRN.
+ * Clean an incoming PATCH request body to make it more compatible with the
+ * database and its validation rules.
  *
- * @param {number} uprn The UPRN to resolve to an address.
- * @returns {any} The address details for the passed UPRN.
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
  */
-const cleanAddressFromUprn = async (uprn: number): Promise<any> => {
-  // Send axios GET request to the Postcode lookup service with the auth token.
-  const serverResponse: AxiosResponse = await axios.get('https://cagmap.snh.gov.uk/gazetteer', {
-    params: {
-      uprn,
-      fieldset: 'all',
-    },
-    headers: {
-      Authorization: `Bearer ${config.postcodeApiKey}`,
-    },
-  });
+const cleanAssessment = (body: any): any => {
+  const cleanedBody: AssessmentInterface = {};
 
-  const subBuildingName = serverResponse.data.results[0].address[0].sub_building_name
-    ? String(serverResponse.data.results[0].address[0].sub_building_name)
-    : '';
-  const organisationName = serverResponse.data.results[0].address[0].rm_organisation_name
-    ? String(serverResponse.data.results[0].address[0].rm_organisation_name)
-    : '';
-  const buildingNumber = serverResponse.data.results[0].address[0].building_number
-    ? String(serverResponse.data.results[0].address[0].building_number)
-    : '';
-  const buildingName = serverResponse.data.results[0].address[0].building_name
-    ? String(serverResponse.data.results[0].address[0].building_name)
-    : '';
+  // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if (body.testOneAssessment) {
+    cleanedBody.testOneAssessment = body.testOneAssessment.trim();
+  }
 
-  const addressLine1 = `${subBuildingName} ${organisationName} ${buildingNumber} ${buildingName}`;
+  if ('testOneDecision' in body) {
+    cleanedBody.testOneDecision = body.testOneDecision;
+  }
 
+  if (body.testTwoAssessment) {
+    cleanedBody.testTwoAssessment = body.testTwoAssessment.trim();
+  }
+
+  if ('testTwoDecision' in body) {
+    cleanedBody.testTwoDecision = body.testTwoDecision;
+  }
+
+  if ('decision' in body) {
+    cleanedBody.decision = body.decision;
+  }
+
+  if ('assessedBy' in body) {
+    cleanedBody.assessedBy = body.assessedBy;
+  }
+
+  if (body.refusalReason) {
+    cleanedBody.refusalReason = body.refusalReason;
+  }
+
+  return cleanedBody;
+};
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {Condition[] | undefined} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanCondition = async (body: any) => {
+  const optionalConditions = [];
+  /* eslint-disable no-await-in-loop */
+  for (const condition of body.conditions) {
+    const findOptionalCondition = await Condition.findOne(condition);
+    if (findOptionalCondition) {
+      optionalConditions.push(findOptionalCondition);
+    }
+  }
+
+  if (optionalConditions.length > 0) {
+    return optionalConditions;
+  }
+
+  return undefined;
+};
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {Advisory[] | undefined} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanAdvisory = async (body: any) => {
+  const optionalAdvisories = [];
+
+  for (const advisory of body.advisories) {
+    const findOptionalAdvisory = await Advisory.findOne(advisory);
+    if (findOptionalAdvisory) {
+      optionalAdvisories.push(findOptionalAdvisory);
+    }
+  }
+
+  if (optionalAdvisories.length > 0) {
+    return optionalAdvisories;
+  }
+
+  return undefined;
+};
+/* eslint-enable no-await-in-loop */
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanLicense = (body: any): any => {
   return {
-    uprn: serverResponse.data.results[0].address[0].uprn,
-    postcode: serverResponse.data.results[0].address[0].postcode
-      ? serverResponse.data.results[0].address[0].postcode
-      : '',
-    addressLine1,
-    addressLine2: serverResponse.data.results[0].address[0].street_description
-      ? serverResponse.data.results[0].address[0].street_description
-      : '',
-    addressTown: serverResponse.data.results[0].address[0].post_town
-      ? serverResponse.data.results[0].address[0].post_town
-      : '',
-    addressCounty: serverResponse.data.results[0].address[0].administrative_area
-      ? serverResponse.data.results[0].address[0].administrative_area
-      : '',
+    periodFrom: body.periodFrom,
+    periodTo: body.periodTo,
+    createdBy: body.createdBy,
   };
 };
+
+/**
+ * Clean the incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {number} existingId The application that is being revoked.
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up fields on it.
+ */
+const cleanWithdrawOrRevokeInput = (existingId: number, body: any) => {
+  return {
+    ApplicationId: existingId,
+    // The strings are trimmed for leading and trailing whitespace and then
+    // copied across if they're in the POST body or are set to undefined if
+    // they're missing.
+    reason: body.reason === undefined ? undefined : body.reason.trim(),
+    createdBy: body.createdBy === undefined ? undefined : body.createdBy.trim(),
+  };
+};
+
+/**
+ * Clean an incoming request body to make it more compatible with the
+ * database and its validation rules.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanNote = (body: any): any => {
+  return {
+    Note: body.note.trim(),
+    createdBy: body.createdBy,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -256,8 +417,14 @@ const CleaningFunctions = {
   cleanApplication,
   cleanIssue,
   cleanActivity,
+  cleanPermittedActivity,
   cleanMeasure,
-  cleanAddressFromUprn,
+  cleanAssessment,
+  cleanCondition,
+  cleanAdvisory,
+  cleanLicense,
+  cleanNote,
+  cleanWithdrawOrRevokeInput,
 };
 
 export default CleaningFunctions;

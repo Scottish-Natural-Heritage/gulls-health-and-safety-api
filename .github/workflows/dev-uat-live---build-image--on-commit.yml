@@ -1,0 +1,76 @@
+name: On-commit build of image
+
+on:
+  push:
+    branches: [ main, develop ]
+
+env:
+  ECR_REPOSITORY: naturescot/gulls-health-and-safety-api
+
+jobs:
+
+  build_and_push:
+    name: Build and Push the Image
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install all the pre-requisites
+      run: |
+        npm ci
+
+    - name: Check the linter
+      run: |
+        npm run lint
+
+    # - name: Check the integration tests
+    #   env:
+    #     GULLS_NOTIFY_API_KEY: ${{ secrets.GULLS_NOTIFY_TEST_KEY }}
+    #   run: |
+    #     npm run test
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Make scripts executable
+      run: |
+        chmod +x ./*.sh
+
+    - name: Decrypt JWT key
+      env:
+        GHS_JWT_KEY_GPG_PASSPHRASE: ${{ secrets.GHS_JWT_KEY_GPG_PASSPHRASE }}
+      run: |
+        ./01_decrypt_secrets.sh
+
+    - name: Build and tag the Docker Image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF##*/} .
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF##*/} $ECR_REGISTRY/$ECR_REPOSITORY:prerelease
+
+    - name: Push the Docker Image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF##*/}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:prerelease
+
+
+    - name: Logout of Amazon ECR
+      if: always()
+      run: docker logout ${{ steps.login-ecr.outputs.registry }}

@@ -9,7 +9,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
 const AddressModel = (sequelize: Sequelize) => {
   class Address extends Model {
     public id!: number;
-    public uprn!: number;
+    public uprn!: string;
     public addressLine1!: string;
     public addressLine2!: string;
     public addressTown!: string;
@@ -20,7 +20,7 @@ const AddressModel = (sequelize: Sequelize) => {
   Address.init(
     {
       uprn: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
       },
       addressLine1: {
         type: DataTypes.STRING,
