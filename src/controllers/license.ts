@@ -70,7 +70,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
 const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    notifyClient.sendEmail('82e220c4-4534-4da1-940b-353883e5dbab', emailAddress, {
+    await notifyClient.sendEmail('82e220c4-4534-4da1-940b-353883e5dbab', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -555,14 +555,10 @@ const LicenseController = {
       // Set the email details personalisation.
       const emailDetails = setLicenceNotificationDetails(applicationDetails, incomingLicense);
 
-      try {
-        // Try to send the email to the licence holder.
-        await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
-        // And send a copy to the licensing team too.
-        await sendLicenceNotificationEmail(emailDetails, 'licensing@nature.scot');
-      } catch (error: unknown) {
-        return error;
-      }
+      // Try to send the email to the licence holder.
+      await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
+      // And send a copy to the licensing team too.
+      await sendLicenceNotificationEmail(emailDetails, 'licensing@nature.scot');
     }
 
     // If all went well and we have a new application return it.

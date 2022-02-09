@@ -120,7 +120,7 @@ const setHolderApplicantConfirmEmailDetails = (
 const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress, {
+    await notifyClient.sendEmail('5892536f-15cb-4787-82dc-d9b83ccc00ba', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -152,7 +152,7 @@ const setLicenceApplicantNotificationDetails = (licenceApplicantContact: any, li
 const sendLicenceApplicantNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    notifyClient.sendEmail('6955dccf-c7ad-460f-8d5d-82ad984d018a', emailAddress, {
+    await notifyClient.sendEmail('6955dccf-c7ad-460f-8d5d-82ad984d018a', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -209,7 +209,7 @@ const setLicenceHolderMagicLinkDetails = async (
 const sendLicenceHolderMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    notifyClient.sendEmail('e2d7bea5-c487-448c-afa4-1360fe966eab', emailAddress, {
+    await notifyClient.sendEmail('e2d7bea5-c487-448c-afa4-1360fe966eab', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -225,7 +225,7 @@ const sendLicenceHolderMagicLinkEmail = async (emailDetails: any, emailAddress: 
 const sendHolderApplicantConfirmEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    notifyClient.sendEmail('b227af1f-4709-4be5-a111-66605dcf0525', emailAddress, {
+    await notifyClient.sendEmail('b227af1f-4709-4be5-a111-66605dcf0525', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -570,23 +570,17 @@ const ApplicationController = {
         licenceHolderContact,
         onBehalfContact,
       );
-      try {
-        // Send the email using the Notify service's API.
-        await sendLicenceApplicantNotificationEmail(emailDetails, onBehalfContact.emailAddress);
-        await sendLicenceHolderMagicLinkEmail(magicLinkEmailDetails, licenceHolderContact.emailAddress);
-      } catch (error: unknown) {
-        return error;
-      }
+
+      // Send the email using the Notify service's API.
+      await sendLicenceApplicantNotificationEmail(emailDetails, onBehalfContact.emailAddress);
+      await sendLicenceHolderMagicLinkEmail(magicLinkEmailDetails, licenceHolderContact.emailAddress);
     } else {
       // Else if the licence holder applied directly send them a confirmation email.
       // Set the details of the email.
       const emailDetails = setLicenceHolderDirectEmailDetails(newApplication, licenceHolderContact, siteAddress);
-      try {
-        // Send the email using the Notify service's API.
-        await sendLicenceHolderDirectEmail(emailDetails, licenceHolderContact.emailAddress);
-      } catch (error: unknown) {
-        return error;
-      }
+
+      // Send the email using the Notify service's API.
+      await sendLicenceHolderDirectEmail(emailDetails, licenceHolderContact.emailAddress);
     }
 
     // If all went well and we have a new application return it.
@@ -639,13 +633,9 @@ const ApplicationController = {
         );
       }
 
-      try {
-        // Send the email using the Notify service's API.
-        await sendHolderApplicantConfirmEmail(emailDetails, updatedApplication.LicenceHolder.emailAddress);
-        await sendHolderApplicantConfirmEmail(emailDetails, updatedApplication.LicenceApplicant.emailAddress);
-      } catch (error: unknown) {
-        return error;
-      }
+      // Send the email using the Notify service's API.
+      await sendHolderApplicantConfirmEmail(emailDetails, updatedApplication.LicenceHolder.emailAddress);
+      await sendHolderApplicantConfirmEmail(emailDetails, updatedApplication.LicenceApplicant.emailAddress);
     }
 
     // If all went well and we have confirmed a application return it.
