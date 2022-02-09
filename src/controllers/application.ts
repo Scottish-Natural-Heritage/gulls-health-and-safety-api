@@ -130,16 +130,18 @@ const sendLicenceHolderDirectEmail = async (emailDetails: any, emailAddress: any
 /**
  * This function returns an object containing the details required for the license applicant notification email.
  *
+ * @param {any} applicationId The ID of the new application.
  * @param {any} licenceApplicantContact The licence applicant's contact details.
  * @param {any} licenceHolderContact The licence holder's contact details.
  * @returns {any} An object with the required details set.
  */
-const setLicenceApplicantNotificationDetails = (licenceApplicantContact: any, licenceHolderContact: any) => {
+const setLicenceApplicantNotificationDetails = (applicationId: any, licenceApplicantContact: any, licenceHolderContact: any) => {
   return {
     laName: licenceApplicantContact.name,
     lhName: licenceHolderContact.name,
     lhOrg: licenceHolderContact.organisation ? licenceHolderContact.organisation : 'No organisation entered',
     lhEmail: licenceHolderContact.emailAddress,
+    id: applicationId,
   };
 };
 
@@ -189,6 +191,7 @@ const setLicenceHolderMagicLinkDetails = async (
   const magicLink = `${confirmBaseUrl}${token}`;
 
   return {
+    id: applicationId,
     lhName: licenceHolderContact.name,
     onBehalfName: licenceApplicantContact.name,
     onBehalfOrg: licenceApplicantContact.organisation
@@ -563,7 +566,7 @@ const ApplicationController = {
     // and send the email to the license holder containing the magic link.
     if (newApplication && onBehalfContact) {
       // Set the details of the emails.
-      const emailDetails = setLicenceApplicantNotificationDetails(onBehalfContact, licenceHolderContact);
+      const emailDetails = setLicenceApplicantNotificationDetails((newApplication as any).id, onBehalfContact, licenceHolderContact);
       const magicLinkEmailDetails = await setLicenceHolderMagicLinkDetails(
         confirmBaseUrl,
         (newApplication as any).id,
