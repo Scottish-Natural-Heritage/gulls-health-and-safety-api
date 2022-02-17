@@ -8,6 +8,7 @@ interface ConditionInterface {
   condition?: string;
   orderNumber?: number;
   default?: boolean;
+  category?: string;
 }
 
 /**
@@ -22,6 +23,7 @@ const ConditionModel = (sequelize: Sequelize) => {
     public condition!: string;
     public orderNumber!: number;
     public default!: boolean;
+    public category!: string;
   }
 
   Condition.init(
@@ -34,6 +36,9 @@ const ConditionModel = (sequelize: Sequelize) => {
       },
       default: {
         type: DataTypes.BOOLEAN,
+      },
+      category: {
+        type: DataTypes.STRING,
       },
     },
     {
