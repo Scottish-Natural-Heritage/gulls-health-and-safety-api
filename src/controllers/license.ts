@@ -46,7 +46,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
       : 'No address line 2',
     addressTown: application.LicenceHolderAddress.addressTown,
     postcode: application.LicenceHolderAddress.postcode,
-    permittedSpeciesActivitiesList: createPermittedSpeciesActivitiesList(application.PermittedSpecies),
+    permittedSpeciesActivitiesList: createPermittedSpeciesActivitiesList(application.PSpecies),
     identifiedSpecies: createIdentifiedSpecies(application.Species),
     issuesList: createIssues(application.ApplicationIssue),
     measuresTried: createMeasures(application.ApplicationMeasure, 'Tried'),
@@ -122,23 +122,23 @@ const displayableRanges = (range: string | undefined): string => {
 const createPermittedSpeciesActivitiesList = (species: any): string => {
   const permittedActivities = [];
   if (species.HerringGullId) {
-    permittedActivities.push(addActivities(species.PermittedHerringGull, 'Herring gull'));
+    permittedActivities.push(addActivities(species.PHerringGull, 'Herring gull'));
   }
 
   if (species.BlackHeadedGullId) {
-    permittedActivities.push(addActivities(species.PermittedBlackHeadedGull, 'Black-headed gull'));
+    permittedActivities.push(addActivities(species.PBlackHeadedGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
-    permittedActivities.push(addActivities(species.PermittedCommonGull, 'Common gull'));
+    permittedActivities.push(addActivities(species.PCommonGull, 'Common gull'));
   }
 
   if (species.GreatBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.PermittedGreatBlackBackedGull, 'Great black-backed gull'));
+    permittedActivities.push(addActivities(species.PGreatBlackBackedGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.PermittedLesserBlackBackedGull, 'Lesser black-backed gull'));
+    permittedActivities.push(addActivities(species.PLesserBlackBackedGull, 'Lesser black-backed gull'));
   }
 
   return permittedActivities.join('\n');

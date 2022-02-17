@@ -9,8 +9,8 @@ import Issue from './issue';
 import Measure from './measure';
 import Species from './species';
 import Activity from './activity';
-import PermittedSpecies from './permitted-species';
-import PermittedActivity from './permitted-activity';
+import PSpecies from './p-species';
+import PActivity from './p-activity';
 import License from './license';
 import LicenseAdvisory from './license-advisory';
 import LicenseCondition from './license-condition';
@@ -40,8 +40,8 @@ const database = {
   Measure: Measure(sequelize),
   Species: Species(sequelize),
   Activity: Activity(sequelize),
-  PermittedSpecies: PermittedSpecies(sequelize),
-  PermittedActivity: PermittedActivity(sequelize),
+  PSpecies: PSpecies(sequelize),
+  PActivity: PActivity(sequelize),
   License: License(sequelize),
   LicenseAdvisory: LicenseAdvisory(sequelize),
   LicenseCondition: LicenseCondition(sequelize),
@@ -58,14 +58,14 @@ database.Application.belongsTo(database.Contact, {as: 'LicenceApplicant', foreig
 database.Application.belongsTo(database.Address, {as: 'LicenceHolderAddress', foreignKey: 'LicenceHolderAddressId'});
 database.Application.belongsTo(database.Address, {as: 'SiteAddress', foreignKey: 'SiteAddressId'});
 database.Application.belongsTo(database.Species, {as: 'Species', foreignKey: 'SpeciesId'});
-database.Application.belongsTo(database.PermittedSpecies, {as: 'PermittedSpecies', foreignKey: 'PermittedSpeciesId'});
+database.Application.belongsTo(database.PSpecies, {as: 'PSpecies', foreignKey: 'PermittedSpeciesId'});
 
 database.Contact.hasOne(database.Application, {as: 'LicenceHolder', foreignKey: 'LicenceHolderId'});
 database.Contact.hasOne(database.Application, {as: 'LicenceApplicant', foreignKey: 'LicenceApplicantId'});
 database.Address.hasOne(database.Application, {as: 'LicenceHolderAddress', foreignKey: 'LicenceHolderAddressId'});
 database.Address.hasOne(database.Application, {as: 'SiteAddress', foreignKey: 'SiteAddressId'});
 database.Species.hasOne(database.Application, {as: 'Species', foreignKey: 'SpeciesId'});
-database.PermittedSpecies.hasOne(database.Application, {as: 'PermittedSpecies', foreignKey: 'PermittedSpeciesId'});
+database.PSpecies.hasOne(database.Application, {as: 'PSpecies', foreignKey: 'PermittedSpeciesId'});
 
 database.Assessment.belongsTo(database.Application, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
 database.License.belongsTo(database.Application, {as: 'License', foreignKey: 'ApplicationId'});
@@ -107,39 +107,39 @@ database.Activity.hasOne(database.Species, {as: 'CommonGull', foreignKey: 'Commo
 database.Activity.hasOne(database.Species, {as: 'GreatBlackBackedGull', foreignKey: 'GreatBlackBackedGullId'});
 database.Activity.hasOne(database.Species, {as: 'LesserBlackBackedGull', foreignKey: 'LesserBlackBackedGullId'});
 
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'PermittedHerringGull',
+database.PSpecies.belongsTo(database.PActivity, {
+  as: 'PHerringGull',
   foreignKey: 'HerringGullId',
 });
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'PermittedBlackHeadedGull',
+database.PSpecies.belongsTo(database.PActivity, {
+  as: 'PBlackHeadedGull',
   foreignKey: 'BlackHeadedGullId',
 });
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'PermittedCommonGull',
+database.PSpecies.belongsTo(database.PActivity, {
+  as: 'PCommonGull',
   foreignKey: 'CommonGullId',
 });
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'PermittedGreatBlackBackedGull',
+database.PSpecies.belongsTo(database.PActivity, {
+  as: 'PGreatBlackBackedGull',
   foreignKey: 'GreatBlackBackedGullId',
 });
-database.PermittedSpecies.belongsTo(database.PermittedActivity, {
-  as: 'PermittedLesserBlackBackedGull',
+database.PSpecies.belongsTo(database.PActivity, {
+  as: 'PLesserBlackBackedGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 
-database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'PermittedHerringGull', foreignKey: 'HerringGullId'});
-database.PermittedActivity.hasOne(database.PermittedSpecies, {
-  as: 'PermittedBlackHeadedGull',
+database.PActivity.hasOne(database.PSpecies, {as: 'PHerringGull', foreignKey: 'HerringGullId'});
+database.PActivity.hasOne(database.PSpecies, {
+  as: 'PBlackHeadedGull',
   foreignKey: 'BlackHeadedGullId',
 });
-database.PermittedActivity.hasOne(database.PermittedSpecies, {as: 'PermittedCommonGull', foreignKey: 'CommonGullId'});
-database.PermittedActivity.hasOne(database.PermittedSpecies, {
-  as: 'PermittedGreatBlackBackedGull',
+database.PActivity.hasOne(database.PSpecies, {as: 'PCommonGull', foreignKey: 'CommonGullId'});
+database.PActivity.hasOne(database.PSpecies, {
+  as: 'PGreatBlackBackedGull',
   foreignKey: 'GreatBlackBackedGullId',
 });
-database.PermittedActivity.hasOne(database.PermittedSpecies, {
-  as: 'PermittedLesserBlackBackedGull',
+database.PActivity.hasOne(database.PSpecies, {
+  as: 'PLesserBlackBackedGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 

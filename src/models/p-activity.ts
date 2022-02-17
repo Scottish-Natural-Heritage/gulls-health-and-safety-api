@@ -6,8 +6,8 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} An Permitted Activity model.
  */
-const PermittedActivityModel = (sequelize: Sequelize) => {
-  class PermittedActivity extends Model {
+const PActivityModel = (sequelize: Sequelize) => {
+  class PActivity extends Model {
     public id!: number;
     public removeNests!: boolean;
     public quantityNestsToRemove!: string;
@@ -23,7 +23,7 @@ const PermittedActivityModel = (sequelize: Sequelize) => {
     public quantityAdultsToKill!: number;
   }
 
-  PermittedActivity.init(
+  PActivity.init(
     {
       removeNests: {
         type: DataTypes.BOOLEAN,
@@ -64,13 +64,13 @@ const PermittedActivityModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'PermittedActivity',
+      modelName: 'PActivity',
       timestamps: true,
       paranoid: true,
     },
   );
 
-  return PermittedActivity;
+  return PActivity;
 };
 
-export {PermittedActivityModel as default};
+export {PActivityModel as default};
