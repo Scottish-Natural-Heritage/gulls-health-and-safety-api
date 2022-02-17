@@ -79,7 +79,10 @@ const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderCo
   return {
     licenceName: licenceHolderContact.name,
     applicationDate: createDisplayDate(new Date(newApplication.createdAt)),
-    siteName: siteAddress.addressLine1,
+    siteAddressLine1: siteAddress.addressLine1,
+    siteAddressLine2: siteAddress.addressLine2,
+    siteAddressTown: siteAddress.addressTown,
+    sitePostcode: siteAddress.postcode,
     id: newApplication.id,
   };
 };
@@ -106,7 +109,10 @@ const setHolderApplicantConfirmEmailDetails = (
     lhName: licenceHolderContact.name,
     laName: onBehalfContact.name,
     applicationDate: createDisplayDate(new Date(createdAt)),
-    siteName: siteAddress.addressLine1,
+    siteAddressLine1: siteAddress.addressLine1,
+    siteAddressLine2: siteAddress.addressLine2,
+    siteAddressTown: siteAddress.addressTown,
+    sitePostcode: siteAddress.postcode,
     id,
   };
 };

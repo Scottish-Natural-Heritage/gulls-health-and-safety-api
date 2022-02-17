@@ -5,6 +5,10 @@
 # We're deploying to the 16-alpine image, so do our building on it too.
 FROM node:16-alpine as builder
 
+# Using npm 8.1.2 as there seems to be an issue with 8.3.1 shipped with node:16-alpine
+# that causes an ERR_SOCKET_TIMEOUT just after the npm ci command completes.
+RUN npm install -g npm@8.1.2
+
 # By default, we want to do everything in a non-privileged user, so go to their
 # home dir and drop to their account.
 WORKDIR /home/node
@@ -15,7 +19,7 @@ COPY --chown=node:node ./src ./src
 
 # Install all the build, test & run dependencies.
 COPY --chown=node:node package*.json ./
-RUN npm ci
+RUN npm ci --loglevel verbose
 
 # Build the `.js` and `.css` from our `.ts` and `.scss` files.
 COPY --chown=node:node tsconfig.json ./
