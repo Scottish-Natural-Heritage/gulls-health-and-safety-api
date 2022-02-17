@@ -1,40 +1,40 @@
 /* eslint-disable unicorn/prefer-module */
 const databaseConfig = require('../database.js');
 
-  module.exports = {
-    up: async (queryInterface, Sequelize) => {
-      await queryInterface.renameTable(
-        {
-          schema: databaseConfig.database.schema,
-          tableName: 'PermittedActivities',
-        },
-        'PActivities'
-      );
+module.exports = {
+  up: async (queryInterface) => {
+    await queryInterface.renameTable(
+      {
+        schema: databaseConfig.database.schema,
+        tableName: 'PermittedActivities',
+      },
+      'PActivities',
+    );
 
-      await queryInterface.renameTable(
-        {
-          schema: databaseConfig.database.schema,
-          tableName: 'PermittedSpecies',
-        },
-        'PSpecies'
-      );
-    },
+    await queryInterface.renameTable(
+      {
+        schema: databaseConfig.database.schema,
+        tableName: 'PermittedSpecies',
+      },
+      'PSpecies',
+    );
+  },
 
-    down: async (queryInterface, Sequelize) => {
-      await queryInterface.renameTable(
-        {
-          schema: databaseConfig.database.schema,
-          tableName: 'PSpecies',
-        },
-        'PermittedSpecies'
-      );
+  down: async (queryInterface) => {
+    await queryInterface.renameTable(
+      {
+        schema: databaseConfig.database.schema,
+        tableName: 'PSpecies',
+      },
+      'PermittedSpecies',
+    );
 
-      await queryInterface.renameTable(
-        {
-          schema: databaseConfig.database.schema,
-          tableName: 'PActivities',
-        },
-        'PermittedActivities'
-      );
-    }
-  };
+    await queryInterface.renameTable(
+      {
+        schema: databaseConfig.database.schema,
+        tableName: 'PActivities',
+      },
+      'PermittedActivities',
+    );
+  },
+};

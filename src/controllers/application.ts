@@ -763,19 +763,17 @@ const ApplicationController = {
           await PActivity.destroy({where: {id: pCommonGullActivity.id}, transaction: t});
         }
 
-        const pGreatBlackBackedGullActivity = await PActivity.findByPk(
-          pSpecies.GreatBlackBackedGullId,
-          {transaction: t},
-        );
+        const pGreatBlackBackedGullActivity = await PActivity.findByPk(pSpecies.GreatBlackBackedGullId, {
+          transaction: t,
+        });
         if (pGreatBlackBackedGullActivity) {
           // Soft Delete any PermittedActivity attached to the application/license.
           await PActivity.destroy({where: {id: pGreatBlackBackedGullActivity.id}, transaction: t});
         }
 
-        const pLesserBlackBackedGullActivity = await PActivity.findByPk(
-          pSpecies.LesserBlackBackedGullId,
-          {transaction: t},
-        );
+        const pLesserBlackBackedGullActivity = await PActivity.findByPk(pSpecies.LesserBlackBackedGullId, {
+          transaction: t,
+        });
         if (pLesserBlackBackedGullActivity) {
           // Soft Delete any PermittedActivity attached to the application/license.
           await PActivity.destroy({where: {id: pLesserBlackBackedGullActivity.id}, transaction: t});
@@ -924,10 +922,9 @@ const ApplicationController = {
           await PActivity.destroy({where: {id: pCommonGullActivity.id}, force: true, transaction: t});
         }
 
-        const pGreatBlackBackedGullActivity = await PActivity.findByPk(
-          pSpecies.GreatBlackBackedGullId,
-          {transaction: t},
-        );
+        const pGreatBlackBackedGullActivity = await PActivity.findByPk(pSpecies.GreatBlackBackedGullId, {
+          transaction: t,
+        });
         if (pGreatBlackBackedGullActivity) {
           // Delete any PermittedActivity record attached to the application/license.
           await PActivity.destroy({
@@ -937,10 +934,9 @@ const ApplicationController = {
           });
         }
 
-        const pLesserBlackBackedGullActivity = await PActivity.findByPk(
-          pSpecies.LesserBlackBackedGullId,
-          {transaction: t},
-        );
+        const pLesserBlackBackedGullActivity = await PActivity.findByPk(pSpecies.LesserBlackBackedGullId, {
+          transaction: t,
+        });
         if (pLesserBlackBackedGullActivity) {
           // Delete any PermittedActivity record attached to the application/license.
           await PActivity.destroy({
