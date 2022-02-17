@@ -6,8 +6,8 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} A Permitted Species model.
  */
-const PermittedSpeciesModel = (sequelize: Sequelize) => {
-  class PermittedSpecies extends Model {
+const PSpeciesModel = (sequelize: Sequelize) => {
+  class PSpecies extends Model {
     public id!: number;
     public HerringGullId!: number;
     public BlackHeadedGullId!: number;
@@ -16,7 +16,7 @@ const PermittedSpeciesModel = (sequelize: Sequelize) => {
     public LesserBlackBackedGullId!: number;
   }
 
-  PermittedSpecies.init(
+  PSpecies.init(
     {
       HerringGullId: {
         type: DataTypes.INTEGER,
@@ -36,13 +36,13 @@ const PermittedSpeciesModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'PermittedSpecies',
+      modelName: 'PSpecies',
       timestamps: true,
       paranoid: true,
     },
   );
 
-  return PermittedSpecies;
+  return PSpecies;
 };
 
-export {PermittedSpeciesModel as default};
+export {PSpeciesModel as default};
