@@ -46,7 +46,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
       : 'No address line 2',
     addressTown: application.LicenceHolderAddress.addressTown,
     postcode: application.LicenceHolderAddress.postcode,
-    permittedSpeciesActivitiesList: createPermittedSpeciesActivitiesList(application.PermittedSpecies),
+    permittedSpeciesActivitiesList: createPermittedSpeciesActivitiesList(application.PSpecies),
     identifiedSpecies: createIdentifiedSpecies(application.Species),
     issuesList: createIssues(application.ApplicationIssue),
     measuresTried: createMeasures(application.ApplicationMeasure, 'Tried'),
@@ -70,7 +70,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
 const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    notifyClient.sendEmail('82e220c4-4534-4da1-940b-353883e5dbab', emailAddress, {
+    await notifyClient.sendEmail('82e220c4-4534-4da1-940b-353883e5dbab', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -122,23 +122,23 @@ const displayableRanges = (range: string | undefined): string => {
 const createPermittedSpeciesActivitiesList = (species: any): string => {
   const permittedActivities = [];
   if (species.HerringGullId) {
-    permittedActivities.push(addActivities(species.PermittedHerringGull, 'Herring gull'));
+    permittedActivities.push(addActivities(species.PHerringGull, 'Herring gull'));
   }
 
   if (species.BlackHeadedGullId) {
-    permittedActivities.push(addActivities(species.PermittedBlackHeadedGull, 'Black-headed gull'));
+    permittedActivities.push(addActivities(species.PBlackHeadedGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
-    permittedActivities.push(addActivities(species.PermittedCommonGull, 'Common gull'));
+    permittedActivities.push(addActivities(species.PCommonGull, 'Common gull'));
   }
 
   if (species.GreatBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.PermittedGreatBlackBackedGull, 'Great black-backed gull'));
+    permittedActivities.push(addActivities(species.PGreatBlackBackedGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.PermittedLesserBlackBackedGull, 'Lesser black-backed gull'));
+    permittedActivities.push(addActivities(species.PLesserBlackBackedGull, 'Lesser black-backed gull'));
   }
 
   return permittedActivities.join('\n');
@@ -555,14 +555,10 @@ const LicenseController = {
       // Set the email details personalisation.
       const emailDetails = setLicenceNotificationDetails(applicationDetails, incomingLicense);
 
-      try {
-        // Try to send the email to the licence holder.
-        await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
-        // And send a copy to the licensing team too.
-        await sendLicenceNotificationEmail(emailDetails, 'licensing@nature.scot');
-      } catch (error: unknown) {
-        return error;
-      }
+      // Try to send the email to the licence holder.
+      await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
+      // And send a copy to the licensing team too.
+      await sendLicenceNotificationEmail(emailDetails, 'licensing@nature.scot');
     }
 
     // If all went well and we have a new application return it.
