@@ -9,10 +9,10 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       // Mark it as deleted.
-      condition.deletedAt = new Date(condition.createdAt);
+      condition[0].deletedAt = new Date();
 
       await queryInterface.sequelize.query(`UPDATE gulls."Conditions" SET "deletedAt" = ? WHERE "id" = ?;`, {
-        replacements: [condition.deletedAt, condition.id],
+        replacements: [condition[0].deletedAt, condition[0].id],
         type: Sequelize.QueryTypes.UPDATE,
       });
     },
@@ -32,10 +32,10 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       // Mark it as deleted.
-      condition.deletedAt = new Date();
+      condition[0].deletedAt = new Date();
 
       await queryInterface.sequelize.query(`UPDATE Conditions SET deletedAt = ? WHERE id = ?;`, {
-        replacements: [condition.deletedAt, condition.id],
+        replacements: [condition[0].deletedAt, condition[0].id],
         type: Sequelize.QueryTypes.UPDATE,
       });
     },
