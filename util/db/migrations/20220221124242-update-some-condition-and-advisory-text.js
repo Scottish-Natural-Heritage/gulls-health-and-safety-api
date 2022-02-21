@@ -19,6 +19,14 @@ if (process.env.NODE_ENV === 'production') {
         type: Sequelize.QueryTypes.UPDATE,
       });
 
+      const updatedCondition3 =
+        'You must record the number of eggs oiled, pricked or replaced with dummy eggs as well as the dates on which they were destroyed.';
+
+      await queryInterface.sequelize.query(`UPDATE gulls."Conditions" SET "condition" = ? WHERE "id" = 21;`, {
+        replacements: [updatedCondition3],
+        type: Sequelize.QueryTypes.UPDATE,
+      });
+
       const updatedAdvisory1 =
         "Gull nests that are not in use are not protected. You don't need a licence to clear them and we do not count them in the permitted numbers of this licence.";
 
@@ -34,6 +42,14 @@ if (process.env.NODE_ENV === 'production') {
 
       await queryInterface.sequelize.query(`UPDATE gulls."Advisories" SET "advisory" = ? WHERE "id" = 2;`, {
         replacements: [updatedAdvisory1],
+        type: Sequelize.QueryTypes.UPDATE,
+      });
+
+      const updatedCondition3 =
+        'You must record the number of eggs destroyed as well as the dates on which they were destroyed.';
+
+      await queryInterface.sequelize.query(`UPDATE gulls."Conditions" SET "condition" = ? WHERE "id" = 21;`, {
+        replacements: [updatedCondition3],
         type: Sequelize.QueryTypes.UPDATE,
       });
 
@@ -73,6 +89,14 @@ if (process.env.NODE_ENV === 'production') {
         type: Sequelize.QueryTypes.UPDATE,
       });
 
+      const updatedCondition3 =
+        'You must record the number of eggs oiled, pricked or replaced with dummy eggs as well as the dates on which they were destroyed.';
+
+      await queryInterface.sequelize.query(`UPDATE Conditions SET condition = ? WHERE id = 21;`, {
+        replacements: [updatedCondition3],
+        type: Sequelize.QueryTypes.UPDATE,
+      });
+
       const updatedAdvisory1 =
         "Gull nests that are not in use are not protected. You don't need a licence to clear them and we do not count them in the permitted numbers of this licence.";
 
@@ -88,6 +112,14 @@ if (process.env.NODE_ENV === 'production') {
 
       await queryInterface.sequelize.query(`UPDATE Advisories SET advisory = ? WHERE id = 2;`, {
         replacements: [updatedAdvisory1],
+        type: Sequelize.QueryTypes.UPDATE,
+      });
+
+      const updatedCondition3 =
+        'You must record the number of eggs destroyed as well as the dates on which they were destroyed.';
+
+      await queryInterface.sequelize.query(`UPDATE Conditions SET condition = ? WHERE id = 21;`, {
+        replacements: [updatedCondition3],
         type: Sequelize.QueryTypes.UPDATE,
       });
 
