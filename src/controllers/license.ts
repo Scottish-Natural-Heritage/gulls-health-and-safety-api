@@ -558,7 +558,7 @@ const LicenseController = {
       // Try to send the email to the licence holder.
       await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
       // And send a copy to the licensing team too.
-      await sendLicenceNotificationEmail(emailDetails, 'licensing@nature.scot');
+      await sendLicenceNotificationEmail(emailDetails, 'issuedlicence@nature.scot');
     }
 
     // If all went well and we have a new application return it.
