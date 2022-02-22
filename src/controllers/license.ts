@@ -52,7 +52,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     measuresTried: createMeasures(application.ApplicationMeasure, 'Tried'),
     measuresIntended: createMeasures(application.ApplicationMeasure, 'Intend'),
     measuresNotTried: createMeasures(application.ApplicationMeasure, 'No'),
-    proposalResult: createProposalResult(application.Species),
+    proposalResult: createProposalResult(application.PSpecies),
     optionalAdvisoriesList: createOptionalAdvisoriesList(application.License.LicenseAdvisories),
     optionalWhatYouMustDoConditionsList: createWhatYouMustDoOptionalConditionsList(
       application.License.LicenseConditions,
@@ -93,23 +93,23 @@ const createDisplayDate = (date: Date) => {
  */
 const displayableRanges = (range: string | undefined): string => {
   if (range === '10' || range === 'upTo10') {
-    return '1 - 10';
+    return 'up to 10';
   }
 
   if (range === '50' || range === 'upTo50') {
-    return '11 - 50';
+    return 'up to 50';
   }
 
   if (range === '100' || range === 'upTo100') {
-    return '51 - 100';
+    return 'up to 100';
   }
 
   if (range === '500' || range === 'upTo500') {
-    return '101 - 500';
+    return 'up to 500';
   }
 
   if (range === '1000' || range === 'upTo1000') {
-    return '501 - 1000';
+    return 'up to 1000';
   }
 
   return '';
@@ -324,23 +324,23 @@ const createMeasures = (applicationMeasures: any, measuresStatus: string): strin
 const createProposalResult = (species: any): string => {
   const proposalResult = [];
   if (species.HerringGullId) {
-    proposalResult.push(addProposalResults(species.HerringGull, 'Herring gull'));
+    proposalResult.push(addProposalResults(species.PHerringGull, 'Herring gull'));
   }
 
   if (species.BlackHeadedGullId) {
-    proposalResult.push(addProposalResults(species.BlackHeadedGull, 'Black-headed gull'));
+    proposalResult.push(addProposalResults(species.PBlackHeadedGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
-    proposalResult.push(addProposalResults(species.CommonGull, 'Common gull'));
+    proposalResult.push(addProposalResults(species.PCommonGull, 'Common gull'));
   }
 
   if (species.GreatBlackBackedGullId) {
-    proposalResult.push(addProposalResults(species.GreatBlackBackedGull, 'Great black-backed gull'));
+    proposalResult.push(addProposalResults(species.PGreatBlackBackedGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    proposalResult.push(addProposalResults(species.LesserBlackBackedGull, 'Lesser black-backed gull'));
+    proposalResult.push(addProposalResults(species.PLesserBlackBackedGull, 'Lesser black-backed gull'));
   }
 
   return proposalResult.join('\n');
