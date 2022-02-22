@@ -58,6 +58,9 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
       application.License.LicenseConditions,
     ),
     optionalGeneralConditionsList: createGeneralOptionalConditionsList(application.License.LicenseConditions),
+    optionalReportingConditionsList: createReportingOptionalConditionsList(application.License.LicenseConditions),
+    test1Details: application.ApplicationAssessment.testOneAssessment,
+    test2Details: application.ApplicationAssessment.testTwoAssessment,
   };
 };
 
@@ -439,6 +442,27 @@ const createWhatYouMustDoOptionalConditionsList = (conditions: any): string => {
 
   const optionalConditions = conditions.filter((optional: any) => {
     return optionalWhatMustBeDoneConditionIds.has(optional.Condition.id);
+  });
+  for (const condition of optionalConditions) {
+    conditionList.push(condition.Condition.condition);
+  }
+
+  return conditionList.join('\n\n');
+};
+
+/**
+ * This function returns a list of optional reporting conditions.
+ *
+ * @param {any} conditions The list of conditions associated with the licence.
+ * @returns {string} Returns a formatted list of optional general conditions.
+ */
+const createReportingOptionalConditionsList = (conditions: any): string => {
+  const optionalReportingConditionIds = new Set([19, 20, 21, 22, 23, 24, 25]);
+
+  const conditionList = [];
+
+  const optionalConditions = conditions.filter((optional: any) => {
+    return optionalReportingConditionIds.has(optional.Condition.id);
   });
   for (const condition of optionalConditions) {
     conditionList.push(condition.Condition.condition);
