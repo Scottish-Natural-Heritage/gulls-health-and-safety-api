@@ -79,12 +79,28 @@ const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderCo
   return {
     licenceName: licenceHolderContact.name,
     applicationDate: createDisplayDate(new Date(newApplication.createdAt)),
-    siteAddressLine1: siteAddress.addressLine1,
-    siteAddressLine2: siteAddress.addressLine2,
-    siteAddressTown: siteAddress.addressTown,
-    sitePostcode: siteAddress.postcode,
+    siteAddress: createSummaryAddress(siteAddress),
     id: newApplication.id,
   };
+};
+
+/**
+ * This function returns a summary address built from the address fields of an address object.
+ *
+ * @param {any} fullAddress The address to use to build the summary address from.
+ * @returns {string} Returns a string containing the summary address.
+ */
+const createSummaryAddress = (fullAddress: any): string => {
+  const address = [];
+  address.push(fullAddress.addressLine1.trim());
+  // As addressLine2 is optional we need to check if it exists.
+  if (fullAddress.addressLine2) {
+    address.push(fullAddress.addressLine2.trim());
+  }
+
+  address.push(fullAddress.addressTown.trim(), fullAddress.addressCounty.trim(), fullAddress.postcode.trim());
+
+  return address.join(', ');
 };
 
 /**
