@@ -52,12 +52,15 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     measuresTried: createMeasures(application.ApplicationMeasure, 'Tried'),
     measuresIntended: createMeasures(application.ApplicationMeasure, 'Intend'),
     measuresNotTried: createMeasures(application.ApplicationMeasure, 'No'),
-    proposalResult: createProposalResult(application.Species),
+    proposalResult: createProposalResult(application.PSpecies),
     optionalAdvisoriesList: createOptionalAdvisoriesList(application.License.LicenseAdvisories),
     optionalWhatYouMustDoConditionsList: createWhatYouMustDoOptionalConditionsList(
       application.License.LicenseConditions,
     ),
     optionalGeneralConditionsList: createGeneralOptionalConditionsList(application.License.LicenseConditions),
+    optionalReportingConditionsList: createReportingOptionalConditionsList(application.License.LicenseConditions),
+    test1Details: application.ApplicationAssessment.testOneAssessment,
+    test2Details: application.ApplicationAssessment.testTwoAssessment,
   };
 };
 
@@ -90,23 +93,23 @@ const createDisplayDate = (date: Date) => {
  */
 const displayableRanges = (range: string | undefined): string => {
   if (range === '10' || range === 'upTo10') {
-    return '1 - 10';
+    return 'up to 10';
   }
 
   if (range === '50' || range === 'upTo50') {
-    return '11 - 50';
+    return 'up to 50';
   }
 
   if (range === '100' || range === 'upTo100') {
-    return '51 - 100';
+    return 'up to 100';
   }
 
   if (range === '500' || range === 'upTo500') {
-    return '101 - 500';
+    return 'up to 500';
   }
 
   if (range === '1000' || range === 'upTo1000') {
-    return '501 - 1000';
+    return 'up to 1000';
   }
 
   return '';
@@ -321,23 +324,23 @@ const createMeasures = (applicationMeasures: any, measuresStatus: string): strin
 const createProposalResult = (species: any): string => {
   const proposalResult = [];
   if (species.HerringGullId) {
-    proposalResult.push(addProposalResults(species.HerringGull, 'Herring gull'));
+    proposalResult.push(addProposalResults(species.PHerringGull, 'Herring gull'));
   }
 
   if (species.BlackHeadedGullId) {
-    proposalResult.push(addProposalResults(species.BlackHeadedGull, 'Black-headed gull'));
+    proposalResult.push(addProposalResults(species.PBlackHeadedGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
-    proposalResult.push(addProposalResults(species.CommonGull, 'Common gull'));
+    proposalResult.push(addProposalResults(species.PCommonGull, 'Common gull'));
   }
 
   if (species.GreatBlackBackedGullId) {
-    proposalResult.push(addProposalResults(species.GreatBlackBackedGull, 'Great black-backed gull'));
+    proposalResult.push(addProposalResults(species.PGreatBlackBackedGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    proposalResult.push(addProposalResults(species.LesserBlackBackedGull, 'Lesser black-backed gull'));
+    proposalResult.push(addProposalResults(species.PLesserBlackBackedGull, 'Lesser black-backed gull'));
   }
 
   return proposalResult.join('\n');
@@ -439,6 +442,27 @@ const createWhatYouMustDoOptionalConditionsList = (conditions: any): string => {
 
   const optionalConditions = conditions.filter((optional: any) => {
     return optionalWhatMustBeDoneConditionIds.has(optional.Condition.id);
+  });
+  for (const condition of optionalConditions) {
+    conditionList.push(condition.Condition.condition);
+  }
+
+  return conditionList.join('\n\n');
+};
+
+/**
+ * This function returns a list of optional reporting conditions.
+ *
+ * @param {any} conditions The list of conditions associated with the licence.
+ * @returns {string} Returns a formatted list of optional general conditions.
+ */
+const createReportingOptionalConditionsList = (conditions: any): string => {
+  const optionalReportingConditionIds = new Set([19, 20, 21, 22, 23, 24, 25]);
+
+  const conditionList = [];
+
+  const optionalConditions = conditions.filter((optional: any) => {
+    return optionalReportingConditionIds.has(optional.Condition.id);
   });
   for (const condition of optionalConditions) {
     conditionList.push(condition.Condition.condition);
@@ -558,7 +582,7 @@ const LicenseController = {
       // Try to send the email to the licence holder.
       await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
       // And send a copy to the licensing team too.
-      await sendLicenceNotificationEmail(emailDetails, 'licensing@nature.scot');
+      await sendLicenceNotificationEmail(emailDetails, 'issuedlicence@nature.scot');
     }
 
     // If all went well and we have a new application return it.
