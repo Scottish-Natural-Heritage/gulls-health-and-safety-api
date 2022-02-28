@@ -735,6 +735,41 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * POST resend license emails endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/license/resend`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested License.
+        const license = await License.findOne(existingId);
+        // Did we issue the license?
+        if (license === undefined || license === null) {
+          return h.response({message: `A License for Application ${existingId} has not been issued yet.`}).code(400);
+        }
+
+        // Call the controllers to resend the emails.
+        await License.reSendEmails(existingId);
+
+        // Return a 200 response if the emails were sent successfully.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * POST new application note endpoint.
    */
   {
