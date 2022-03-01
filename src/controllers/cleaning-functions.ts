@@ -1,4 +1,5 @@
 import utils from 'naturescot-utils';
+import {PActivityInterface} from 'models/p-activity';
 import {AssessmentInterface} from 'models/assessment';
 import Condition from './condition';
 import Advisory from './advisory';
@@ -311,6 +312,38 @@ const cleanAssessment = (body: any): any => {
 };
 
 /**
+ * Cleans the permitted activity details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned activity details.
+ */
+const cleanPermittedActivityChange = (body: any): any => {
+  const cleanedBody: PActivityInterface = {};
+  // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if ('quantityNestsToRemove' in body) {
+    cleanedBody.quantityNestsToRemove = body.quantityNestsToRemove;
+  }
+
+  if ('quantityNestsWhereEggsDestroyed' in body) {
+    cleanedBody.quantityNestsWhereEggsDestroyed = body.quantityNestsWhereEggsDestroyed;
+  }
+
+  if ('quantityChicksToRescue' in body) {
+    cleanedBody.quantityChicksToRescue = body.quantityChicksToRescue;
+  }
+
+  if ('quantityChicksToKill' in body) {
+    cleanedBody.quantityChicksToKill = body.quantityChicksToKill;
+  }
+
+  if ('quantityAdultsToKill' in body) {
+    cleanedBody.quantityAdultsToKill = body.quantityAdultsToKill;
+  }
+
+  return cleanedBody;
+};
+
+/**
  * Clean an incoming request body to make it more compatible with the
  * database and its validation rules.
  *
@@ -420,6 +453,7 @@ const CleaningFunctions = {
   cleanPermittedActivity,
   cleanMeasure,
   cleanAssessment,
+  cleanPermittedActivityChange,
   cleanCondition,
   cleanAdvisory,
   cleanLicense,
