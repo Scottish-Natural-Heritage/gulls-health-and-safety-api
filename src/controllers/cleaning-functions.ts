@@ -296,6 +296,14 @@ const cleanAssessment = (body: any): any => {
     cleanedBody.testTwoDecision = body.testTwoDecision;
   }
 
+  if (body.testThreeAssessment) {
+    cleanedBody.testThreeAssessment = body.testThreeAssessment.trim();
+  }
+
+  if ('testThreeDecision' in body) {
+    cleanedBody.testThreeDecision = body.testThreeDecision;
+  }
+
   if ('decision' in body) {
     cleanedBody.decision = body.decision;
   }
