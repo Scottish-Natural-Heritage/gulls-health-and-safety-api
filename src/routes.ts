@@ -645,7 +645,7 @@ const routes: ServerRoute[] = [
    */
   {
     method: 'patch',
-    path: `${config.pathPrefix}/application/{id}/permitted-activities{activityId}`,
+    path: `${config.pathPrefix}/application/{id}/permitted-activities/{activityId}`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // Is the ID a number?
@@ -669,7 +669,7 @@ const routes: ServerRoute[] = [
         }
 
         // Try to get the requested permitted activity.
-        const permittedActivity = await PActivity.findOne(existingId);
+        const permittedActivity = await PActivity.findOne(existingActivityId);
 
         // Did we get an permitted activity?
         if (permittedActivity === undefined || permittedActivity === null) {
