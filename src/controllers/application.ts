@@ -125,10 +125,7 @@ const setHolderApplicantConfirmEmailDetails = (
     lhName: licenceHolderContact.name,
     laName: onBehalfContact.name,
     applicationDate: createDisplayDate(new Date(createdAt)),
-    siteAddressLine1: siteAddress.addressLine1,
-    siteAddressLine2: siteAddress.addressLine2,
-    siteAddressTown: siteAddress.addressTown,
-    sitePostcode: siteAddress.postcode,
+    siteAddress: createSummaryAddress(siteAddress),
     id,
   };
 };
