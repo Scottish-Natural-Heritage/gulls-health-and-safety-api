@@ -10,10 +10,13 @@ import routes from './routes';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
+import scheduled from './controllers/scheduled';
+
 const cron = require('node-cron');
 
-cron.schedule('* * * * *', () => {
-  console.log('Call code to be scheduled from here ===>>> ? ? ?');
+cron.schedule('0 3 * * *', () => {
+  console.log('Call code at 3:00am every day from here...');
+  scheduled.checkUnconfirmedAndSendReminder();
 })
 
 // Start up our micro-app.
