@@ -10,6 +10,12 @@ import routes from './routes';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
+const cron = require('node-cron');
+
+cron.schedule('* * * * *', () => {
+  console.log('Call code to be scheduled from here ===>>> ? ? ?');
+})
+
 // Start up our micro-app.
 const init = async () => {
   const server = Hapi.server({
