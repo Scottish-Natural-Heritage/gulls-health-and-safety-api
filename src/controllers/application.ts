@@ -60,6 +60,7 @@ interface ApplicationInterface {
   supportingInformation: string;
   confirmedByLicenseHolder: boolean;
   staffNumber: string;
+  fourteenDayReminder: boolean;
 }
 
 // Create a more user friendly displayable date from a date object.

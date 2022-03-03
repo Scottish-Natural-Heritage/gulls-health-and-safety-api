@@ -10,13 +10,28 @@ import routes from './routes';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
-import scheduled from './controllers/scheduled';
+// import scheduled from './controllers/scheduled';
+
+const https = require('https');
 
 const cron = require('node-cron');
 
 cron.schedule('0 3 * * *', () => {
   console.log('Call code at 3:00am every day from here...');
-  scheduled.checkUnconfirmedAndSendReminder();
+
+  const options = {
+    hostname: config.pathPrefix,
+    port: 443,
+    path: '/reminder',
+    method: 'PATCH'
+  }
+
+  https.request(options, (res: { statusCode: any; }) => {
+    console.log(`14 Day Reminder: ${res.statusCode}`);
+  })
+
+
+  // scheduled.checkUnconfirmedAndSendReminder();
 })
 
 // Start up our micro-app.
