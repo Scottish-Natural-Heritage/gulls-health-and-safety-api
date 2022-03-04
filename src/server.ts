@@ -10,28 +10,23 @@ import routes from './routes';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
-// import scheduled from './controllers/scheduled';
+import axios from 'axios';
 
-const https = require('https');
-
+// Install @types/node-cron and change to import.
 const cron = require('node-cron');
 
-cron.schedule('0 3 * * *', () => {
-  console.log('Call code at 3:00am every day from here...');
-
-  const options = {
-    hostname: config.pathPrefix,
-    port: 443,
-    path: '/reminder',
-    method: 'PATCH'
+cron.schedule('* * * * *', async () => {
+  try {
+    const response = await axios.patch(`http://localhost:3017${config.pathPrefix}/reminder`, undefined, {
+      params: {
+        onBehalfApprovePath: '/gulls-health-and-safety/on-behalf-approve?token=',
+      },
+    });
+    return response;
+  } catch (error: unknown) {
+    console.log('ERROR: ' + error)
+    return undefined;
   }
-
-  https.request(options, (res: { statusCode: any; }) => {
-    console.log(`14 Day Reminder: ${res.statusCode}`);
-  })
-
-
-  // scheduled.checkUnconfirmedAndSendReminder();
 })
 
 // Start up our micro-app.

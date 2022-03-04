@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 
-import jwk from 'config/jwk.js';
+import jwk from '../config/jwk.js';
 import database from '../models/index.js';
 
 import config from '../config/app';
@@ -82,9 +82,9 @@ const set14DayReminderEmailDetails = async (
 
   return {
     lhName: licenceHolderContact.name,
-    onBehalfName: onBehalfContact.any,
-    onBehalfOrg: onBehalfContact.any,
-    onBehalfEmail: onBehalfContact.any,
+    onBehalfName: onBehalfContact.name,
+    onBehalfOrg: onBehalfContact.organisation,
+    onBehalfEmail: onBehalfContact.emailAddress,
     siteAddress: createSummaryAddress(siteAddress),
     magicLink,
     id,
@@ -94,7 +94,7 @@ const set14DayReminderEmailDetails = async (
 const ScheduledController = {
   getUnconfirmed: async () => {
     return Application.findAll({
-      where: {confirmedByLicenseHolder: false, fourteenDayReminder: false},
+      where: {confirmedByLicenseHolder: false, fourteenDayReminder: false || null},
       include: [
         {
           model: Contact,
@@ -135,10 +135,9 @@ const ScheduledController = {
       );
 
       await sendReminderMagicLinkEmail(emailDetails, application.LicenceHolder.emailAddress);
-
-      // Return the unconfirmed array of applications.
-      return unconfirmed;
     }
+    // Return the unconfirmed array of applications or undefined if empty.
+    return unconfirmed ? unconfirmed : undefined;
   },
 };
 

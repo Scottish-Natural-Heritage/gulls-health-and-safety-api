@@ -455,20 +455,22 @@ const routes: ServerRoute[] = [
           }`,
         );
 
-        // Grab the 'forwarding' url from the request.
-        const {confirmBaseUrl} = request.query;
+        // Create the confirm magic link base URL.
+        const confirmBaseUrl = `${request.url.protocol}//${request.url.hostname}${request.query.onBehalfApprovePath}`;
 
         // Check there's actually one there, otherwise we'll have to make one up.
         const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
 
-        const unconfirmed: any = Scheduled.checkUnconfirmedAndSendReminder(
+        const unconfirmed: any = await Scheduled.checkUnconfirmedAndSendReminder(
           applications,
           urlInvalid ? `${baseUrl.toString()}confirm?token=` : confirmBaseUrl,
         );
 
-        for (const application of unconfirmed) {
-          const sentReminder: any = { fourteenDayReminder: true };
-          Application.confirm(application.id, sentReminder);
+        if (unconfirmed) {
+          for (const application of unconfirmed) {
+            const sentReminder: any = { fourteenDayReminder: true };
+            Application.confirm(application.id, sentReminder);
+          }
         }
 
         return h.response({message: `Reminders sent for applications unconfirmed after 14 days.`}).code(200);
