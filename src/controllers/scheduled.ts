@@ -55,6 +55,23 @@ const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) 
 };
 
 /**
+ * This function calls the Notify API and asks for a 14 day reminder email to be sent to
+ * the licence applicant.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+ const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('52c8aa89-7fec-41c2-bb02-646ed61470d3', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
  * This function returns an object containing the details required for the licence holder
  * fourteen day reminder email.
  *
@@ -96,6 +113,24 @@ const set14DayReminderEmailDetails = async (
     onBehalfEmail: onBehalfContact.emailAddress,
     siteAddress: createSummaryAddress(siteAddress),
     magicLink,
+    id,
+  };
+};
+
+const set14DayReminderEmailDetailsForApplicant = async (
+  id: number,
+  applicationDate: string,
+  licenceHolderContact: any,
+  onBehalfContact: any,
+  siteAddress: any,
+) => {
+  return {
+    lhName: licenceHolderContact.name,
+    applicationDate: createDisplayDate(new Date(applicationDate)),
+    laName: onBehalfContact.name,
+    onBehalfOrg: onBehalfContact.organisation,
+    onBehalfEmail: onBehalfContact.emailAddress,
+    siteAddress: createSummaryAddress(siteAddress),
     id,
   };
 };
@@ -145,9 +180,19 @@ const ScheduledController = {
         confirmBaseUrl,
       );
 
-      // Send the reminder email, the await needs to be part of the loop.
-      // eslint-disable-next-line no-await-in-loop
+      const applicantEmailDetails = await set14DayReminderEmailDetailsForApplicant(
+        application.id,
+        application.createdAt,
+        application.LicenceHolder,
+        application.LicenceApplicant,
+        application.SiteAddress,
+      );
+
+      // Send the reminder emails, the awaits needs to be part of the loop.
+      /* eslint-disable no-await-in-loop */
       await sendReminderMagicLinkEmail(emailDetails, application.LicenceHolder.emailAddress);
+      await sendReminderEmailForApplicant(applicantEmailDetails, application.LicenceApplicant.emailAddress);
+      /* eslint-enable no-await-in-loop */
     }
 
     // Return the unconfirmed array of applications or undefined if empty.
