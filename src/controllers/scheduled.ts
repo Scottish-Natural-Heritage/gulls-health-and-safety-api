@@ -97,7 +97,7 @@ const set14DayReminderEmailDetails = async (
   // Create JWT.
   const token = jwt.sign({}, privateKey as string, {
     algorithm: 'ES256',
-    expiresIn: '21 days',
+    expiresIn: '7 days',
     noTimestamp: true,
     subject: `${id}`,
   });
