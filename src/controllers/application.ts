@@ -686,12 +686,12 @@ const ApplicationController = {
       remindedApplication = await Application.update(remindApplication, {where: {id}, transaction: t});
     });
 
-    // If all went well and we have confirmed a application return it.
+    // If all went well and we have flagged an application as reminded then return the application.
     if (remindedApplication) {
       return remindedApplication as ApplicationInterface;
     }
 
-    // If no application was confirmed return undefined.
+    // If no application was reminded return undefined.
     return undefined;
   },
 
