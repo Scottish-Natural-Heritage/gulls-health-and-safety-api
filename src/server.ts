@@ -4,18 +4,20 @@ import * as Hapi from '@hapi/hapi';
 // Use Pino for logging from Hapi.
 import HapiPino from 'hapi-pino';
 
+// Use node-cron for scheduled tasks.
+import cron from 'node-cron';
+
+// Use to make HTTP calls.
+import axios from 'axios';
+
 // Import the micro-app's routes.
 import routes from './routes';
 
 import config from './config/app';
 import JsonUtils from './json-utils';
 
-import axios from 'axios';
-
-// Install @types/node-cron and change to import.
-const cron = require('node-cron');
-
-cron.schedule('* * * * *', async () => {
+// Cron scheduled task, set to trigger at 6am each day and send out 14 day reminder emails.
+cron.schedule('0 6 * * *', async () => {
   console.log('Triggering cron job(s).');
   try {
     const response = await axios.patch(`http://localhost:3017${config.pathPrefix}/reminder`, undefined, {
@@ -23,13 +25,13 @@ cron.schedule('* * * * *', async () => {
         onBehalfApprovePath: '/gulls-health-and-safety/on-behalf-approve?token=',
       },
     });
-    console.log('Ending cron job(s).')
+    console.log('Ending cron job(s).');
     return response;
   } catch (error: unknown) {
-    console.log('ERROR: ' + error)
+    console.error(JsonUtils.unErrorJson(error));
     return undefined;
   }
-})
+});
 
 // Start up our micro-app.
 const init = async () => {

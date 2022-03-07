@@ -456,7 +456,9 @@ const routes: ServerRoute[] = [
         );
 
         // Create the confirm magic link base URL.
-        const confirmBaseUrl = `${request.url.protocol}//${request.url.hostname}${request.query.onBehalfApprovePath}`;
+        const confirmBaseUrl = `${request.url.protocol}//${request.url.hostname}${String(
+          request.query.onBehalfApprovePath,
+        )}`;
 
         // Check there's actually one there, otherwise we'll have to make one up.
         const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
@@ -468,12 +470,14 @@ const routes: ServerRoute[] = [
 
         if (unconfirmed) {
           for (const application of unconfirmed) {
-            const sentReminder: any = { fourteenDayReminder: true };
-            Application.remind(application.id, sentReminder);
+            const sentReminder: any = {fourteenDayReminder: true};
+            // The await is needed here as we have an indeterminate number of unconfirmed to update in the DB.
+            // eslint-disable-next-line no-await-in-loop
+            await Application.remind(application.id, sentReminder);
           }
         }
 
-        return h.response({message: `Reminders sent for applications unconfirmed after 14 days.`}).code(200);
+        return h.response({message: 'Reminders sent for applications unconfirmed after 14 days.'}).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

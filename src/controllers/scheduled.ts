@@ -4,6 +4,7 @@ import jwk from '../config/jwk.js';
 import database from '../models/index.js';
 
 import config from '../config/app';
+import {ApplicationInterface} from './application.js';
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -43,7 +44,7 @@ const createDisplayDate = (date: Date) => {
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
- const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
+const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     await notifyClient.sendEmail('328d9fa5-b7be-443b-85f5-1b2c80f94022', emailAddress, {
@@ -58,10 +59,11 @@ const createDisplayDate = (date: Date) => {
  * fourteen day reminder email.
  *
  * @param {number} id The confirmed application's reference number.
- * @param {string} createdAt The date the application was created on.
+ * @param {string} applicationDate The date the application was created on.
  * @param {any} licenceHolderContact The licence holder's contact details.
  * @param {any} onBehalfContact The licence applicant's contact details.
  * @param {any} siteAddress The address of the site to which the licence pertains.
+ * @param {string} confirmBaseUrl The URL to use when creating the magic link.
  * @returns {any} An object with the required details set.
  */
 const set14DayReminderEmailDetails = async (
@@ -126,13 +128,14 @@ const ScheduledController = {
   checkUnconfirmedAndSendReminder: async (unconfirmed: any, confirmBaseUrl: any) => {
     const todayDateMinusFourteenDays: Date = new Date(new Date().setDate(new Date().getDate() - 14));
 
-    // createdAt date filter on the unconfirmed Array - easier to do here.
-    unconfirmed = unconfirmed.filter(
-      (application: any) => new Date(application.createdAt) <= todayDateMinusFourteenDays,
-    );
+    // Filter any unconfirmed applications to only include those that are 14 days old or older.
+    unconfirmed = unconfirmed.filter((application: any) => {
+      return new Date(application.createdAt) <= todayDateMinusFourteenDays;
+    });
 
     for (const application of unconfirmed) {
-      // loop through each application and create personalisation object.
+      // Loop through each application and create personalisation object, the await needs to be part of the loop.
+      // eslint-disable-next-line no-await-in-loop
       const emailDetails = await set14DayReminderEmailDetails(
         application.id,
         application.createdAt,
@@ -142,10 +145,13 @@ const ScheduledController = {
         confirmBaseUrl,
       );
 
+      // Send the reminder email, the await needs to be part of the loop.
+      // eslint-disable-next-line no-await-in-loop
       await sendReminderMagicLinkEmail(emailDetails, application.LicenceHolder.emailAddress);
     }
+
     // Return the unconfirmed array of applications or undefined if empty.
-    return unconfirmed ? unconfirmed : undefined;
+    return unconfirmed ? (unconfirmed as ApplicationInterface[]) : undefined;
   },
 };
 
