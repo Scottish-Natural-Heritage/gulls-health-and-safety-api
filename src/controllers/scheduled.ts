@@ -61,7 +61,7 @@ const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) 
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
- const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: any) => {
+const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     await notifyClient.sendEmail('52c8aa89-7fec-41c2-bb02-646ed61470d3', emailAddress, {
@@ -128,8 +128,8 @@ const set14DayReminderEmailDetailsForApplicant = async (
     lhName: licenceHolderContact.name,
     applicationDate: createDisplayDate(new Date(applicationDate)),
     laName: onBehalfContact.name,
-    onBehalfOrg: onBehalfContact.organisation,
-    onBehalfEmail: onBehalfContact.emailAddress,
+    lhOrg: licenceHolderContact.organisation,
+    lhEmail: licenceHolderContact.emailAddress,
     siteAddress: createSummaryAddress(siteAddress),
     id,
   };
@@ -180,6 +180,7 @@ const ScheduledController = {
         confirmBaseUrl,
       );
 
+      // eslint-disable-next-line no-await-in-loop
       const applicantEmailDetails = await set14DayReminderEmailDetailsForApplicant(
         application.id,
         application.createdAt,
