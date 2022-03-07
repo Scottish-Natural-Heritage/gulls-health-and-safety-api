@@ -8,6 +8,7 @@ import Advisory from './controllers/advisory';
 import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
 import CleaningFunctions from './controllers/cleaning-functions';
+import Scheduled from './controllers/scheduled';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
@@ -430,6 +431,53 @@ const routes: ServerRoute[] = [
 
         // If they are, send back the updated fields.
         return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  {
+    method: 'patch',
+    path: `${config.pathPrefix}/reminder`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get the requested application.
+        const applications = await Scheduled.getUnconfirmed();
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // Create the confirm magic link base URL.
+        const confirmBaseUrl = `${request.url.protocol}//${request.url.hostname}${String(
+          request.query.onBehalfApprovePath,
+        )}`;
+
+        // Check there's actually one there, otherwise we'll have to make one up.
+        const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
+
+        const unconfirmed: any = await Scheduled.checkUnconfirmedAndSendReminder(
+          applications,
+          urlInvalid ? `${baseUrl.toString()}confirm?token=` : confirmBaseUrl,
+        );
+
+        if (unconfirmed) {
+          for (const application of unconfirmed) {
+            const sentReminder: any = {fourteenDayReminder: true};
+            // The await is needed here as we have an indeterminate number of unconfirmed to update in the DB.
+            // eslint-disable-next-line no-await-in-loop
+            await Application.remind(application.id, sentReminder);
+          }
+        }
+
+        return h.response({message: 'Reminders sent for applications unconfirmed after 14 days.'}).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

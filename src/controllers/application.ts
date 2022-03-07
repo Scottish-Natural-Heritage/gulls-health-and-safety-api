@@ -60,6 +60,7 @@ interface ApplicationInterface {
   supportingInformation: string;
   confirmedByLicenseHolder: boolean;
   staffNumber: string;
+  fourteenDayReminder: boolean;
 }
 
 // Create a more user friendly displayable date from a date object.
@@ -674,6 +675,23 @@ const ApplicationController = {
     }
 
     // If no application was confirmed return undefined.
+    return undefined;
+  },
+
+  remind: async (id: number, remindApplication: ApplicationInterface) => {
+    let remindedApplication;
+    // Start the transaction.
+    await database.sequelize.transaction(async (t: transaction) => {
+      // Save the new values to the database.
+      remindedApplication = await Application.update(remindApplication, {where: {id}, transaction: t});
+    });
+
+    // If all went well and we have flagged an application as reminded then return the application.
+    if (remindedApplication) {
+      return remindedApplication as ApplicationInterface;
+    }
+
+    // If no application was reminded return undefined.
     return undefined;
   },
 
