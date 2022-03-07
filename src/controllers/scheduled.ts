@@ -31,6 +31,11 @@ const createSummaryAddress = (fullAddress: any): string => {
   return address.join(', ');
 };
 
+// Create a more user friendly displayable date from a date object, format (dd/mm/yyy).
+const createDisplayDate = (date: Date) => {
+  return date.toLocaleDateString('en-GB', {year: 'numeric', month: 'numeric', day: 'numeric'});
+};
+
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
  * the to be licence holder asking them to confirm their details.
@@ -61,6 +66,7 @@ const createSummaryAddress = (fullAddress: any): string => {
  */
 const set14DayReminderEmailDetails = async (
   id: number,
+  applicationDate: string,
   licenceHolderContact: any,
   onBehalfContact: any,
   siteAddress: any,
@@ -82,6 +88,7 @@ const set14DayReminderEmailDetails = async (
 
   return {
     lhName: licenceHolderContact.name,
+    applicationDate: createDisplayDate(new Date(applicationDate)),
     onBehalfName: onBehalfContact.name,
     onBehalfOrg: onBehalfContact.organisation,
     onBehalfEmail: onBehalfContact.emailAddress,
@@ -128,6 +135,7 @@ const ScheduledController = {
       // loop through each application and create personalisation object.
       const emailDetails = await set14DayReminderEmailDetails(
         application.id,
+        application.createdAt,
         application.LicenceHolder,
         application.LicenceApplicant,
         application.SiteAddress,

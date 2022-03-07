@@ -678,6 +678,23 @@ const ApplicationController = {
     return undefined;
   },
 
+  remind: async (id: number, remindApplication: ApplicationInterface) => {
+    let remindedApplication;
+    // Start the transaction.
+    await database.sequelize.transaction(async (t: transaction) => {
+      // Save the new values to the database.
+      remindedApplication = await Application.update(remindApplication, {where: {id}, transaction: t});
+    });
+
+    // If all went well and we have confirmed a application return it.
+    if (remindedApplication) {
+      return remindedApplication as ApplicationInterface;
+    }
+
+    // If no application was confirmed return undefined.
+    return undefined;
+  },
+
   assign: async (id: number, assignTo: any) => {
     let assign;
     // Start the transaction.

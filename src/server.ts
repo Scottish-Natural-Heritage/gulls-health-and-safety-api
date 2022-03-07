@@ -16,12 +16,14 @@ import axios from 'axios';
 const cron = require('node-cron');
 
 cron.schedule('* * * * *', async () => {
+  console.log('Triggering cron job(s).');
   try {
     const response = await axios.patch(`http://localhost:3017${config.pathPrefix}/reminder`, undefined, {
       params: {
         onBehalfApprovePath: '/gulls-health-and-safety/on-behalf-approve?token=',
       },
     });
+    console.log('Ending cron job(s).')
     return response;
   } catch (error: unknown) {
     console.log('ERROR: ' + error)

@@ -469,7 +469,7 @@ const routes: ServerRoute[] = [
         if (unconfirmed) {
           for (const application of unconfirmed) {
             const sentReminder: any = { fourteenDayReminder: true };
-            Application.confirm(application.id, sentReminder);
+            Application.remind(application.id, sentReminder);
           }
         }
 
