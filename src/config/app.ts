@@ -21,7 +21,7 @@ const config: AppConfig = {
   roGullsPassword: process.env.RO_GULLS_DB_PASS ?? 'override_this_value',
   underTest: Boolean(process.env.UNDER_TEST),
   notifyApiKey: process.env.GULLS_NOTIFY_API_KEY ?? null,
-  hostPrefix: process.env.GULLS_HOST_PREFIX ?? 'http://localhost:3016'
+  hostPrefix: process.env.GULLS_HOST_PREFIX ?? 'http://localhost:3016',
 };
 
 export default config;
