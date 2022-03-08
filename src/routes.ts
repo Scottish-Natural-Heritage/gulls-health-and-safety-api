@@ -538,6 +538,26 @@ const routes: ServerRoute[] = [
     },
   },
 
+  {
+    method: 'delete',
+    path: `${config.pathPrefix}/withdrawal`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get any unconfirmed applications.
+        const applications = await Scheduled.getUnconfirmed();
+
+        const unconfirmed: any = await Scheduled.checkUnconfirmedAndWithdraw(applications);
+
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
   /**
    * Soft DELETEs a single licence and all child records (revoke).
    */
