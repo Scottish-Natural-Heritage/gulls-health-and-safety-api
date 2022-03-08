@@ -456,9 +456,7 @@ const routes: ServerRoute[] = [
         );
 
         // Create the confirm magic link base URL.
-        const confirmBaseUrl = `${request.url.protocol}//${request.url.hostname}${String(
-          request.query.onBehalfApprovePath,
-        )}`;
+        const confirmBaseUrl = `${config.hostPrefix}${String(request.query.onBehalfApprovePath)}`;
 
         // Check there's actually one there, otherwise we'll have to make one up.
         const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
