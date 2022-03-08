@@ -543,8 +543,8 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/withdrawal`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
-        // Try to get any unconfirmed applications.
-        const applications = await Scheduled.getUnconfirmed();
+        // Try to get any unconfirmed but reminded applications.
+        const applications = await Scheduled.getUnconfirmedReminded();
 
         const unconfirmed: any = await Scheduled.checkUnconfirmedAndWithdraw(applications);
 
@@ -555,6 +555,7 @@ const routes: ServerRoute[] = [
 
         for (const application of unconfirmed) {
           const withdrawalReason = {
+            ApplicationId: application.id,
             reason: 'Application unconfirmed after 21 days.',
             createdBy: 'node-cron automated process',
           };
@@ -562,6 +563,7 @@ const routes: ServerRoute[] = [
           await Application.withdraw(application.id, withdrawalReason);
         }
 
+        // Return something here.
         return h.response().code(200);
       } catch (error: unknown) {
         // Log any error.

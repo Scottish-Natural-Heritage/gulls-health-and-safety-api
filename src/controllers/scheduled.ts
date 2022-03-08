@@ -78,10 +78,10 @@ const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: an
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
- const sendWithdrawHolderEmail = async (emailDetails: any, emailAddress: any) => {
+const sendWithdrawHolderEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa ', emailAddress, {
+    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -95,10 +95,10 @@ const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: an
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
- const sendWithdrawApplicantEmail = async (emailDetails: any, emailAddress: any) => {
+const sendWithdrawApplicantEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa ', emailAddress, {
+    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -189,6 +189,30 @@ const ScheduledController = {
   getUnconfirmed: async () => {
     return Application.findAll({
       where: {confirmedByLicenseHolder: false, fourteenDayReminder: false || null},
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddress',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+      ],
+    });
+  },
+
+  getUnconfirmedReminded: async () => {
+    return Application.findAll({
+      where: {confirmedByLicenseHolder: false, fourteenDayReminder: true},
       include: [
         {
           model: Contact,
