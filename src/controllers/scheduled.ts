@@ -253,14 +253,13 @@ const ScheduledController = {
   checkUnconfirmedAndWithdraw: async (unconfirmed: any) => {
     const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
 
-    // Filter any unconfirmed applications to only include those that are 14 days old or older.
+    // Filter any unconfirmed applications to only include those that are 21 days old or older.
     unconfirmed = unconfirmed.filter((application: any) => {
       return new Date(application.createdAt) <= todayDateMinusTwentyOneDays;
     });
 
     for (const application of unconfirmed) {
-      // Loop through each application and create personalisation object, the await needs to be part of the loop.
-      // eslint-disable-next-line no-await-in-loop
+      // Loop through each application and create personalisation object.
       const emailDetails = set21DayWithdrawEmailDetails(
         application.id,
         application.createdAt,

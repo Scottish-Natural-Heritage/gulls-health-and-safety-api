@@ -508,9 +508,9 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
-        // Try to get the requested licence sd we can only withdraw a application if the license hasn't been issued.
+        // Try to get the requested licence so we can only withdraw an application if the licence hasn't been issued.
         const licence = await License.findOne(existingId);
-        // Did we get an License?
+        // Did we get a licence?
         if (licence) {
           return h.response({message: `Licence ${existingId} has already been issued you need to revoke.`}).code(400);
         }
@@ -547,6 +547,20 @@ const routes: ServerRoute[] = [
         const applications = await Scheduled.getUnconfirmed();
 
         const unconfirmed: any = await Scheduled.checkUnconfirmedAndWithdraw(applications);
+
+        // If we have undefined confirmed no applications needed to be withdrawn.
+        if (unconfirmed === undefined) {
+          return h.response({message: 'No unconfirmed applications older than 21 days exist.'}).code(200);
+        }
+
+        for (const application of unconfirmed) {
+          const withdrawalReason = {
+            reason: 'Application unconfirmed after 21 days.',
+            createdBy: 'node-cron automated process',
+          };
+
+          await Application.withdraw(application.id, withdrawalReason);
+        }
 
         return h.response().code(200);
       } catch (error: unknown) {
