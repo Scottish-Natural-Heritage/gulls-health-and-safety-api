@@ -72,30 +72,12 @@ const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: an
 };
 
 /**
- * This function calls the Notify API and asks for a 21 day withdraw email to be sent to
- * the proposed licence holder.
+ * This function calls the Notify API and asks for a 21 day withdraw email to be sent.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
  */
-const sendWithdrawHolderEmail = async (emailDetails: any, emailAddress: any) => {
-  if (config.notifyApiKey) {
-    const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa', emailAddress, {
-      personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
-    });
-  }
-};
-
-/**
- * This function calls the Notify API and asks for a 21 day withdraw email to be sent to
- * the licence applicant.
- *
- * @param {any} emailDetails The details to use in the email to be sent.
- * @param {any} emailAddress The email address to send the email to.
- */
-const sendWithdrawApplicantEmail = async (emailDetails: any, emailAddress: any) => {
+const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa', emailAddress, {
@@ -294,8 +276,8 @@ const ScheduledController = {
 
       // Send the withdraw emails, the awaits needs to be part of the loop.
       /* eslint-disable no-await-in-loop */
-      await sendWithdrawHolderEmail(emailDetails, application.LicenceHolder.emailAddress);
-      await sendWithdrawApplicantEmail(emailDetails, application.LicenceApplicant.emailAddress);
+      await sendWithdrawEmail(emailDetails, application.LicenceHolder.emailAddress);
+      await sendWithdrawEmail(emailDetails, application.LicenceApplicant.emailAddress);
       /* eslint-enable no-await-in-loop */
     }
 
