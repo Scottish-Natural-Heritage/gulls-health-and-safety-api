@@ -292,7 +292,7 @@ const ScheduledController = {
         application.SiteAddress,
       );
 
-      // Send the reminder emails, the awaits needs to be part of the loop.
+      // Send the withdraw emails, the awaits needs to be part of the loop.
       /* eslint-disable no-await-in-loop */
       await sendWithdrawHolderEmail(emailDetails, application.LicenceHolder.emailAddress);
       await sendWithdrawApplicantEmail(emailDetails, application.LicenceApplicant.emailAddress);

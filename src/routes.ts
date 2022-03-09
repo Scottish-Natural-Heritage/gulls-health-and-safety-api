@@ -557,7 +557,8 @@ const routes: ServerRoute[] = [
             reason: 'Application unconfirmed after 21 days.',
             createdBy: 'node-cron automated process',
           };
-
+          // Disabled as we need to loop through the list of applications to withdraw.
+          // eslint-disable-next-line no-await-in-loop
           await Application.withdraw(application.id, withdrawalReason);
         }
 

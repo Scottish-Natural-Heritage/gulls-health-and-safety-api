@@ -17,7 +17,7 @@ import config from './config/app';
 import JsonUtils from './json-utils';
 
 // Cron scheduled tasks, set to trigger at 6am each day.
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 6 * * *', async () => {
   console.log('Triggering cron job(s).');
 
   // Check for unconfirmed applications and sent out 14 day reminder emails.
