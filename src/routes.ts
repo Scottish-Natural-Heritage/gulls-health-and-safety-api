@@ -506,9 +506,9 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
-        // Try to get the requested licence sd we can only withdraw a application if the license hasn't been issued.
+        // Try to get the requested licence so we can only withdraw an application if the licence hasn't been issued.
         const licence = await License.findOne(existingId);
-        // Did we get an License?
+        // Did we get a licence?
         if (licence) {
           return h.response({message: `Licence ${existingId} has already been issued you need to revoke.`}).code(400);
         }
@@ -526,6 +526,43 @@ const routes: ServerRoute[] = [
         }
 
         // If we were able to delete the application we need to return a 200.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  {
+    method: 'delete',
+    path: `${config.pathPrefix}/withdrawal`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get any unconfirmed but reminded applications.
+        const applications = await Scheduled.getUnconfirmedReminded();
+
+        const unconfirmed: any = await Scheduled.checkUnconfirmedAndWithdraw(applications);
+
+        // If we have undefined confirmed no applications needed to be withdrawn.
+        if (unconfirmed === undefined) {
+          return h.response({message: 'No unconfirmed applications older than 21 days exist.'}).code(200);
+        }
+
+        for (const application of unconfirmed) {
+          const withdrawalReason = {
+            ApplicationId: application.id,
+            reason: 'Application unconfirmed after 21 days.',
+            createdBy: 'node-cron automated process',
+          };
+          // Disabled as we need to loop through the list of applications to withdraw.
+          // eslint-disable-next-line no-await-in-loop
+          await Application.withdraw(application.id, withdrawalReason);
+        }
+
+        // Return something here.
         return h.response().code(200);
       } catch (error: unknown) {
         // Log any error.

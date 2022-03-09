@@ -72,6 +72,22 @@ const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: an
 };
 
 /**
+ * This function calls the Notify API and asks for a 21 day withdraw email to be sent.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
  * This function returns an object containing the details required for the licence holder
  * fourteen day reminder email.
  *
@@ -135,10 +151,50 @@ const set14DayReminderEmailDetailsForApplicant = async (
   };
 };
 
+const set21DayWithdrawEmailDetails = (
+  id: number,
+  applicationDate: string,
+  licenceHolderContact: any,
+  onBehalfContact: any,
+  siteAddress: any,
+) => {
+  return {
+    lhName: licenceHolderContact.name,
+    onBehalfName: onBehalfContact.name,
+    applicationDate: createDisplayDate(new Date(applicationDate)),
+    siteAddress: createSummaryAddress(siteAddress),
+    id,
+  };
+};
+
 const ScheduledController = {
   getUnconfirmed: async () => {
     return Application.findAll({
       where: {confirmedByLicenseHolder: false, fourteenDayReminder: false || null},
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddress',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+      ],
+    });
+  },
+
+  getUnconfirmedReminded: async () => {
+    return Application.findAll({
+      where: {confirmedByLicenseHolder: false, fourteenDayReminder: true},
       include: [
         {
           model: Contact,
@@ -193,6 +249,35 @@ const ScheduledController = {
       /* eslint-disable no-await-in-loop */
       await sendReminderMagicLinkEmail(emailDetails, application.LicenceHolder.emailAddress);
       await sendReminderEmailForApplicant(applicantEmailDetails, application.LicenceApplicant.emailAddress);
+      /* eslint-enable no-await-in-loop */
+    }
+
+    // Return the unconfirmed array of applications or undefined if empty.
+    return unconfirmed ? (unconfirmed as ApplicationInterface[]) : undefined;
+  },
+
+  checkUnconfirmedAndWithdraw: async (unconfirmed: any) => {
+    const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
+
+    // Filter any unconfirmed applications to only include those that are 21 days old or older.
+    unconfirmed = unconfirmed.filter((application: any) => {
+      return new Date(application.createdAt) <= todayDateMinusTwentyOneDays;
+    });
+
+    for (const application of unconfirmed) {
+      // Loop through each application and create personalisation object.
+      const emailDetails = set21DayWithdrawEmailDetails(
+        application.id,
+        application.createdAt,
+        application.LicenceHolder,
+        application.LicenceApplicant,
+        application.SiteAddress,
+      );
+
+      // Send the withdraw emails, the awaits needs to be part of the loop.
+      /* eslint-disable no-await-in-loop */
+      await sendWithdrawEmail(emailDetails, application.LicenceHolder.emailAddress);
+      await sendWithdrawEmail(emailDetails, application.LicenceApplicant.emailAddress);
       /* eslint-enable no-await-in-loop */
     }
 

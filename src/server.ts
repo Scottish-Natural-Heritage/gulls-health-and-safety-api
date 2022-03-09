@@ -16,21 +16,29 @@ import routes from './routes';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
-// Cron scheduled task, set to trigger at 6am each day and send out 14 day reminder emails.
+// Cron scheduled tasks, set to trigger at 6am each day.
 cron.schedule('0 6 * * *', async () => {
   console.log('Triggering cron job(s).');
+
+  // Check for unconfirmed applications and sent out 14 day reminder emails.
   try {
-    const response = await axios.patch(`http://localhost:3017${config.pathPrefix}/reminder`, undefined, {
+    await axios.patch(`http://localhost:3017${config.pathPrefix}/reminder`, undefined, {
       params: {
         onBehalfApprovePath: '/gulls-health-and-safety/on-behalf-approve?token=',
       },
     });
-    console.log('Ending cron job(s).');
-    return response;
   } catch (error: unknown) {
     console.error(JsonUtils.unErrorJson(error));
-    return undefined;
   }
+
+  // Check for unconfirmed after 21 days applications and send out withdrawn emails.
+  try {
+    await axios.delete(`http://localhost:3017${config.pathPrefix}/withdrawal`);
+  } catch (error: unknown) {
+    console.error(JsonUtils.unErrorJson(error));
+  }
+
+  console.log('Ending cron job(s).');
 });
 
 // Start up our micro-app.
