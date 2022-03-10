@@ -262,6 +262,7 @@ const sendHolderApplicantConfirmEmail = async (emailDetails: any, emailAddress: 
 const ApplicationController = {
   findOne: async (id: number) => {
     return Application.findByPk(id, {
+      paranoid: false,
       include: [
         {
           model: Revocation,
@@ -274,18 +275,22 @@ const ApplicationController = {
         {
           model: Contact,
           as: 'LicenceHolder',
+          paranoid: false,
         },
         {
           model: Contact,
           as: 'LicenceApplicant',
+          paranoid: false,
         },
         {
           model: Address,
           as: 'LicenceHolderAddress',
+          paranoid: false,
         },
         {
           model: Address,
           as: 'SiteAddress',
+          paranoid: false,
         },
         {
           model: Species,
@@ -358,6 +363,7 @@ const ApplicationController = {
         {
           model: License,
           as: 'License',
+          paranoid: false,
           include: [
             {
               model: LicenseAdvisory,
@@ -397,6 +403,7 @@ const ApplicationController = {
    */
   findAllSummary: async () => {
     return Application.findAll({
+      paranoid: false,
       include: [
         {
           model: Contact,
