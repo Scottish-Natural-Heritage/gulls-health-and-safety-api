@@ -8,6 +8,7 @@ import Advisory from './controllers/advisory';
 import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
 import CleaningFunctions from './controllers/cleaning-functions';
+import Scheduled from './controllers/scheduled';
 import config from './config/app';
 import JsonUtils from './json-utils';
 
@@ -439,6 +440,51 @@ const routes: ServerRoute[] = [
     },
   },
 
+  {
+    method: 'patch',
+    path: `${config.pathPrefix}/reminder`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get the requested application.
+        const applications = await Scheduled.getUnconfirmed();
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // Create the confirm magic link base URL.
+        const confirmBaseUrl = `${config.hostPrefix}${String(request.query.onBehalfApprovePath)}`;
+
+        // Check there's actually one there, otherwise we'll have to make one up.
+        const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
+
+        const unconfirmed: any = await Scheduled.checkUnconfirmedAndSendReminder(
+          applications,
+          urlInvalid ? `${baseUrl.toString()}confirm?token=` : confirmBaseUrl,
+        );
+
+        if (unconfirmed) {
+          for (const application of unconfirmed) {
+            const sentReminder: any = {fourteenDayReminder: true};
+            // The await is needed here as we have an indeterminate number of unconfirmed to update in the DB.
+            // eslint-disable-next-line no-await-in-loop
+            await Application.remind(application.id, sentReminder);
+          }
+        }
+
+        return h.response({message: 'Reminders sent for applications unconfirmed after 14 days.'}).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
   /**
    * DELETEs a single application and all child records (withdraw).
    */
@@ -460,9 +506,9 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
-        // Try to get the requested licence sd we can only withdraw a application if the license hasn't been issued.
+        // Try to get the requested licence so we can only withdraw an application if the licence hasn't been issued.
         const licence = await License.findOne(existingId);
-        // Did we get an License?
+        // Did we get a licence?
         if (licence) {
           return h.response({message: `Licence ${existingId} has already been issued you need to revoke.`}).code(400);
         }
@@ -480,6 +526,43 @@ const routes: ServerRoute[] = [
         }
 
         // If we were able to delete the application we need to return a 200.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  {
+    method: 'delete',
+    path: `${config.pathPrefix}/withdrawal`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get any unconfirmed but reminded applications.
+        const applications = await Scheduled.getUnconfirmedReminded();
+
+        const unconfirmed: any = await Scheduled.checkUnconfirmedAndWithdraw(applications);
+
+        // If we have undefined confirmed no applications needed to be withdrawn.
+        if (unconfirmed === undefined) {
+          return h.response({message: 'No unconfirmed applications older than 21 days exist.'}).code(200);
+        }
+
+        for (const application of unconfirmed) {
+          const withdrawalReason = {
+            ApplicationId: application.id,
+            reason: 'Application unconfirmed after 21 days.',
+            createdBy: 'node-cron automated process',
+          };
+          // Disabled as we need to loop through the list of applications to withdraw.
+          // eslint-disable-next-line no-await-in-loop
+          await Application.withdraw(application.id, withdrawalReason);
+        }
+
+        // Return something here.
         return h.response().code(200);
       } catch (error: unknown) {
         // Log any error.
