@@ -641,11 +641,58 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * GET single application from ID endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}/permitted-activity/{activityId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Is the activityId a number?
+        const existingActivityId = Number(request.params.activityId);
+        if (Number.isNaN(existingActivityId)) {
+          return h.response({message: `Permitted Activity ${existingActivityId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get the requested permitted activity.
+        const permittedActivity = await PActivity.findOne(existingActivityId);
+
+        // Did we get an permitted activity?
+        if (permittedActivity === undefined || permittedActivity === null) {
+          return h.response({message: `Permitted Activity ${existingActivityId} not found.`}).code(404);
+        }
+
+        // Return the permittedActivity record.
+        return h.response(permittedActivity).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * PATCH application permitted activity endpoint.
    */
   {
     method: 'patch',
-    path: `${config.pathPrefix}/application/{id}/permitted-activities/{activityId}`,
+    path: `${config.pathPrefix}/application/{id}/permitted-activity/{activityId}`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // Is the ID a number?

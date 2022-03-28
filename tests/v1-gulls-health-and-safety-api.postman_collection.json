@@ -574,7 +574,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/permitted-activities/{{GULLS_ACTIVITY_ID}}",
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/permitted-activity/{{GULLS_ACTIVITY_ID}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -585,7 +585,46 @@
 						"v1",
 						"application",
 						"{{GULLS_NEW_APP_ID}}",
-						"permitted-activities",
+						"permitted-activity",
+						"{{GULLS_ACTIVITY_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a permitted activity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/permitted-activity/{{GULLS_ACTIVITY_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"permitted-activity",
 						"{{GULLS_ACTIVITY_ID}}"
 					]
 				}
