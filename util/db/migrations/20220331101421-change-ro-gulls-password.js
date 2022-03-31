@@ -1,4 +1,4 @@
-'use strict';
+/* eslint-disable unicorn/prefer-module */
 
 const config = require('../../../src/config/database.js').ssDatabase;
 
