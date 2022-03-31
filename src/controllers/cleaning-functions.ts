@@ -407,6 +407,33 @@ const cleanNote = (body: any): any => {
   };
 };
 
+/**
+ * Clean an incoming request body to ensure that the authentication information is in the correct format.
+ *
+ * @param {any} body The incoming request's body.
+ * @param {string} existingId The incoming licence Id.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanAuthenticationInfo = (body: any, existingId: string): any => {
+  // Clean the strings, removing any extra start / end whitespace.
+  const postcode = body.postcode.trim();
+  const licenceNumber = existingId.trim();
+
+  // Check the postcode to ensure that it is a valid UK postcode.
+  const isRealPostcode = utils.postalAddress.isaRealUkPostcode(postcode);
+
+  // Check the licenceNumber to ensure that it is a valid licence number.
+  const regExNumbersOnly = /^\d+$/;
+  const isValidLengthLicenseNumber = licenceNumber.length === 6;
+  const isValidNumbersLicenseNumber = regExNumbersOnly.test(licenceNumber);
+
+  return {
+    licenceHolder: body.licenceHolder,
+    postcode: isRealPostcode ? postcode : undefined,
+    licenceNumber: isValidLengthLicenseNumber && isValidNumbersLicenseNumber ? licenceNumber : undefined,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -425,6 +452,7 @@ const CleaningFunctions = {
   cleanLicense,
   cleanNote,
   cleanWithdrawOrRevokeInput,
+  cleanAuthenticationInfo,
 };
 
 export default CleaningFunctions;
