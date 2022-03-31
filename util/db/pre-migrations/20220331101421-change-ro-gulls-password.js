@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/prefer-module */
 
-const config = require('../../../src/config/database.js').ssDatabase;
+const config = require('../database.js').ssDatabase;
 
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
