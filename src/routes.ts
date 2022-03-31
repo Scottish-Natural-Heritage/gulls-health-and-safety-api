@@ -11,8 +11,7 @@ import CleaningFunctions from './controllers/cleaning-functions';
 import Scheduled from './controllers/scheduled';
 import config from './config/app';
 import JsonUtils from './json-utils';
-
-import jwk from './config/jwk';
+import jwk from './config/jwk.js';
 
 /**
  * An array of all the routes and controllers in the app.
@@ -389,6 +388,63 @@ const routes: ServerRoute[] = [
         request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * POST gulls return authentication endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/login`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Grab the ID?
+        const existingId = request.params.id;
+
+        // Get the payload from the request.
+        const authentication = request.payload as any;
+
+        // Clean the fields on the authentication process.
+        const incomingAuthentication = CleaningFunctions.cleanAuthenticationInfo(authentication, existingId);
+
+        // Try to get the requested application.
+        const application: any = await Application.findOne(incomingAuthentication.licenceNumber);
+
+        // Do a check to see that the postcode entered matches the sites.
+        const postcodeMatches = application
+          ? application?.SiteAddress?.postcode === incomingAuthentication.postcode
+          : undefined;
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // Grab the 'forwarding' url from the request.
+        const {redirectBaseUrl} = request.query;
+
+        // Check there's actually one there, otherwise we'll have to make one up.
+        const urlInvalid = redirectBaseUrl === undefined || redirectBaseUrl === null;
+
+        // Save the magicLinkUrl.
+        const magicLinkBaseUrl = urlInvalid ? `${baseUrl.toString()}start?token=` : redirectBaseUrl;
+
+        if (application && postcodeMatches) {
+          // Try send the magic link email.
+          await Application.login(incomingAuthentication, application, magicLinkBaseUrl);
+        }
+
+        // Return a 200 regardless of if the email was sent or not.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? But as this is an authentication process then we should just return a 200 with no error.
+        return h.response().code(200);
       }
     },
   },
