@@ -495,6 +495,10 @@ const ApplicationController = {
           model: Withdrawal,
           as: 'Withdrawal',
         },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
+        },
       ],
     });
   },
