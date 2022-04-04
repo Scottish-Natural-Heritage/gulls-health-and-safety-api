@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "48963579-f7c5-4173-a050-c3d672f9645e",
-		"name": "v1-gulls-health-and-safety-api",
+		"_postman_id": "df450f75-5890-4c27-a061-a7979a06da31",
+		"name": "v1-gulls-health-and-safety-api Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -112,6 +112,9 @@
 							"    pm.response.to.have.status(200);\r",
 							"    pm.response.to.have.status('OK');\r",
 							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"GULLS_CONTACT_ID\", jsonData.LicenceHolder.id);\r",
 							""
 						],
 						"type": "text/javascript"
@@ -690,6 +693,96 @@
 			"response": []
 		},
 		{
+			"name": "Edit Contact - when it is an application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"This is a test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/contact/{{GULLS_CONTACT_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"contact",
+						"{{GULLS_CONTACT_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get application with edited contact",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returned object matches posted object', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData).to.have.property('LicenceHolder');\r",
+							"    pm.expect(jsonData.LicenceHolder.name).to.equal('This is a test');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create new License from an approved application as a staff member",
 			"event": [
 				{
@@ -739,6 +832,54 @@
 						"application",
 						"{{GULLS_NEW_APP_ID}}",
 						"license"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Contact - when it is a Licence",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status('Bad Request');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"This is a test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/contact/{{GULLS_CONTACT_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"contact",
+						"{{GULLS_CONTACT_ID}}"
 					]
 				}
 			},
@@ -1971,6 +2112,10 @@
 		{
 			"key": "GULLS_NEW_APP_ID",
 			"value": "0"
+		},
+		{
+			"key": "GULLS_CONTACT_ID",
+			"value": ""
 		}
 	]
 }

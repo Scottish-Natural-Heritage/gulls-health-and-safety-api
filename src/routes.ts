@@ -7,6 +7,7 @@ import Note from './controllers/note';
 import Advisory from './controllers/advisory';
 import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
+import Contact from './controllers/contact';
 import CleaningFunctions from './controllers/cleaning-functions';
 import Scheduled from './controllers/scheduled';
 import config from './config/app';
@@ -260,6 +261,54 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
+  /**
+   * GET single application contact from ID endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}/contact/{contactId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Is the contactId a number?
+        const existingContactId = Number(request.params.contactId);
+        if (Number.isNaN(existingContactId)) {
+          return h.response({message: `Contact ${existingContactId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get the requested contact.
+        const contact = await Contact.findOne(existingContactId);
+
+        // Did we get a contact?
+        if (contact === undefined || contact === null) {
+          return h.response({message: `Contact ${existingContactId} not found.`}).code(404);
+        }
+
+        // Return the contact record.
+        return h.response(contact).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
   /**
    * POST new application endpoint.
    */
@@ -483,6 +532,80 @@ const routes: ServerRoute[] = [
         // If they're not successful, send a 500 error.
         if (updatedApplication === undefined) {
           return h.response({message: `Could not update application ${existingId}.`}).code(500);
+        }
+
+        // If they are, send back the updated fields.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * PATCH application contact endpoint.
+   */
+  {
+    method: 'patch',
+    path: `${config.pathPrefix}/application/{id}/contact/{contactId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Is the contactId a number?
+        const existingContactId = Number(request.params.contactId);
+        if (Number.isNaN(existingContactId)) {
+          return h.response({message: `Contact ${existingContactId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get the requested Licence.
+        const licence = await License.findOne(existingId);
+
+        // Did we get an licence?
+        if (licence !== undefined && licence !== null) {
+          return h
+            .response({
+              message: `Application ${existingId} has already been issued as a licence so you will need to amend the Licence.`,
+            })
+            .code(400);
+        }
+
+        // Try to get the requested contact.
+        const contact = await Contact.findOne(existingContactId);
+
+        // Did we get a contact?
+        if (contact === undefined || contact === null) {
+          return h.response({message: `Contact ${existingContactId} not found.`}).code(404);
+        }
+
+        // Clean the fields on the applications contact record.
+        const incomingContactChange = await CleaningFunctions.cleanContact(request.payload as any);
+
+        // Update the contact.
+        const contactChange = await Contact.update(existingContactId, incomingContactChange);
+
+        // If they're not successful, send a 500 error.
+        if (!contactChange) {
+          return h
+            .response({
+              message: `Could not update contact ${existingContactId} for application ${existingId}.`,
+            })
+            .code(500);
         }
 
         // If they are, send back the updated fields.
