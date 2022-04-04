@@ -2,6 +2,36 @@ import utils from 'naturescot-utils';
 import {AssessmentInterface} from 'models/assessment';
 import Condition from './condition';
 import Advisory from './advisory';
+import { ContactInterface } from 'models/contact';
+
+/**
+ * Cleans the base contact details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned on behalf contact details.
+ */
+const cleanContact = (body: any): any => {
+  const cleanedBody: ContactInterface = {};
+
+  // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if (body.name) {
+    cleanedBody.name = body.name.trim();
+  }
+
+  if (body.organisation) {
+    cleanedBody.organisation = body.organisation.trim();
+  }
+
+  if (body.emailAddress) {
+    cleanedBody.emailAddress = utils.formatters.stripAndRemoveObscureWhitespace(body.emailAddress.toLowerCase());
+  }
+
+  if (body.phoneNumber) {
+    cleanedBody.phoneNumber = body.phoneNumber.trim();
+  }
+
+  return cleanedBody;
+};
 
 /**
  * Cleans the on behalf contact details into something the database can use.
@@ -437,6 +467,7 @@ const cleanAuthenticationInfo = (body: any, existingId: string): any => {
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
+  cleanContact,
   cleanOnBehalfContact,
   cleanLicenseHolderContact,
   cleanAddress,
