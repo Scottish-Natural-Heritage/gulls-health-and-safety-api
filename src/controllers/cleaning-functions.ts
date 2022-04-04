@@ -1,8 +1,8 @@
 import utils from 'naturescot-utils';
 import {AssessmentInterface} from 'models/assessment';
+import {ContactInterface} from 'models/contact';
 import Condition from './condition';
 import Advisory from './advisory';
-import { ContactInterface } from 'models/contact';
 
 /**
  * Cleans the base contact details into something the database can use.

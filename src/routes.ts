@@ -578,7 +578,11 @@ const routes: ServerRoute[] = [
 
         // Did we get an licence?
         if (licence !== undefined && licence !== null) {
-          return h.response({message: `Application ${existingId} has already been issued as a licence so you will need to amend the Licence.`}).code(400);
+          return h
+            .response({
+              message: `Application ${existingId} has already been issued as a licence so you will need to amend the Licence.`,
+            })
+            .code(400);
         }
 
         // Try to get the requested contact.
