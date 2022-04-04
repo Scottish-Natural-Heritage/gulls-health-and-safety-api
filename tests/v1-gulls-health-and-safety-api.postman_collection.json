@@ -693,7 +693,7 @@
 			"response": []
 		},
 		{
-			"name": "Edit Contact - when it is an appplication",
+			"name": "Edit Contact - when it is an application",
 			"event": [
 				{
 					"listen": "test",
