@@ -1,8 +1,38 @@
 import utils from 'naturescot-utils';
 import {PActivityInterface} from 'models/p-activity';
 import {AssessmentInterface} from 'models/assessment';
+import {ContactInterface} from 'models/contact';
 import Condition from './condition';
 import Advisory from './advisory';
+
+/**
+ * Cleans the base contact details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned on behalf contact details.
+ */
+const cleanContact = (body: any): any => {
+  const cleanedBody: ContactInterface = {};
+
+  // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if (body.name) {
+    cleanedBody.name = body.name.trim();
+  }
+
+  if (body.organisation) {
+    cleanedBody.organisation = body.organisation.trim();
+  }
+
+  if (body.emailAddress) {
+    cleanedBody.emailAddress = utils.formatters.stripAndRemoveObscureWhitespace(body.emailAddress.toLowerCase());
+  }
+
+  if (body.phoneNumber) {
+    cleanedBody.phoneNumber = body.phoneNumber.trim();
+  }
+
+  return cleanedBody;
+};
 
 /**
  * Cleans the on behalf contact details into something the database can use.
@@ -448,9 +478,37 @@ const cleanNote = (body: any): any => {
   };
 };
 
+/**
+ * Clean an incoming request body to ensure that the authentication information is in the correct format.
+ *
+ * @param {any} body The incoming request's body.
+ * @param {string} existingId The incoming licence Id.
+ * @returns {any} CleanedBody a json object that's just got our cleaned up fields on it.
+ */
+const cleanAuthenticationInfo = (body: any, existingId: string): any => {
+  // Clean the strings, removing any extra start / end whitespace.
+  const postcode = body.postcode.trim();
+  const licenceNumber = existingId.trim();
+
+  // Check the postcode to ensure that it is a valid UK postcode.
+  const isRealPostcode = utils.postalAddress.isaRealUkPostcode(postcode);
+
+  // Check the licenceNumber to ensure that it is a valid licence number.
+  const regExNumbersOnly = /^\d+$/;
+  const isValidLengthLicenseNumber = licenceNumber.length === 6;
+  const isValidNumbersLicenseNumber = regExNumbersOnly.test(licenceNumber);
+
+  return {
+    licenceHolder: body.licenceHolder,
+    postcode: isRealPostcode ? postcode : undefined,
+    licenceNumber: isValidLengthLicenseNumber && isValidNumbersLicenseNumber ? licenceNumber : undefined,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
+  cleanContact,
   cleanOnBehalfContact,
   cleanLicenseHolderContact,
   cleanAddress,
@@ -467,6 +525,7 @@ const CleaningFunctions = {
   cleanLicense,
   cleanNote,
   cleanWithdrawOrRevokeInput,
+  cleanAuthenticationInfo,
 };
 
 export default CleaningFunctions;

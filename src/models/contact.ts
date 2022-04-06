@@ -1,6 +1,17 @@
 import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
+ * Local interface to hold the ContactInterface.
+ */
+interface ContactInterface {
+  id?: number;
+  name?: string;
+  organisation?: string;
+  emailAddress?: string;
+  phoneNumber?: string;
+}
+
+/**
  * Build a Contact model.
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
@@ -49,3 +60,4 @@ const ContactModel = (sequelize: Sequelize) => {
 };
 
 export {ContactModel as default};
+export {ContactInterface};

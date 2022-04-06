@@ -105,6 +105,52 @@ const createSummaryAddress = (fullAddress: any): string => {
 };
 
 /**
+ * This function returns an object containing the details required for the magic link return email.
+ *
+ * @param {number} id The confirmed application's reference number.
+ * @param {any} contact The licence holder's or licence applicants contact details.
+ * @param {string} magicLinkUrl The magic link url minus the token.
+ * @returns {any} An object with the required details set.
+ */
+const setReturnLoginMagicLinkEmailDetails = async (id: number, contact: any, magicLinkUrl: string) => {
+  // Get the private key.
+  const privateKey = await jwk.getPrivateKey({type: 'pem'});
+
+  // Create JWT.
+  const token = jwt.sign({}, privateKey as string, {
+    algorithm: 'ES256',
+    expiresIn: '30m',
+    noTimestamp: true,
+    subject: `${id}`,
+  });
+
+  // Append JWT to magic link url.
+  const magicLink = `${magicLinkUrl}${token}`;
+
+  return {
+    id,
+    personName: contact.name,
+    magicLink,
+  };
+};
+
+/**
+ * This function calls the Notify API and asks for an email to be sent with the supplied details.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendReturnLoginMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('5e00dcb7-52ac-4197-a1ca-ed7f4d3508ee', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
  * This function returns an object containing the details required for the licence holder and the
  * licence applicant confirmation emails.
  *
@@ -449,6 +495,10 @@ const ApplicationController = {
           model: Withdrawal,
           as: 'Withdrawal',
         },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
+        },
       ],
     });
   },
@@ -703,6 +753,34 @@ const ApplicationController = {
 
     // If no application was confirmed return undefined.
     return undefined;
+  },
+
+  login: async (authentication: any, application: any, magicLinkBaseUrl: any) => {
+    // The details required to generate the confirmation emails.
+    let emailDetails;
+
+    // Is the license holder or the applicant submitting the return? if it is the licence holder we need to send them a
+    // magic link email so they can submit their return. but if it's the applicant then we need to send the applicant the
+    // magic link email.
+    if (application && authentication.licenceHolder) {
+      emailDetails = await setReturnLoginMagicLinkEmailDetails(
+        authentication.licenceNumber,
+        application.LicenceHolder,
+        magicLinkBaseUrl,
+      );
+
+      await sendReturnLoginMagicLinkEmail(emailDetails, application.LicenceHolder.emailAddress);
+    }
+
+    if (application && !authentication.licenceHolder) {
+      emailDetails = await setReturnLoginMagicLinkEmailDetails(
+        authentication.licenceNumber,
+        application.LicenceApplicant,
+        magicLinkBaseUrl,
+      );
+
+      await sendReturnLoginMagicLinkEmail(emailDetails, application.LicenceApplicant.emailAddress);
+    }
   },
 
   remind: async (id: number, remindApplication: ApplicationInterface) => {
