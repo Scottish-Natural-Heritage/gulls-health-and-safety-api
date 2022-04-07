@@ -495,7 +495,7 @@ const cleanAuthenticationInfo = (body: any, existingId: string): any => {
 
   // Check the licenceNumber to ensure that it is a valid licence number.
   const regExNumbersOnly = /^\d+$/;
-  const isValidLengthLicenseNumber = licenceNumber.length === 6;
+  const isValidLengthLicenseNumber = licenceNumber.length <= 6;
   const isValidNumbersLicenseNumber = regExNumbersOnly.test(licenceNumber);
 
   return {
