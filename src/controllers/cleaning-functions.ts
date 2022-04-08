@@ -1,4 +1,5 @@
 import utils from 'naturescot-utils';
+import {PActivityInterface} from 'models/p-activity';
 import {AssessmentInterface} from 'models/assessment';
 import {ContactInterface} from 'models/contact';
 import Condition from './condition';
@@ -325,6 +326,14 @@ const cleanAssessment = (body: any): any => {
     cleanedBody.testTwoDecision = body.testTwoDecision;
   }
 
+  if (body.testThreeAssessment) {
+    cleanedBody.testThreeAssessment = body.testThreeAssessment.trim();
+  }
+
+  if ('testThreeDecision' in body) {
+    cleanedBody.testThreeDecision = body.testThreeDecision;
+  }
+
   if ('decision' in body) {
     cleanedBody.decision = body.decision;
   }
@@ -335,6 +344,38 @@ const cleanAssessment = (body: any): any => {
 
   if (body.refusalReason) {
     cleanedBody.refusalReason = body.refusalReason;
+  }
+
+  return cleanedBody;
+};
+
+/**
+ * Cleans the permitted activity details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned activity details.
+ */
+const cleanPermittedActivityChange = (body: any): any => {
+  const cleanedBody: PActivityInterface = {};
+  // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if ('quantityNestsToRemove' in body) {
+    cleanedBody.quantityNestsToRemove = body.quantityNestsToRemove;
+  }
+
+  if ('quantityNestsWhereEggsDestroyed' in body) {
+    cleanedBody.quantityNestsWhereEggsDestroyed = body.quantityNestsWhereEggsDestroyed;
+  }
+
+  if ('quantityChicksToRescue' in body) {
+    cleanedBody.quantityChicksToRescue = body.quantityChicksToRescue;
+  }
+
+  if ('quantityChicksToKill' in body) {
+    cleanedBody.quantityChicksToKill = body.quantityChicksToKill;
+  }
+
+  if ('quantityAdultsToKill' in body) {
+    cleanedBody.quantityAdultsToKill = body.quantityAdultsToKill;
   }
 
   return cleanedBody;
@@ -478,6 +519,7 @@ const CleaningFunctions = {
   cleanPermittedActivity,
   cleanMeasure,
   cleanAssessment,
+  cleanPermittedActivityChange,
   cleanCondition,
   cleanAdvisory,
   cleanLicense,
