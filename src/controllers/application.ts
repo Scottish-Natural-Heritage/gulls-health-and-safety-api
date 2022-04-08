@@ -635,11 +635,11 @@ const ApplicationController = {
       let remainingAttempts = 10; // Allow 10 attempts to check if the ID is in use.
       let foundExistingId = true; // Assume true until checked.
 
-      // Generate a random 6 digit ID and check if it's already in use.
+      // Generate a random 6 digit ID between 1000 and 999_999 and checks if it's already in use.
       // No await in loop disabled because we need to wait for the result.
       /* eslint-disable no-await-in-loop */
       while (foundExistingId && remainingAttempts > 0) {
-        newId = Math.floor(Math.random() * 999_999);
+        newId = Math.floor(Math.random() * (999_999 - 1000) + 1000);
         existingApplication = await Application.findByPk(newId);
         if (!existingApplication) {
           foundExistingId = false;
