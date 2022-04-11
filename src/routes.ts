@@ -462,6 +462,9 @@ const routes: ServerRoute[] = [
         // Try to get the requested application.
         const application: any = await Application.findOne(incomingAuthentication.licenceNumber);
 
+        // Try to get the requested licence.
+        const licence: any = await License.findOne(incomingAuthentication.licenceNumber);
+
         // Do a check to see that the postcode entered matches the sites.
         const postcodeMatches = application
           ? application?.SiteAddress?.postcode === incomingAuthentication.postcode
@@ -483,7 +486,7 @@ const routes: ServerRoute[] = [
         // Save the magicLinkUrl.
         const magicLinkBaseUrl = urlInvalid ? `${baseUrl.toString()}start?token=` : redirectBaseUrl;
 
-        if (application && postcodeMatches) {
+        if (application && licence && postcodeMatches) {
           // Try send the magic link email.
           await Application.login(incomingAuthentication, application, magicLinkBaseUrl);
         }
