@@ -358,20 +358,48 @@ const cleanAssessment = (body: any): any => {
 const cleanPermittedActivityChange = (body: any): any => {
   const cleanedBody: PActivityInterface = {};
   // Check for the existence of each field and if found clean it if required and add to the cleanedBody object.
+  if ('removeNests' in body) {
+    cleanedBody.removeNests = body.removeNests;
+  }
+
   if ('quantityNestsToRemove' in body) {
     cleanedBody.quantityNestsToRemove = body.quantityNestsToRemove;
+  }
+
+  if ('eggDestruction' in body) {
+    cleanedBody.eggDestruction = body.eggDestruction;
   }
 
   if ('quantityNestsWhereEggsDestroyed' in body) {
     cleanedBody.quantityNestsWhereEggsDestroyed = body.quantityNestsWhereEggsDestroyed;
   }
 
+  if ('chicksToRescueCentre' in body) {
+    cleanedBody.chicksToRescueCentre = body.chicksToRescueCentre;
+  }
+
   if ('quantityChicksToRescue' in body) {
     cleanedBody.quantityChicksToRescue = body.quantityChicksToRescue;
   }
 
+  if ('chicksRelocateNearby' in body) {
+    cleanedBody.chicksRelocateNearby = body.chicksRelocateNearby;
+  }
+
+  if ('quantityChicksToRelocate' in body) {
+    cleanedBody.quantityChicksToRelocate = body.quantityChicksToRelocate;
+  }
+
+  if ('killChicks' in body) {
+    cleanedBody.killChicks = body.killChicks;
+  }
+
   if ('quantityChicksToKill' in body) {
     cleanedBody.quantityChicksToKill = body.quantityChicksToKill;
+  }
+
+  if ('killAdults' in body) {
+    cleanedBody.killAdults = body.killAdults;
   }
 
   if ('quantityAdultsToKill' in body) {
