@@ -21,7 +21,7 @@ module.exports = {
       eggDestruction: {
         type: Sequelize.BOOLEAN,
       },
-      quantityNestsEggsDestroyed: {
+      quantityNestsDestroyed: {
         type: Sequelize.INTEGER,
       },
       quantityEggsDestroyed: {
@@ -33,22 +33,22 @@ module.exports = {
       quantityChicksToRescue: {
         type: Sequelize.INTEGER,
       },
-      chicksRelocateNearby: {
+      chicksRelocatedNearby: {
         type: Sequelize.BOOLEAN,
       },
-      quantityChicksToRelocate: {
+      quantityChicksRelocated: {
         type: Sequelize.INTEGER,
       },
       killChicks: {
         type: Sequelize.BOOLEAN,
       },
-      quantityChicksToKill: {
+      quantityChicksKilled: {
         type: Sequelize.INTEGER,
       },
       killAdults: {
         type: Sequelize.BOOLEAN,
       },
-      quantityAdultsToKill: {
+      quantityAdultsKilled: {
         type: Sequelize.INTEGER,
       },
       createdAt: {
