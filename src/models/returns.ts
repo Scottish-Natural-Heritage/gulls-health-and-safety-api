@@ -32,7 +32,7 @@ const ReturnsModel = (sequelize: Sequelize) => {
       SpeciesId: {
         type: DataTypes.INTEGER,
       },
-      confirmedByLicenseHolder: {
+      confirmedReturn: {
         type: DataTypes.BOOLEAN,
       },
     },
