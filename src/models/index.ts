@@ -19,6 +19,9 @@ import Condition from './condition';
 import Note from './note';
 import Revocation from './revocation';
 import Withdrawal from './withdrawal';
+import Returns from './returns';
+import ReturnSpecies from './returns-species';
+import ReturnActivity from './returns-activities';
 
 const Sequelize = require('sequelize');
 
@@ -50,6 +53,9 @@ const database = {
   Note: Note(sequelize),
   Revocation: Revocation(sequelize),
   Withdrawal: Withdrawal(sequelize),
+  Returns: Returns(sequelize),
+  ReturnSpecies: ReturnSpecies(sequelize),
+  ReturnActivity: ReturnActivity(sequelize),
 };
 
 // Relationships go here.
@@ -140,6 +146,38 @@ database.PActivity.hasOne(database.PSpecies, {
 });
 database.PActivity.hasOne(database.PSpecies, {
   as: 'PLesserBlackBackedGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.Returns.belongsTo(database.ReturnSpecies, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
+database.ReturnSpecies.hasOne(database.Returns, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
+database.Returns.belongsTo(database.License, {as: 'Returns', foreignKey: 'LicenseId'});
+database.License.hasMany(database.Returns, {as: 'Returns', foreignKey: 'LicenseId'});
+
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {as: 'ReturnHerringGull', foreignKey: 'HerringGullId'});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {
+  as: 'ReturnBlackHeadedGull',
+  foreignKey: 'BlackHeadedGullId',
+});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {as: 'ReturnCommonGull', foreignKey: 'CommonGullId'});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {
+  as: 'ReturnGreatBlackBackedGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {
+  as: 'ReturnLesserBlackBackedGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnHerringGull', foreignKey: 'HerringGullId'});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnBlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnCommonGull', foreignKey: 'CommonGullId'});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {
+  as: 'ReturnGreatBlackBackedGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {
+  as: 'ReturnLesserBlackBackedGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 
