@@ -21,7 +21,7 @@ module.exports = {
       eggDestruction: {
         type: Sequelize.BOOLEAN,
       },
-      quantityNestsDestroyed: {
+      quantityNestsAffected: {
         type: Sequelize.INTEGER,
       },
       quantityEggsDestroyed: {

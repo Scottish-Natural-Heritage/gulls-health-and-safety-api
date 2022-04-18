@@ -9,7 +9,7 @@ interface ReturnActivityInterface {
   quantityNestsRemoved?: number;
   quantityEggsRemoved?: number;
   eggDestruction?: boolean;
-  quantityNestsDestroyed?: number;
+  quantityNestsAffected?: number;
   quantityEggsDestroyed?: number;
   chicksToRescueCentre?: boolean;
   quantityChicksToRescue?: number;
@@ -34,7 +34,7 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
     public quantityNestsRemoved!: number;
     public quantityEggsRemoved!: number;
     public eggDestruction!: boolean;
-    public quantityNestsDestroyed!: number;
+    public quantityNestsAffected!: number;
     public quantityEggsDestroyed!: number;
     public chicksToRescueCentre!: boolean;
     public quantityChicksToRescue!: number;
@@ -60,7 +60,7 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
       eggDestruction: {
         type: DataTypes.BOOLEAN,
       },
-      quantityNestsDestroyed: {
+      quantityNestsAffected: {
         type: DataTypes.INTEGER,
       },
       quantityEggsDestroyed: {
