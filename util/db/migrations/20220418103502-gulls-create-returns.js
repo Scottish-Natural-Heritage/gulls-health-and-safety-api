@@ -11,7 +11,7 @@ module.exports = {
       LicenceId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Licence',
+          model: 'Licenses',
           key: 'ApplicationId',
         },
       },

@@ -58,4 +58,4 @@ const ReturnSpeciesModel = (sequelize: Sequelize) => {
 };
 
 export {ReturnSpeciesModel as default};
-export {ReturnSpeciesInterface}
+export {ReturnSpeciesInterface};
