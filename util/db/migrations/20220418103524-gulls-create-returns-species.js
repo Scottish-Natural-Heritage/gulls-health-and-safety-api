@@ -1,21 +1,64 @@
-'use strict';
+/* eslint-disable unicorn/prefer-module */
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
+    await queryInterface.createTable('ReturnSpecies', {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+      },
+      HerringGullId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ReturnActivities',
+          key: 'id',
+        },
+      },
+      BlackHeadedGullId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ReturnActivities',
+          key: 'id',
+        },
+      },
+      CommonGullId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ReturnActivities',
+          key: 'id',
+        },
+      },
+      GreatBlackBackedGullId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ReturnActivities',
+          key: 'id',
+        },
+      },
+      LesserBlackBackedGullId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'ReturnActivities',
+          key: 'id',
+        },
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+      },
+    });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
-  }
+  down: async (queryInterface) => {
+    await queryInterface.dropTable('ReturnSpecies');
+  },
 };
