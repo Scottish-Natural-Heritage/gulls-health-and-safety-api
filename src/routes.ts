@@ -1235,6 +1235,13 @@ const routes: ServerRoute[] = [
           return h.response({message: `Licence number ${existingId} not valid.`}).code(404);
         }
 
+        // Try to get the license to which the return pertains.
+        const license = await License.findOne(existingId);
+        // Did we issue the license?
+        if (license === undefined || license === null) {
+          return h.response({message: `A License for Application ${existingId} has not been issued yet.`}).code(400);
+        }
+
         // Get the new return from the request's payload.
         const newReturn = request.payload as any;
 
