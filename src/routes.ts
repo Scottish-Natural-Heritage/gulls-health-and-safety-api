@@ -1271,6 +1271,7 @@ const routes: ServerRoute[] = [
           lesserBlackBackedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'lesserBlackBackedGull');
         }
 
+        // Try to add the return to the database.
         const insertedReturn: any = await Returns.create(
           cleanedReturn,
           herringReturn,

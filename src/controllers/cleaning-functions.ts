@@ -593,6 +593,12 @@ const cleanAuthenticationInfo = (body: any, existingId: string): any => {
   };
 };
 
+/**
+ * Cleans the incoming requests body to ensure that the return's details are in a format the DB can use.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up field on it.
+ */
 const cleanReturn = (body: any): any => {
   return {
     confirmedReturn: body.confirmDeclaration,

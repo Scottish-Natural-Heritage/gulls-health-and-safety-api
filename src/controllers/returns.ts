@@ -3,6 +3,9 @@ import database from '../models/index.js';
 
 const {Returns, ReturnSpecies, ReturnActivity} = database;
 
+/**
+ * Local interface to hold the species IDs used with the foreign keys.
+ */
 interface SpeciesIds {
   HerringGullId: number | undefined;
   BlackHeadedGullId: number | undefined;
@@ -12,6 +15,12 @@ interface SpeciesIds {
 }
 
 const ReturnsController = {
+  /**
+   * This function returns a single return by ID.
+   *
+   * @param {number} id The primary key of the desired return.
+   * @returns {any} Returns the return requests.
+   */
   findOne: async (id: number) => {
     return Returns.findByPk(id, {
       paranoid: false,
@@ -52,14 +61,29 @@ const ReturnsController = {
     });
   },
 
+  /**
+   * This function gets all returns from the database.
+   *
+   * @returns {any} Returns all returns.
+   */
   findAll: async () => {
     return Returns.findAll();
   },
 
+  /**
+   * .
+   * @param {any | undefined} cleanedReturn The cleaned return
+   * @param {any | undefined} herringReturnActivity The herring gull activities being returned.
+   * @param {any | undefined} blackHeadedReturnActivity The black headed gull activities being returned.
+   * @param {any | undefined} commonReturnActivity The common gull activities being returned.
+   * @param {any | undefined} greatBlackBackedReturnActivity The great black-backed gull activities being returned.
+   * @param {any | undefined} lesserBlackBackedReturnActivity The lesser black-backed gull activities being returned.
+   * @returns
+   */
   create: async (
     cleanedReturn: any | undefined,
     herringReturnActivity: any | undefined,
-    blackReturnHeadedActivity: any | undefined,
+    blackHeadedReturnActivity: any | undefined,
     commonReturnActivity: any | undefined,
     greatBlackBackedReturnActivity: any | undefined,
     lesserBlackBackedReturnActivity: any | undefined,
@@ -74,14 +98,15 @@ const ReturnsController = {
 
     let newReturn;
 
+    // Add the returns for each species to the database, keeping a copy of the species ID.
     await database.sequelize.transaction(async (t: transaction) => {
       if (herringReturnActivity) {
         const herringGull = await ReturnActivity.create(herringReturnActivity, {transaction: t});
         speciesIds.HerringGullId = herringGull.id;
       }
 
-      if (blackReturnHeadedActivity) {
-        const blackHeadedGull = await ReturnActivity.create(blackReturnHeadedActivity, {transaction: t});
+      if (blackHeadedReturnActivity) {
+        const blackHeadedGull = await ReturnActivity.create(blackHeadedReturnActivity, {transaction: t});
         speciesIds.BlackHeadedGullId = blackHeadedGull.id;
       }
 
