@@ -74,7 +74,7 @@ const setReturnNotificationDetails = (licenceId: any, returnDate: any, siteAddre
 };
 
 /**
- * This function calls the Notify API and asks for an email to be send with the supplied details.
+ * This function calls the Notify API and asks for an email to be sent with the supplied details.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
@@ -246,14 +246,18 @@ const ReturnsController = {
         siteAddress,
       );
 
-      // Send the email using the Notify service's API to the licence holder.
-      if (licenceHolder?.emailAddress) {
+      // If the licence holder and applicant are the same person only send a single email.
+      if (licenceHolder && licenceHolder?.id === licenceApplicant?.id) {
         await sendLicenceReturnNotificationEmail(emailDetails, licenceHolder.emailAddress);
-      }
+      } else {
+        // Send an email to both holder and applicant.
+        if (licenceHolder?.emailAddress) {
+          await sendLicenceReturnNotificationEmail(emailDetails, licenceHolder.emailAddress);
+        }
 
-      // Send the email using the Notify service's API to the licence applicant.
-      if (licenceApplicant?.emailAddress)
-        await sendLicenceReturnNotificationEmail(emailDetails, licenceApplicant.emailAddress);
+        if (licenceApplicant?.emailAddress)
+          await sendLicenceReturnNotificationEmail(emailDetails, licenceApplicant.emailAddress);
+      }
     }
 
     // If all went well and we have a new return return it.
