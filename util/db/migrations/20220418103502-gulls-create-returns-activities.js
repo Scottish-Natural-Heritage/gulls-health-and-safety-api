@@ -18,6 +18,9 @@ module.exports = {
       quantityEggsRemoved: {
         type: Sequelize.INTEGER,
       },
+      dateNestsEggsRemoved: {
+        type: Sequelize.DATE,
+      },
       eggDestruction: {
         type: Sequelize.BOOLEAN,
       },
@@ -26,6 +29,9 @@ module.exports = {
       },
       quantityEggsDestroyed: {
         type: Sequelize.INTEGER,
+      },
+      dateNestsEggsDestroyed: {
+        type: Sequelize.DATE,
       },
       chicksToRescueCentre: {
         type: Sequelize.BOOLEAN,

@@ -8,9 +8,11 @@ interface ReturnActivityInterface {
   removeNests?: boolean;
   quantityNestsRemoved?: number;
   quantityEggsRemoved?: number;
+  dateNestsEggsRemoved?: Date;
   eggDestruction?: boolean;
   quantityNestsAffected?: number;
   quantityEggsDestroyed?: number;
+  dateNestsEggsDestroyed?: Date;
   chicksToRescueCentre?: boolean;
   quantityChicksToRescue?: number;
   chicksRelocatedNearby?: boolean;
@@ -33,9 +35,11 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
     public removeNests!: boolean;
     public quantityNestsRemoved!: number;
     public quantityEggsRemoved!: number;
+    public dateNestsEggsRemoved!: Date;
     public eggDestruction!: boolean;
     public quantityNestsAffected!: number;
     public quantityEggsDestroyed!: number;
+    public dateNestsEggsDestroyed!: Date;
     public chicksToRescueCentre!: boolean;
     public quantityChicksToRescue!: number;
     public chicksRelocatedNearby!: boolean;
@@ -57,6 +61,9 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
       quantityEggsRemoved: {
         type: DataTypes.INTEGER,
       },
+      dateNestsEggsRemoved: {
+        type: DataTypes.DATE,
+      },
       eggDestruction: {
         type: DataTypes.BOOLEAN,
       },
@@ -65,6 +72,9 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
       },
       quantityEggsDestroyed: {
         type: DataTypes.INTEGER,
+      },
+      dateNestsEggsDestroyed: {
+        type: DataTypes.DATE,
       },
       chicksToRescueCentre: {
         type: DataTypes.BOOLEAN,
