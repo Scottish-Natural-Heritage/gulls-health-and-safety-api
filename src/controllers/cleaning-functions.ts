@@ -533,6 +533,12 @@ const cleanAuthenticationInfo = (body: any, existingId: string): any => {
   };
 };
 
+const cleanReturn = (body: any): any => {
+  return {
+    confirmedReturn: body.confirmDeclaration,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -554,6 +560,7 @@ const CleaningFunctions = {
   cleanNote,
   cleanWithdrawOrRevokeInput,
   cleanAuthenticationInfo,
+  cleanReturn,
 };
 
 export default CleaningFunctions;

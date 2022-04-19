@@ -1237,8 +1237,17 @@ const routes: ServerRoute[] = [
         // Get the new return from the request's payload.
         const newReturn = request.payload as any;
 
+        let herringReturn;
+        let blackHeadedReturn;
+        let commonReturn;
+        let greatBlackBackedReturn;
+        let lesserBlackBackedReturn;
+
         // Clean the return before we try to insert it into the database.
         const cleanedReturn = CleaningFunctions.cleanReturn(newReturn);
+
+
+
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
