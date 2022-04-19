@@ -29,6 +29,7 @@ const routes: ServerRoute[] = [
       return h.response({message: 'Hello, world!'});
     },
   },
+
   /**
    * GET all advisories endpoint.
    */
@@ -54,6 +55,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all default advisories endpoint.
    */
@@ -79,6 +81,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all optional advisories endpoint.
    */
@@ -104,6 +107,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all conditions endpoint.
    */
@@ -129,6 +133,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all default conditions endpoint.
    */
@@ -154,6 +159,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all optional conditions endpoint.
    */
@@ -179,6 +185,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET addresses from postcode lookup service endpoint.
    */
@@ -205,6 +212,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all (summarized) applications endpoint.
    */
@@ -230,6 +238,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET single application from ID endpoint.
    */
@@ -623,6 +632,9 @@ const routes: ServerRoute[] = [
     },
   },
 
+  /**
+   * Send a 14 day reminder endpoint.
+   */
   {
     method: 'patch',
     path: `${config.pathPrefix}/reminder`,
@@ -719,6 +731,9 @@ const routes: ServerRoute[] = [
     },
   },
 
+  /**
+   * Withdraw application endpoint.
+   */
   {
     method: 'delete',
     path: `${config.pathPrefix}/withdrawal`,
@@ -1204,6 +1219,35 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
+  /**
+   * POST new return endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/return`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Licence number ${existingId} not valid.`}).code(404);
+        }
+
+        // Get the new return from the request's payload.
+        const newReturn = request.payload as any;
+
+        // Clean the return before we try to insert it into the database.
+        const cleanedReturn = CleaningFunctions.cleanReturn(newReturn);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
   /**
    * GET the public part of our elliptic curve JWK.
    */
