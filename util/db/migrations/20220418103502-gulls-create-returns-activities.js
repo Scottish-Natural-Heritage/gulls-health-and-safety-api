@@ -39,11 +39,17 @@ module.exports = {
       quantityChicksToRescue: {
         type: Sequelize.INTEGER,
       },
+      dateChicksToRescue: {
+        type: Sequelize.DATE,
+      },
       chicksRelocatedNearby: {
         type: Sequelize.BOOLEAN,
       },
       quantityChicksRelocated: {
         type: Sequelize.INTEGER,
+      },
+      dateChicksRelocated: {
+        type: Sequelize.DATE,
       },
       killChicks: {
         type: Sequelize.BOOLEAN,
@@ -51,11 +57,17 @@ module.exports = {
       quantityChicksKilled: {
         type: Sequelize.INTEGER,
       },
+      dateChicksKilled: {
+        type: Sequelize.DATE,
+      },
       killAdults: {
         type: Sequelize.BOOLEAN,
       },
       quantityAdultsKilled: {
         type: Sequelize.INTEGER,
+      },
+      dateAdultsKilled: {
+        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,

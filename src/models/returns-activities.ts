@@ -15,12 +15,16 @@ interface ReturnActivityInterface {
   dateNestsEggsDestroyed?: Date;
   chicksToRescueCentre?: boolean;
   quantityChicksToRescue?: number;
+  dateChicksToRescue?: Date;
   chicksRelocatedNearby?: boolean;
   quantityChicksRelocated?: number;
+  dateChicksRelocated?: Date;
   killChicks?: boolean;
   quantityChicksKilled?: number;
+  dateChicksKilled?: Date;
   killAdults?: boolean;
   quantityAdultsKilled?: number;
+  dateAdultsKilled?: Date;
 }
 
 /**
@@ -42,12 +46,16 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
     public dateNestsEggsDestroyed!: Date;
     public chicksToRescueCentre!: boolean;
     public quantityChicksToRescue!: number;
+    public dateChicksToRescue!: Date;
     public chicksRelocatedNearby!: boolean;
     public quantityChicksRelocated!: number;
+    public dateChicksRelocated!: Date;
     public killChicks!: boolean;
     public quantityChicksKilled!: number;
+    public dateChicksKilled!: Date;
     public killAdults!: boolean;
     public quantityAdultsKilled!: number;
+    public dateAdultsKilled!: Date;
   }
 
   ReturnActivity.init(
@@ -82,11 +90,17 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
       quantityChicksToRescue: {
         type: DataTypes.INTEGER,
       },
+      dateChicksToRescue: {
+        type: DataTypes.DATE,
+      },
       chicksRelocatedNearby: {
         type: DataTypes.BOOLEAN,
       },
       quantityChicksRelocated: {
         type: DataTypes.INTEGER,
+      },
+      dateChicksRelocated: {
+        type: DataTypes.DATE,
       },
       killChicks: {
         type: DataTypes.BOOLEAN,
@@ -94,11 +108,17 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
       quantityChicksKilled: {
         type: DataTypes.INTEGER,
       },
+      dateChicksKilled: {
+        type: DataTypes.DATE,
+      },
       killAdults: {
         type: DataTypes.BOOLEAN,
       },
       quantityAdultsKilled: {
         type: DataTypes.INTEGER,
+      },
+      dateAdultsKilled: {
+        type: DataTypes.DATE,
       },
     },
     {
