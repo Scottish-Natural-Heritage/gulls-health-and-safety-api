@@ -151,8 +151,8 @@ database.PActivity.hasOne(database.PSpecies, {
 
 database.Returns.belongsTo(database.ReturnSpecies, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
 database.ReturnSpecies.hasOne(database.Returns, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
-database.Returns.belongsTo(database.License, {as: 'Returns', foreignKey: 'LicenseId'});
-database.License.hasMany(database.Returns, {as: 'Returns', foreignKey: 'LicenseId'});
+database.Returns.belongsTo(database.License, {as: 'Returns', foreignKey: 'LicenceId'});
+database.License.hasMany(database.Returns, {as: 'Returns', foreignKey: 'LicenceId'});
 
 database.ReturnSpecies.belongsTo(database.ReturnActivity, {as: 'ReturnHerringGull', foreignKey: 'HerringGullId'});
 database.ReturnSpecies.belongsTo(database.ReturnActivity, {

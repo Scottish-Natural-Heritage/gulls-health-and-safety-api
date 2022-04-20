@@ -9,6 +9,7 @@ import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
 import PActivity from './controllers/p-activity';
 import Contact from './controllers/contact';
+import Returns from './controllers/returns';
 import CleaningFunctions from './controllers/cleaning-functions';
 import Scheduled from './controllers/scheduled';
 import config from './config/app';
@@ -29,6 +30,7 @@ const routes: ServerRoute[] = [
       return h.response({message: 'Hello, world!'});
     },
   },
+
   /**
    * GET all advisories endpoint.
    */
@@ -54,6 +56,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all default advisories endpoint.
    */
@@ -79,6 +82,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all optional advisories endpoint.
    */
@@ -104,6 +108,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all conditions endpoint.
    */
@@ -129,6 +134,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all default conditions endpoint.
    */
@@ -154,6 +160,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all optional conditions endpoint.
    */
@@ -179,6 +186,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET addresses from postcode lookup service endpoint.
    */
@@ -205,6 +213,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET all (summarized) applications endpoint.
    */
@@ -230,6 +239,7 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
   /**
    * GET single application from ID endpoint.
    */
@@ -623,6 +633,9 @@ const routes: ServerRoute[] = [
     },
   },
 
+  /**
+   * Send a 14 day reminder endpoint.
+   */
   {
     method: 'patch',
     path: `${config.pathPrefix}/reminder`,
@@ -719,6 +732,9 @@ const routes: ServerRoute[] = [
     },
   },
 
+  /**
+   * Withdraw application endpoint.
+   */
   {
     method: 'delete',
     path: `${config.pathPrefix}/withdrawal`,
@@ -1204,6 +1220,102 @@ const routes: ServerRoute[] = [
       }
     },
   },
+
+  /**
+   * POST new return endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/return`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Licence number ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the license to which the return pertains.
+        const license = await License.findOne(existingId);
+        // Did we issue the license?
+        if (license === undefined || license === null) {
+          return h.response({message: `A License for Application ${existingId} has not been issued yet.`}).code(400);
+        }
+
+        // Get the new return from the request's payload.
+        const newReturn = request.payload as any;
+
+        let herringReturn;
+        let blackHeadedReturn;
+        let commonReturn;
+        let greatBlackBackedReturn;
+        let lesserBlackBackedReturn;
+
+        // Clean the return before we try to insert it into the database.
+        const cleanedReturn = CleaningFunctions.cleanReturn(newReturn);
+
+        // Set the licence ID to be used as the foreign key.
+        cleanedReturn.LicenceId = existingId;
+
+        // Clean all the possible return species activities.
+        if (newReturn.species.herringGull.hasReturn) {
+          herringReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'herringGull');
+        }
+
+        if (newReturn.species.blackHeadedGull.hasReturn) {
+          blackHeadedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'blackHeadedGull');
+        }
+
+        if (newReturn.species.commonGull.hasReturn) {
+          commonReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'commonGull');
+        }
+
+        if (newReturn.species.greatBlackBackedGull.hasReturn) {
+          greatBlackBackedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'greatBlackBackedGull');
+        }
+
+        if (newReturn.species.lesserBlackBackedGull.hasReturn) {
+          lesserBlackBackedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'lesserBlackBackedGull');
+        }
+
+        // Try to add the return to the database.
+        const insertedReturn: any = await Returns.create(
+          cleanedReturn,
+          herringReturn,
+          blackHeadedReturn,
+          commonReturn,
+          greatBlackBackedReturn,
+          lesserBlackBackedReturn,
+        );
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is an insertedReturn object and it has the ID property then...
+        if (insertedReturn?.id) {
+          // Set a string representation of the ID to this local variable.
+          const newReturnId = insertedReturn.id.toString();
+          // Construct a new URL object with the baseUrl declared above and the newReturnId.
+          const locationUrl = new URL(newReturnId, baseUrl);
+          // If all is well return the return, location and 201 created.
+          return h.response(insertedReturn).location(locationUrl.href).code(201);
+        }
+
+        // If we get here the return was not created successfully.
+        return h.response({message: `Failed to create return.`}).code(500);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
   /**
    * GET the public part of our elliptic curve JWK.
    */

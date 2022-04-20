@@ -190,6 +190,66 @@ const cleanActivity = (body: any, gullType: string): any => {
 };
 
 /**
+ * Cleans a return's activity details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @param {string} gullType The type of gull the return's activities relate to.
+ * @returns {any} The cleaned return activity details.
+ */
+const cleanReturnActivity = (body: any, gullType: string): any => {
+  return {
+    removeNests: body.species?.[gullType].activities.removeNests,
+    quantityNestsRemoved: body.species?.[gullType].activities.quantityNestsRemoved
+      ? body.species?.[gullType].activities.quantityNestsRemoved
+      : undefined,
+    quantityEggsRemoved: body.species?.[gullType].activities.quantityEggsRemoved
+      ? body.species?.[gullType].activities.quantityEggsRemoved
+      : undefined,
+    dateNestsEggsRemoved: body.species?.[gullType].activities.dateNestsEggsRemoved
+      ? body.species?.[gullType].activities.dateNestsEggsRemoved
+      : undefined,
+    eggDestruction: body.species?.[gullType].activities.eggDestruction,
+    quantityNestsAffected: body.species?.[gullType].activities.quantityNestsAffected
+      ? body.species?.[gullType].activities.quantityNestsAffected
+      : undefined,
+    quantityEggsDestroyed: body.species?.[gullType].activities.quantityEggsDestroyed
+      ? body.species?.[gullType].activities.quantityEggsDestroyed
+      : undefined,
+    dateNestsEggsDestroyed: body.species?.[gullType].activities.dateNestsEggsDestroyed
+      ? body.species?.[gullType].activities.dateNestsEggsDestroyed
+      : undefined,
+    chicksToRescueCentre: body.species?.[gullType].activities.chicksToRescueCentre,
+    quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
+      ? body.species?.[gullType].activities.quantityChicksToRescue
+      : undefined,
+    dateChicksToRescue: body.species?.[gullType].activities.dateChicksToRescue
+      ? body.species?.[gullType].activities.dateChicksToRescue
+      : undefined,
+    chicksRelocatedNearby: body.species?.[gullType].activities.chicksRelocatedNearby,
+    quantityChicksRelocated: body.species?.[gullType].activities.quantityChicksRelocated
+      ? body.species?.[gullType].activities.quantityChicksRelocated
+      : undefined,
+    dateChicksRelocated: body.species?.[gullType].activities.dateChicksRelocated
+      ? body.species?.[gullType].activities.dateChicksRelocated
+      : undefined,
+    killChicks: body.species?.[gullType].activities.killChicks,
+    quantityChicksKilled: body.species?.[gullType].activities.quantityChicksKilled
+      ? body.species?.[gullType].activities.quantityChicksKilled
+      : undefined,
+    dateChicksKilled: body.species?.[gullType].activities.dateChicksKilled
+      ? body.species?.[gullType].activities.dateChicksKilled
+      : undefined,
+    killAdults: body.species?.[gullType].activities.killAdults,
+    quantityAdultsKilled: body.species?.[gullType].activities.quantityAdultsKilled
+      ? body.species?.[gullType].activities.quantityAdultsKilled
+      : undefined,
+    dateAdultsKilled: body.species?.[gullType].activities.dateAdultsKilled
+      ? body.species?.[gullType].activities.dateAdultsKilled
+      : undefined,
+  };
+};
+
+/**
  * Cleans the permitted activity details into something the database can use.
  *
  * @param {any} body The body of the request to be cleaned.
@@ -533,6 +593,18 @@ const cleanAuthenticationInfo = (body: any, existingId: string): any => {
   };
 };
 
+/**
+ * Cleans the incoming requests body to ensure that the return's details are in a format the DB can use.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up field on it.
+ */
+const cleanReturn = (body: any): any => {
+  return {
+    confirmedReturn: body.confirmDeclaration,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -554,6 +626,8 @@ const CleaningFunctions = {
   cleanNote,
   cleanWithdrawOrRevokeInput,
   cleanAuthenticationInfo,
+  cleanReturn,
+  cleanReturnActivity,
 };
 
 export default CleaningFunctions;
