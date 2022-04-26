@@ -725,6 +725,7 @@ const ApplicationController = {
       // Send the email using the Notify service's API.
       await sendLicenceApplicantNotificationEmail(emailDetails, onBehalfContact.emailAddress);
       await sendLicenceHolderMagicLinkEmail(magicLinkEmailDetails, licenceHolderContact.emailAddress);
+      await sendLicenceHolderMagicLinkEmail(magicLinkEmailDetails, 'issuedlicence@nature.scot');
     } else {
       // Else if the licence holder applied directly send them a confirmation email.
       // Set the details of the email.
