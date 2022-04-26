@@ -57,6 +57,14 @@ const createSummaryAddress = (fullAddress: any): string => {
   return address.join(', ');
 };
 
+/**
+ * This function will create a formatted string of specific species activities, used by Notify
+ * to create the list of returned activities.
+ *
+ * @param {any} activities The activities being returned.
+ * @param {string} speciesType The species the return relates to.
+ * @returns {string} A list of formatted activities as a single species specific string.
+ */
 const addReturnActivities = (activities: any, speciesType: string): string => {
   const returnActivities: string[] = [];
 
@@ -106,21 +114,32 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
 
   // Build the string for chicks killed.
   if (activities.killChicks) {
-    returnActivities.push(`${speciesType} - ${String(activities.quantityChicksKilled)} chicks killed on ${createDisplayDate(
-      new Date(activities.dateChicksKilled),
-    )}`);
+    returnActivities.push(
+      `${speciesType} - ${String(activities.quantityChicksKilled)} chicks killed on ${createDisplayDate(
+        new Date(activities.dateChicksKilled),
+      )}`,
+    );
   }
 
   // Build the string for adults killed.
   if (activities.killAdults) {
-    returnActivities.push(`${speciesType} - ${String(activities.quantityAdultsKilled)} adults killed on ${createDisplayDate(
-      new Date(activities.dateAdultsKilled),
-    )}`);
+    returnActivities.push(
+      `${speciesType} - ${String(activities.quantityAdultsKilled)} adults killed on ${createDisplayDate(
+        new Date(activities.dateAdultsKilled),
+      )}`,
+    );
   }
 
   return returnActivities.join('\n');
 };
 
+/**
+ * This function takes a map of species type and activity and generates the string used by Notify
+ * to create the list of return activities.
+ *
+ * @param {Map<string, any>} returnDetails A list of returned activities mapped to the species type.
+ * @returns {string} Returns the formatted string used by the Notify API for the list of returned activities.
+ */
 const createReturnDetails = (returnDetails: Map<string, any>): string => {
   const returnDetailsResults = [];
   if (returnDetails.has('Herring Gull')) {
@@ -156,6 +175,7 @@ const createReturnDetails = (returnDetails: Map<string, any>): string => {
  * @param {any} licenceId The ID of the licence to which the return pertains.
  * @param {any} returnDate The date of the return details.
  * @param {any} siteAddress The address of the site to which the return pertains.
+ * @param {Map<string, any>} returnDetails A map containing the return details mapped to a species type string as a key.
  * @returns {any} An object with the required details set.
  */
 const setReturnNotificationDetails = (
