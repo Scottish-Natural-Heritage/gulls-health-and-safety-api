@@ -35,7 +35,7 @@ interface ReturnInterface {
 
 // Create a more user friendly displayable date from a date object.
 const createDisplayDate = (date: Date) => {
-  return date.toLocaleDateString('en-GB', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+  return date.toLocaleDateString('en-GB');
 };
 
 /**
@@ -57,6 +57,99 @@ const createSummaryAddress = (fullAddress: any): string => {
   return address.join(', ');
 };
 
+const addReturnActivities = (activities: any, speciesType: string): string => {
+  const returnActivities: string[] = [];
+
+  // Build the string for nest removal.
+  if (activities.removeNests && activities.quantityNestsRemoved && activities.quantityEggsRemoved) {
+    returnActivities.push(
+      `${speciesType} - ${String(activities.quantityNestsRemoved)} nests removed and ${String(
+        activities.quantityEggsRemoved,
+      )} eggs removed on ${createDisplayDate(new Date(activities.dateNestsEggsRemoved))}`,
+    );
+  } else if (activities.removeNests && activities.quantityNestsRemoved) {
+    returnActivities.push(
+      `* ${speciesType} - ${String(activities.quantityNestsRemoved)} nests removed on ${createDisplayDate(
+        new Date(activities.dateNestsEggsRemoved),
+      )}`,
+    );
+  }
+
+  // Build the string for egg destruction.
+  if (activities.eggDestruction) {
+    returnActivities.push(
+      `${speciesType} - ${String(
+        activities.quantityEggsDestroyed,
+      )} eggs oiled pricked or replaced with dummy eggs from ${String(
+        activities.quantityNestsAffected,
+      )} nests on ${createDisplayDate(new Date(activities.dateNestsEggsDestroyed))}`,
+    );
+  }
+
+  // Build the string for chicks taken to rescue centre, includes `rescueCentre`.
+  if (activities.chicksToRescueCentre) {
+    returnActivities.push(
+      `${speciesType} - ${String(activities.quantityChicksToRescue)} chicks taken to ${String(
+        activities.rescueCentre,
+      )} on ${createDisplayDate(new Date(activities.dateChicksToRescue))}`,
+    );
+  }
+
+  // Build the string for chicks relocated nearby.
+  if (activities.chicksRelocatedNearby) {
+    returnActivities.push(
+      `${speciesType} - ${String(activities.quantityChicksRelocated)} chicks relocated nearby on ${createDisplayDate(
+        new Date(activities.dateChicksRelocated),
+      )}`,
+    );
+  }
+
+  // Build the string for chicks killed.
+  if (activities.killChicks) {
+    returnActivities.push(`${speciesType} - ${String(activities.quantityChicksKilled)} chicks killed on ${createDisplayDate(
+      new Date(activities.dateChicksKilled),
+    )}`);
+  }
+
+  // Build the string for adults killed.
+  if (activities.killAdults) {
+    returnActivities.push(`${speciesType} - ${String(activities.quantityAdultsKilled)} adults killed on ${createDisplayDate(
+      new Date(activities.dateAdultsKilled),
+    )}`);
+  }
+
+  return returnActivities.join('\n');
+};
+
+const createReturnDetails = (returnDetails: Map<string, any>): string => {
+  const returnDetailsResults = [];
+  if (returnDetails.has('Herring Gull')) {
+    returnDetailsResults.push(addReturnActivities(returnDetails.get('Herring Gull'), 'Herring gull'));
+  }
+
+  if (returnDetails.has('Black-Headed Gull')) {
+    returnDetailsResults.push(addReturnActivities(returnDetails.get('Black-Headed Gull'), 'Black-Headed Gull'));
+  }
+
+  if (returnDetails.has('Common Gull')) {
+    returnDetailsResults.push(addReturnActivities(returnDetails.get('Common Gull'), 'Common Gull'));
+  }
+
+  if (returnDetails.has('Great Black-Backed Gull')) {
+    returnDetailsResults.push(
+      addReturnActivities(returnDetails.get('Great Black-Backed Gull'), 'Great Black-Backed Gull'),
+    );
+  }
+
+  if (returnDetails.has('Lesser Black-Backed Gull')) {
+    returnDetailsResults.push(
+      addReturnActivities(returnDetails.get('Lesser Black-Backed Gull'), 'Lesser Black-Backed Gull'),
+    );
+  }
+
+  return returnDetailsResults.join('\n');
+};
+
 /**
  * This function returns an object containing the details required for the license return notification email.
  *
@@ -65,7 +158,12 @@ const createSummaryAddress = (fullAddress: any): string => {
  * @param {any} siteAddress The address of the site to which the return pertains.
  * @returns {any} An object with the required details set.
  */
-const setReturnNotificationDetails = (licenceId: any, returnDate: any, siteAddress: any, returnDetails: any[]) => {
+const setReturnNotificationDetails = (
+  licenceId: any,
+  returnDate: any,
+  siteAddress: any,
+  returnDetails: Map<string, any>,
+) => {
   return {
     id: licenceId,
     returnDate: createDisplayDate(new Date(returnDate)),
@@ -240,26 +338,26 @@ const ReturnsController = {
     }
 
     // Create an array of all of the submitted returns for each species, to be used by Notify.
-    const returnDetails: any[] = [];
+    const returnDetails: Map<string, any> = new Map();
 
     if (herringReturnActivity) {
-      returnDetails.push(herringReturnActivity);
+      returnDetails.set('Herring Gull', herringReturnActivity);
     }
 
     if (blackHeadedReturnActivity) {
-      returnDetails.push(blackHeadedReturnActivity);
+      returnDetails.set('Black-Headed Gull', blackHeadedReturnActivity);
     }
 
     if (commonReturnActivity) {
-      returnDetails.push(commonReturnActivity);
+      returnDetails.set('Common Gull', commonReturnActivity);
     }
 
     if (greatBlackBackedReturnActivity) {
-      returnDetails.push(greatBlackBackedReturnActivity);
+      returnDetails.set('Great Black-Backed Gull', greatBlackBackedReturnActivity);
     }
 
     if (lesserBlackBackedReturnActivity) {
-      returnDetails.push(lesserBlackBackedReturnActivity);
+      returnDetails.set('Lesser Black-Backed Gull', lesserBlackBackedReturnActivity);
     }
 
     // If we have successfully submitted a return set the email details.
