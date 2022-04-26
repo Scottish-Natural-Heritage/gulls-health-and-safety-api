@@ -65,11 +65,12 @@ const createSummaryAddress = (fullAddress: any): string => {
  * @param {any} siteAddress The address of the site to which the return pertains.
  * @returns {any} An object with the required details set.
  */
-const setReturnNotificationDetails = (licenceId: any, returnDate: any, siteAddress: any) => {
+const setReturnNotificationDetails = (licenceId: any, returnDate: any, siteAddress: any, returnDetails: any[]) => {
   return {
     id: licenceId,
     returnDate: createDisplayDate(new Date(returnDate)),
     siteAddress: createSummaryAddress(siteAddress),
+    returnDetails: createReturnDetails(returnDetails),
   };
 };
 
@@ -238,12 +239,36 @@ const ReturnsController = {
       licenceApplicant = await ContactController.findOne(applicationDetails?.LicenceApplicantId);
     }
 
+    // Create an array of all of the submitted returns for each species, to be used by Notify.
+    const returnDetails: any[] = [];
+
+    if (herringReturnActivity) {
+      returnDetails.push(herringReturnActivity);
+    }
+
+    if (blackHeadedReturnActivity) {
+      returnDetails.push(blackHeadedReturnActivity);
+    }
+
+    if (commonReturnActivity) {
+      returnDetails.push(commonReturnActivity);
+    }
+
+    if (greatBlackBackedReturnActivity) {
+      returnDetails.push(greatBlackBackedReturnActivity);
+    }
+
+    if (lesserBlackBackedReturnActivity) {
+      returnDetails.push(lesserBlackBackedReturnActivity);
+    }
+
     // If we have successfully submitted a return set the email details.
     if (newReturn) {
       const emailDetails = setReturnNotificationDetails(
         (newReturn as any).LicenceId,
         (newReturn as any).createdAt,
         siteAddress,
+        returnDetails,
       );
 
       // If the licence holder and applicant are the same person only send a single email.
