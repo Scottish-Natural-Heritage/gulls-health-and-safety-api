@@ -534,13 +534,14 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
-        // Did we get an application that has already been confirmed?
+        // Did we get an application that has already been confirmed? if so just return OK
         if (application.confirmedByLicenseHolder) {
-          return h.response({message: `Application ${existingId} has already been confirmed.`}).code(400);
+          return h.response().code(200);
         }
 
         // Update the application in the database with confirmedByLicenseHolder set to true.
         const confirmApplication: any = request.payload as any;
+        confirmApplication.confirmedAt = new Date();
         const updatedApplication = await Application.confirm(existingId, confirmApplication);
 
         // If they're not successful, send a 500 error.

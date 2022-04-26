@@ -62,6 +62,7 @@ interface ApplicationInterface {
   previousLicenceNumber: string;
   supportingInformation: string;
   confirmedByLicenseHolder: boolean;
+  confirmedAt?: Date;
   staffNumber: string;
   fourteenDayReminder: boolean;
 }
