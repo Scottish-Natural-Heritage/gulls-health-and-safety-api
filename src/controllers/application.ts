@@ -122,7 +122,7 @@ const setReturnLoginMagicLinkEmailDetails = async (id: number, contact: any, mag
   // Create JWT.
   const token = jwt.sign({}, privateKey as string, {
     algorithm: 'ES256',
-    expiresIn: '30m',
+    expiresIn: '2h',
     noTimestamp: true,
     subject: `${id}`,
   });
@@ -255,7 +255,7 @@ const setLicenceHolderMagicLinkDetails = async (
   // Create JWT.
   const token = jwt.sign({}, privateKey as string, {
     algorithm: 'ES256',
-    expiresIn: '28 days',
+    expiresIn: '21 days',
     noTimestamp: true,
     subject: `${applicationId}`,
   });
