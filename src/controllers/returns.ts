@@ -357,7 +357,7 @@ const ReturnsController = {
       licenceApplicant = await ContactController.findOne(applicationDetails?.LicenceApplicantId);
     }
 
-    // Create an array of all of the submitted returns for each species, to be used by Notify.
+    // Create a map of all of the submitted returns for each species, to be used by Notify.
     const returnDetails: Map<string, any> = new Map();
 
     if (herringReturnActivity) {
