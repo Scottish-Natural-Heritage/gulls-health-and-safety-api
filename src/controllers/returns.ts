@@ -73,7 +73,7 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
     returnActivities.push(
       `${speciesType} - ${String(activities.quantityNestsRemoved)} nests removed and ${String(
         activities.quantityEggsRemoved,
-      )} eggs removed on ${createDisplayDate(new Date(activities.dateNestsEggsRemoved))}`,
+      )} eggs destroyed on ${createDisplayDate(new Date(activities.dateNestsEggsRemoved))}`,
     );
   } else if (activities.removeNests && activities.quantityNestsRemoved) {
     returnActivities.push(
