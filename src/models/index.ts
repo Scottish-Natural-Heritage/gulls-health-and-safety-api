@@ -22,6 +22,7 @@ import Withdrawal from './withdrawal';
 import Returns from './returns';
 import ReturnSpecies from './returns-species';
 import ReturnActivity from './returns-activities';
+import AssessmentMeasure from './assessment-measure';
 
 const Sequelize = require('sequelize');
 
@@ -56,6 +57,7 @@ const database = {
   Returns: Returns(sequelize),
   ReturnSpecies: ReturnSpecies(sequelize),
   ReturnActivity: ReturnActivity(sequelize),
+  AssessmentMeasure: AssessmentMeasure(sequelize),
 };
 
 // Relationships go here.
@@ -80,6 +82,7 @@ database.Measure.belongsTo(database.Application, {as: 'ApplicationMeasure', fore
 database.Note.belongsTo(database.Application, {as: 'ApplicationNotes', foreignKey: 'ApplicationId'});
 database.Revocation.belongsTo(database.Application, {as: 'Revocation', foreignKey: 'ApplicationId'});
 database.Withdrawal.belongsTo(database.Application, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
+database.AssessmentMeasure.belongsTo(database.Application, {as: 'AssessmentMeasure', foreignKey: 'ApplicationId'});
 
 database.Application.hasOne(database.Assessment, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.License, {as: 'License', foreignKey: 'ApplicationId'});
@@ -88,6 +91,7 @@ database.Application.hasOne(database.Measure, {as: 'ApplicationMeasure', foreign
 database.Application.hasMany(database.Note, {as: 'ApplicationNotes', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Revocation, {as: 'Revocation', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Withdrawal, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
+database.Application.hasOne(database.AssessmentMeasure, {as: 'AssessmentMeasure', foreignKey: 'ApplicationId'});
 
 database.LicenseAdvisory.belongsTo(database.License, {as: 'LicenseAdvisories', foreignKey: 'LicenseId'});
 database.LicenseCondition.belongsTo(database.License, {as: 'LicenseConditions', foreignKey: 'LicenseId'});
