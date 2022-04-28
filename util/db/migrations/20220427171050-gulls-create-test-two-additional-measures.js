@@ -37,12 +37,6 @@ module.exports = {
       disturbanceByDogs: {
         type: Sequelize.STRING,
       },
-      measuresTriedDetail: {
-        type: Sequelize.STRING,
-      },
-      measuresWillNotTryDetail: {
-        type: Sequelize.STRING,
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
