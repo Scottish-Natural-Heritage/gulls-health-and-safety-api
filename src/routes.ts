@@ -901,8 +901,10 @@ const routes: ServerRoute[] = [
         // Clean the fields on the applications assessment.
         const incomingAssessment = CleaningFunctions.cleanAssessment(request.payload as any);
 
+        const incomingAdditionalMeasures = CleaningFunctions.cleanAdditionalMeasure(request.payload as any);
+
         // Upsert the assessment.
-        const assessment = await Assessment.upsert(incomingAssessment, existingId);
+        const assessment = await Assessment.upsert(incomingAssessment, existingId, incomingAdditionalMeasures);
 
         // If they're not successful, send a 500 error.
         if (!assessment) {
