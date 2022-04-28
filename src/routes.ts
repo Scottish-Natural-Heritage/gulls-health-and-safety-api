@@ -829,7 +829,7 @@ const routes: ServerRoute[] = [
   },
 
   /**
-   * PATCH application confirmed endpoint.
+   * PATCH application assign endpoint.
    */
   {
     method: 'patch',
