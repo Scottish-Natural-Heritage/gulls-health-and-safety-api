@@ -410,6 +410,52 @@ const cleanAssessment = (body: any): any => {
 };
 
 /**
+ * Cleans the measure details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned measure details.
+ */
+const cleanAdditionalMeasure = (body: any): any => {
+  if (body.measuresToContinue || body.additionalMeasuresIntendToTry) {
+    return {
+      preventNesting: body.measuresToContinue.preventNesting
+        ? 'Continue'
+        : body.additionalMeasuresIntendToTry.preventNesting
+        ? 'Intend'
+        : 'No',
+      removeOldNests: body.measuresToContinue.removeOldNests
+        ? 'Continue'
+        : body.additionalMeasuresIntendToTry.removeOldNests
+        ? 'Intend'
+        : 'No',
+      removeLitter: body.measuresToContinue.removeLitter
+        ? 'Continue'
+        : body.additionalMeasuresIntendToTry.removeLitter
+        ? 'Intend'
+        : 'No',
+      humanDisturbance: body.measuresToContinue.humanDisturbance
+        ? 'Continue'
+        : body.additionalMeasuresIntendToTry.humanDisturbance
+        ? 'Intend'
+        : 'No',
+      scaringDevices: body.measuresToContinue.scaringDevices
+        ? 'Continue'
+        : body.additionalMeasuresIntendToTry.scaringDevices
+        ? 'Intend'
+        : 'No',
+      hawking: body.measuresToContinue.hawking ? 'Tried' : body.additionalMeasuresIntendToTry.hawking ? 'Intend' : 'No',
+      disturbanceByDogs: body.measuresToContinue.disturbanceByDogs
+        ? 'Continue'
+        : body.additionalMeasuresIntendToTry.disturbanceByDogs
+        ? 'Intend'
+        : 'No',
+    };
+  }
+
+  return undefined;
+};
+
+/**
  * Cleans the permitted activity details into something the database can use.
  *
  * @param {any} body The body of the request to be cleaned.
@@ -619,6 +665,7 @@ const CleaningFunctions = {
   cleanPermittedActivity,
   cleanMeasure,
   cleanAssessment,
+  cleanAdditionalMeasure,
   cleanPermittedActivityChange,
   cleanCondition,
   cleanAdvisory,

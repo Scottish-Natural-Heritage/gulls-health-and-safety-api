@@ -23,6 +23,7 @@ const ApplicationModel = (sequelize: Sequelize) => {
     public confirmedByLicenseHolder!: boolean;
     public staffNumber!: string;
     public fourteenDayReminder!: boolean;
+    public confirmedAt!: Date;
   }
 
   Application.init(
@@ -68,6 +69,9 @@ const ApplicationModel = (sequelize: Sequelize) => {
       },
       fourteenDayReminder: {
         type: DataTypes.BOOLEAN,
+      },
+      confirmedAt: {
+        type: DataTypes.DATE,
       },
     },
     {

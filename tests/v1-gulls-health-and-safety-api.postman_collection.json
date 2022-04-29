@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6b666d51-5353-48f7-b8ed-4bcc39ae8079",
+		"_postman_id": "251f9ec3-b8dd-4128-b2e5-719a222f35f8",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -250,6 +250,7 @@
 							"    var jsonData = pm.response.json();\r",
 							"\r",
 							"    pm.expect(jsonData).to.have.property('confirmedByLicenseHolder');\r",
+							"    pm.expect(jsonData).to.have.property('confirmedAt');\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -377,6 +378,7 @@
 							"    pm.response.to.have.status(200);\r",
 							"    pm.response.to.have.status('OK');\r",
 							"});\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -388,7 +390,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": true\r\n}",
+					"raw": "{\r\n    \"measuresToContinue\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n    },\r\n    \"additionalMeasuresIntendToTry\": {\r\n        \"preventNesting\": false,\r\n        \"removeOldNests\": false,\r\n        \"removeLitter\": false,\r\n        \"humanDisturbance\": true,\r\n        \"scaringDevices\": false,\r\n        \"hawking\": true,\r\n        \"disturbanceByDogs\": false\r\n    },\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -430,6 +432,9 @@
 							"\r",
 							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('testTwoAssessment');\r",
 							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('testTwoDecision');\r",
+							"\r",
+							"    pm.expect(jsonData.AssessmentMeasure).to.have.property('preventNesting').to.eql(\"Continue\");\r",
+							"    pm.expect(jsonData.AssessmentMeasure).to.have.property('humanDisturbance').to.eql(\"Intend\");\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -1730,7 +1735,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": false\r\n}",
+					"raw": "{\r\n    \"measuresToContinue\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n    },\r\n    \"additionalMeasuresIntendToTry\": {\r\n        \"preventNesting\": false,\r\n        \"removeOldNests\": false,\r\n        \"removeLitter\": false,\r\n        \"humanDisturbance\": false,\r\n        \"scaringDevices\": false,\r\n        \"hawking\": false,\r\n        \"disturbanceByDogs\": false\r\n    },\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": false\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
