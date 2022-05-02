@@ -5,6 +5,8 @@
 # We're deploying to the 16-alpine image, so do our building on it too.
 FROM node:16-alpine as builder
 
+RUN npm install -g npm@8.1.2
+
 # By default, we want to do everything in a non-privileged user, so go to their
 # home dir and drop to their account.
 WORKDIR /home/node

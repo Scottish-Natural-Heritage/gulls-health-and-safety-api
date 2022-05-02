@@ -1,24 +1,24 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 
-const {ReturnSpecies} = database;
+const {RSpecies} = database;
 
-const ReturnSpeciesController = {
+const RSpeciesController = {
   findOne: async (id: number) => {
-    return ReturnSpecies.findByPk(id);
+    return RSpecies.findByPk(id);
   },
 
   findAll: async () => {
-    return ReturnSpecies.findAll();
+    return RSpecies.findAll();
   },
 
   create: async (returnSpecies: any) => {
     let newReturnSpecies;
     await database.sequelize.transaction(async (t: transaction) => {
-      newReturnSpecies = await ReturnSpecies.create(returnSpecies, {transaction: t});
+      newReturnSpecies = await RSpecies.create(returnSpecies, {transaction: t});
     });
     return newReturnSpecies;
   },
 };
 
-export {ReturnSpeciesController as default};
+export {RSpeciesController as default};

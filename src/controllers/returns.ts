@@ -5,7 +5,7 @@ import ApplicationController from './application';
 import AddressController from './address';
 import ContactController from './contact';
 
-const {Returns, ReturnSpecies, ReturnActivity} = database;
+const {Returns, RSpecies, RActivity} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -220,33 +220,33 @@ const ReturnsController = {
       paranoid: false,
       include: [
         {
-          model: ReturnSpecies,
-          as: 'ReturnSpecies',
+          model: RSpecies,
+          as: 'RSpecies',
           paranoid: false,
           include: [
             {
-              model: ReturnActivity,
-              as: 'ReturnHerringGull',
+              model: RActivity,
+              as: 'RHerringGull',
               paranoid: false,
             },
             {
-              model: ReturnActivity,
-              as: 'ReturnBlackHeadedGull',
+              model: RActivity,
+              as: 'RBlackHGull',
               paranoid: false,
             },
             {
-              model: ReturnActivity,
-              as: 'ReturnCommonGull',
+              model: RActivity,
+              as: 'RCommonGull',
               paranoid: false,
             },
             {
-              model: ReturnActivity,
-              as: 'ReturnGreatBlackBackedGull',
+              model: RActivity,
+              as: 'RGreatBBGull',
               paranoid: false,
             },
             {
-              model: ReturnActivity,
-              as: 'ReturnLesserBlackBackedGull',
+              model: RActivity,
+              as: 'RLesserBBGull',
               paranoid: false,
             },
           ],
@@ -296,32 +296,32 @@ const ReturnsController = {
     // Add the returns for each species to the database, keeping a copy of the species ID.
     await database.sequelize.transaction(async (t: transaction) => {
       if (herringReturnActivity) {
-        const herringGull = await ReturnActivity.create(herringReturnActivity, {transaction: t});
+        const herringGull = await RActivity.create(herringReturnActivity, {transaction: t});
         speciesIds.HerringGullId = herringGull.id;
       }
 
       if (blackHeadedReturnActivity) {
-        const blackHeadedGull = await ReturnActivity.create(blackHeadedReturnActivity, {transaction: t});
+        const blackHeadedGull = await RActivity.create(blackHeadedReturnActivity, {transaction: t});
         speciesIds.BlackHeadedGullId = blackHeadedGull.id;
       }
 
       if (commonReturnActivity) {
-        const commonGull = await ReturnActivity.create(commonReturnActivity, {transaction: t});
+        const commonGull = await RActivity.create(commonReturnActivity, {transaction: t});
         speciesIds.CommonGullId = commonGull.id;
       }
 
       if (greatBlackBackedReturnActivity) {
-        const greatBlackBackedGull = await ReturnActivity.create(greatBlackBackedReturnActivity, {transaction: t});
+        const greatBlackBackedGull = await RActivity.create(greatBlackBackedReturnActivity, {transaction: t});
         speciesIds.GreatBlackBackedGullId = greatBlackBackedGull.id;
       }
 
       if (lesserBlackBackedReturnActivity) {
-        const lesserBlackBackedGull = await ReturnActivity.create(lesserBlackBackedReturnActivity, {transaction: t});
+        const lesserBlackBackedGull = await RActivity.create(lesserBlackBackedReturnActivity, {transaction: t});
         speciesIds.LesserBlackBackedGullId = lesserBlackBackedGull.id;
       }
 
       // Set the return's species foreign keys in the DB.
-      const newReturnSpecies = await ReturnSpecies.create(speciesIds, {transaction: t});
+      const newReturnSpecies = await RSpecies.create(speciesIds, {transaction: t});
 
       // Set the return's species foreign key.
       cleanedReturn.SpeciesId = newReturnSpecies.id;

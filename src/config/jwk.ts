@@ -86,7 +86,7 @@ interface KeyOptions {
  */
 const getPrivateKey = async (options?: KeyOptions): Promise<string | JsonWebKey> => {
   // Are we running in developer/test mode?
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'production') {
     // Does the caller want the test private key as a JWK?
     if (options && options.type === 'jwk') {
       return testKeyPair;
