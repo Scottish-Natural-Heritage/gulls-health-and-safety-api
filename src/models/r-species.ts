@@ -3,7 +3,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
 /**
  * Local interface to hold the ReturnSpecies.
  */
-interface ReturnSpeciesInterface {
+interface RSpeciesInterface {
   id?: number;
   HerringGullId?: number;
   BlackHeadedGullId?: number;
@@ -18,8 +18,8 @@ interface ReturnSpeciesInterface {
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} A ReturnSpecies model.
  */
-const ReturnSpeciesModel = (sequelize: Sequelize) => {
-  class ReturnSpecies extends Model {
+const RSpeciesModel = (sequelize: Sequelize) => {
+  class RSpecies extends Model {
     public id!: number;
     public HerringGullId!: number;
     public BlackHeadedGullId!: number;
@@ -28,7 +28,7 @@ const ReturnSpeciesModel = (sequelize: Sequelize) => {
     public LesserBlackBackedGullId!: number;
   }
 
-  ReturnSpecies.init(
+  RSpecies.init(
     {
       HerringGullId: {
         type: DataTypes.INTEGER,
@@ -48,14 +48,14 @@ const ReturnSpeciesModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'ReturnSpecies',
+      modelName: 'RSpecies',
       timestamps: true,
       paranoid: true,
     },
   );
 
-  return ReturnSpecies;
+  return RSpecies;
 };
 
-export {ReturnSpeciesModel as default};
-export {ReturnSpeciesInterface};
+export {RSpeciesModel as default};
+export {RSpeciesInterface};

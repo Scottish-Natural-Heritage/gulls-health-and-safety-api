@@ -3,7 +3,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
 /**
  * Local interface to hold the ReturnActivity.
  */
-interface ReturnActivityInterface {
+interface RActivityInterface {
   id?: number;
   removeNests?: boolean;
   quantityNestsRemoved?: number;
@@ -33,8 +33,8 @@ interface ReturnActivityInterface {
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
  * @returns {Sequelize.Model} A ReturnActivity model.
  */
-const ReturnActivityModel = (sequelize: Sequelize) => {
-  class ReturnActivity extends Model {
+const RActivityModel = (sequelize: Sequelize) => {
+  class RActivity extends Model {
     public id!: number;
     public removeNests!: boolean;
     public quantityNestsRemoved!: number;
@@ -58,7 +58,7 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
     public dateAdultsKilled!: Date;
   }
 
-  ReturnActivity.init(
+  RActivity.init(
     {
       removeNests: {
         type: DataTypes.BOOLEAN,
@@ -123,14 +123,14 @@ const ReturnActivityModel = (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      modelName: 'ReturnActivity',
+      modelName: 'RActivity',
       timestamps: true,
       paranoid: true,
     },
   );
 
-  return ReturnActivity;
+  return RActivity;
 };
 
-export {ReturnActivityModel as default};
-export {ReturnActivityInterface};
+export {RActivityModel as default};
+export {RActivityInterface};

@@ -26,8 +26,8 @@ const {
   Revocation,
   Withdrawal,
   Returns,
-  ReturnSpecies,
-  ReturnActivity,
+  RSpecies,
+  RActivity,
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -467,33 +467,33 @@ const ApplicationController = {
               paranoid: false,
               include: [
                 {
-                  model: ReturnSpecies,
-                  as: 'ReturnSpecies',
+                  model: RSpecies,
+                  as: 'RSpecies',
                   paranoid: false,
                   include: [
                     {
-                      model: ReturnActivity,
-                      as: 'ReturnHerringGull',
+                      model: RActivity,
+                      as: 'RHerringGull',
                       paranoid: false,
                     },
                     {
-                      model: ReturnActivity,
-                      as: 'ReturnBlackHeadedGull',
+                      model: RActivity,
+                      as: 'RBlackHGull',
                       paranoid: false,
                     },
                     {
-                      model: ReturnActivity,
-                      as: 'ReturnCommonGull',
+                      model: RActivity,
+                      as: 'RCommonGull',
                       paranoid: false,
                     },
                     {
-                      model: ReturnActivity,
-                      as: 'ReturnGreatBlackBackedGull',
+                      model: RActivity,
+                      as: 'RGreatBBGull',
                       paranoid: false,
                     },
                     {
-                      model: ReturnActivity,
-                      as: 'ReturnLesserBlackBackedGull',
+                      model: RActivity,
+                      as: 'RLesserBBGull',
                       paranoid: false,
                     },
                   ],
