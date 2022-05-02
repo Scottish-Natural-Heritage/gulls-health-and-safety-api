@@ -19,6 +19,10 @@ import Condition from './condition';
 import Note from './note';
 import Revocation from './revocation';
 import Withdrawal from './withdrawal';
+import Returns from './returns';
+import ReturnSpecies from './returns-species';
+import ReturnActivity from './returns-activities';
+import AssessmentMeasure from './assessment-measure';
 
 const Sequelize = require('sequelize');
 
@@ -50,6 +54,10 @@ const database = {
   Note: Note(sequelize),
   Revocation: Revocation(sequelize),
   Withdrawal: Withdrawal(sequelize),
+  Returns: Returns(sequelize),
+  ReturnSpecies: ReturnSpecies(sequelize),
+  ReturnActivity: ReturnActivity(sequelize),
+  AssessmentMeasure: AssessmentMeasure(sequelize),
 };
 
 // Relationships go here.
@@ -74,6 +82,7 @@ database.Measure.belongsTo(database.Application, {as: 'ApplicationMeasure', fore
 database.Note.belongsTo(database.Application, {as: 'ApplicationNotes', foreignKey: 'ApplicationId'});
 database.Revocation.belongsTo(database.Application, {as: 'Revocation', foreignKey: 'ApplicationId'});
 database.Withdrawal.belongsTo(database.Application, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
+database.AssessmentMeasure.belongsTo(database.Application, {as: 'AssessmentMeasure', foreignKey: 'ApplicationId'});
 
 database.Application.hasOne(database.Assessment, {as: 'ApplicationAssessment', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.License, {as: 'License', foreignKey: 'ApplicationId'});
@@ -82,6 +91,7 @@ database.Application.hasOne(database.Measure, {as: 'ApplicationMeasure', foreign
 database.Application.hasMany(database.Note, {as: 'ApplicationNotes', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Revocation, {as: 'Revocation', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Withdrawal, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
+database.Application.hasOne(database.AssessmentMeasure, {as: 'AssessmentMeasure', foreignKey: 'ApplicationId'});
 
 database.LicenseAdvisory.belongsTo(database.License, {as: 'LicenseAdvisories', foreignKey: 'LicenseId'});
 database.LicenseCondition.belongsTo(database.License, {as: 'LicenseConditions', foreignKey: 'LicenseId'});
@@ -140,6 +150,38 @@ database.PActivity.hasOne(database.PSpecies, {
 });
 database.PActivity.hasOne(database.PSpecies, {
   as: 'PLesserBlackBackedGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.Returns.belongsTo(database.ReturnSpecies, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
+database.ReturnSpecies.hasOne(database.Returns, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
+database.Returns.belongsTo(database.License, {as: 'Returns', foreignKey: 'LicenceId'});
+database.License.hasMany(database.Returns, {as: 'Returns', foreignKey: 'LicenceId'});
+
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {as: 'ReturnHerringGull', foreignKey: 'HerringGullId'});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {
+  as: 'ReturnBlackHeadedGull',
+  foreignKey: 'BlackHeadedGullId',
+});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {as: 'ReturnCommonGull', foreignKey: 'CommonGullId'});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {
+  as: 'ReturnGreatBlackBackedGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.ReturnSpecies.belongsTo(database.ReturnActivity, {
+  as: 'ReturnLesserBlackBackedGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnHerringGull', foreignKey: 'HerringGullId'});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnBlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnCommonGull', foreignKey: 'CommonGullId'});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {
+  as: 'ReturnGreatBlackBackedGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.ReturnActivity.hasOne(database.ReturnSpecies, {
+  as: 'ReturnLesserBlackBackedGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 

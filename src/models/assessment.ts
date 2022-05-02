@@ -9,6 +9,8 @@ interface AssessmentInterface {
   testOneDecision?: boolean;
   testTwoAssessment?: string;
   testTwoDecision?: boolean;
+  testThreeAssessment?: string;
+  testThreeDecision?: boolean;
   decision?: boolean;
   refusalReason?: string;
   assessedBy?: string;
@@ -27,6 +29,8 @@ const AssessmentModel = (sequelize: Sequelize) => {
     public testOneDecision!: boolean;
     public testTwoAssessment!: string;
     public testTwoDecision!: boolean;
+    public testThreeAssessment!: string;
+    public testThreeDecision!: boolean;
     public decision!: boolean;
     public refusalReason!: string;
     public assessedBy!: string;
@@ -51,6 +55,12 @@ const AssessmentModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
       },
       testTwoDecision: {
+        type: DataTypes.BOOLEAN,
+      },
+      testThreeAssessment: {
+        type: DataTypes.STRING,
+      },
+      testThreeDecision: {
         type: DataTypes.BOOLEAN,
       },
       decision: {

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "df450f75-5890-4c27-a061-a7979a06da31",
+		"_postman_id": "251f9ec3-b8dd-4128-b2e5-719a222f35f8",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -114,6 +114,7 @@
 							"});\r",
 							"\r",
 							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"GULLS_ACTIVITY_ID\", jsonData.PSpecies.PHerringGull.id);\r",
 							"pm.collectionVariables.set(\"GULLS_CONTACT_ID\", jsonData.LicenceHolder.id);\r",
 							""
 						],
@@ -249,6 +250,7 @@
 							"    var jsonData = pm.response.json();\r",
 							"\r",
 							"    pm.expect(jsonData).to.have.property('confirmedByLicenseHolder');\r",
+							"    pm.expect(jsonData).to.have.property('confirmedAt');\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -376,6 +378,7 @@
 							"    pm.response.to.have.status(200);\r",
 							"    pm.response.to.have.status('OK');\r",
 							"});\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -387,7 +390,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": true\r\n}",
+					"raw": "{\r\n    \"measuresToContinue\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n    },\r\n    \"additionalMeasuresIntendToTry\": {\r\n        \"preventNesting\": false,\r\n        \"removeOldNests\": false,\r\n        \"removeLitter\": false,\r\n        \"humanDisturbance\": true,\r\n        \"scaringDevices\": false,\r\n        \"hawking\": true,\r\n        \"disturbanceByDogs\": false\r\n    },\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -429,6 +432,223 @@
 							"\r",
 							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('testTwoAssessment');\r",
 							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('testTwoDecision');\r",
+							"\r",
+							"    pm.expect(jsonData.AssessmentMeasure).to.have.property('preventNesting').to.eql(\"Continue\");\r",
+							"    pm.expect(jsonData.AssessmentMeasure).to.have.property('humanDisturbance').to.eql(\"Intend\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a permitted activity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/permitted-activity/{{GULLS_ACTIVITY_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"permitted-activity",
+						"{{GULLS_ACTIVITY_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assess an application - change permitted activities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"quantityNestsToRemove\": 100\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/permitted-activity/{{GULLS_ACTIVITY_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"permitted-activity",
+						"{{GULLS_ACTIVITY_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a partial assessed application - check permitted activity change happened",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assess an application - pass test three",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testThreeAssessment\": \"Test Three Assessment\",\r\n    \"testThreeDecision\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/assessment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"assessment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a partial assessed application - pass test Three",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returned object matches posted object', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('testThreeAssessment');\r",
+							"    pm.expect(jsonData.ApplicationAssessment).to.have.property('testThreeDecision');\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -1515,7 +1735,54 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": false\r\n}",
+					"raw": "{\r\n    \"measuresToContinue\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n    },\r\n    \"additionalMeasuresIntendToTry\": {\r\n        \"preventNesting\": false,\r\n        \"removeOldNests\": false,\r\n        \"removeLitter\": false,\r\n        \"humanDisturbance\": false,\r\n        \"scaringDevices\": false,\r\n        \"hawking\": false,\r\n        \"disturbanceByDogs\": false\r\n    },\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/assessment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"assessment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assess an application - pass test three",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testThreeAssessment\": \"Test Three Assessment\",\r\n    \"testThreeDecision\": true\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -2086,6 +2353,460 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create new application to test returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"GULLS_NEW_APP_ID_RETURNS\", pm.response.headers.get('Location').split('/').pop());\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n   \"manualAddress\": {\r\n   \"addressLine1\": \"KATTEDAL FARM   AULDEARN\",\r\n   \"addressLine2\": \"WATERLOO - EASTERTON - INSHOCH\",\r\n   \"addressTown\": \"NAIRN\",\r\n   \"addressCounty\": \"HIGHLAND\"\r\n   },\r\n  \"sameAddressAsLicenceHolder\": false,\r\n  \"sitePostcode\": \"IV38NW\",\r\n  \"siteUprn\": 10092032547,\r\n  \"siteManualAddress\": {\r\n  \"addressLine1\": \" FORESTRY & LAND SCOTLAND  \",\r\n  \"addressLine2\": \"AUCHTERAW ROAD\",\r\n  \"addressTown\": \"FORT AUGUSTUS\",\r\n  \"addressCounty\": \"HIGHLAND\"\r\n  },\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm application to test returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"confirmedByLicenseHolder\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit return on application should fail if not licence",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400 Bad Request', function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status('Bad Request');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returns correct error message', function () {\r",
+							"    // Get the response as JSON.\r",
+							"    var resJsonData = pm.response.json();\r",
+							"\r",
+							"    // Check the error message is correct.\r",
+							"    pm.expect(resJsonData.message).to.include('has not been issued yet');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"confirmDeclaration\": true,\r\n  \"licenceNumber\": {{GULLS_NEW_APP_ID_RETURNS}},\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2021-04-23T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 123,\r\n        \"quantityNestsRemoved\": 33,\r\n        \"dateEggsDestroyed\": \"2021-04-24T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 33,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2021-04-25T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 66,\r\n        \"quantityNestsRemoved\": 39,\r\n        \"dateEggsDestroyed\": \"2021-04-26T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 13,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2021-04-27T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 44,\r\n        \"quantityNestsRemoved\": 3,\r\n        \"dateEggsDestroyed\": \"2021-04-28T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 39,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true\r\n      }\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2021-04-29T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 1234,\r\n        \"quantityNestsRemoved\": 333,\r\n        \"dateEggsDestroyed\": \"2021-04-30T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 333,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true\r\n      }\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2022-03-23T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 10,\r\n        \"quantityNestsRemoved\": 3,\r\n        \"dateEggsDestroyed\": \"2022-03-23T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 9,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true\r\n      }\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/return",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"return"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pass test 1 to test returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testOneAssessment\": \"Test One Assessment\",\r\n    \"testOneDecision\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/assessment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"assessment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pass test 2 to test returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testTwoAssessment\": \"Test Two Assessment\",\r\n    \"testTwoDecision\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/assessment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"assessment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pass test 3 to test returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testThreeAssessment\": \"Test Three Assessment\",\r\n    \"testThreeDecision\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/assessment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"assessment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pass decision to test returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"assessedBy\": \"9394699\",\r\n    \"decision\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/assessment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"assessment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new licence to test returns",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"periodFrom\": \"2021-02-01T00:00:00.000Z\",\r\n  \"periodTo\": \"2022-03-01T23:59:59.000Z\",\r\n  \"advisories\": [1],\r\n  \"conditions\": [4,6],\r\n  \"createdBy\": \"9394699\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/license",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"license"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit valid return",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"confirmDeclaration\": true,\r\n  \"licenceNumber\": {{GULLS_NEW_APP_ID_RETURNS}},\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2021-04-23T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 123,\r\n        \"quantityNestsRemoved\": 33,\r\n        \"dateEggsDestroyed\": \"2021-04-24T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 33,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsAffected\": 129\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"hasReturn\": false,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": null,\r\n        \"quantityEggsRemoved\": null,\r\n        \"quantityNestsRemoved\": null,\r\n        \"dateEggsDestroyed\": null,\r\n        \"quantityEggsDestroyed\": null,\r\n        \"removeNests\": null,\r\n        \"eggDestruction\": null\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2021-04-27T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 44,\r\n        \"quantityNestsRemoved\": 3,\r\n        \"dateEggsDestroyed\": \"2021-04-28T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 39,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsAffected\": 129\r\n      }\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2021-04-29T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 1234,\r\n        \"quantityNestsRemoved\": 333,\r\n        \"dateEggsDestroyed\": \"2021-04-30T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 333,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsAffected\": 129\r\n      }\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"hasReturn\": true,\r\n      \"activities\": {\r\n        \"dateNestsEggsRemoved\": \"2022-03-23T18:25:43.511Z\",\r\n        \"quantityEggsRemoved\": 10,\r\n        \"quantityNestsRemoved\": 3,\r\n        \"dateEggsDestroyed\": \"2022-03-23T18:25:43.511Z\",\r\n        \"quantityEggsDestroyed\": 9,\r\n        \"removeNests\": true,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsAffected\": 129\r\n      }\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/return",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"return"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -2115,6 +2836,15 @@
 		},
 		{
 			"key": "GULLS_CONTACT_ID",
+			"value": ""
+		},
+		{
+			"key": "GULLS_NEW_APP_ID_RETURNS",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "GULLS_ACTIVITY_ID",
 			"value": ""
 		}
 	]

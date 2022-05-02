@@ -1,6 +1,25 @@
 import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
+ * Local interface to hold the PActivityInterface.
+ */
+interface PActivityInterface {
+  id?: number;
+  removeNests?: boolean;
+  quantityNestsToRemove?: string;
+  eggDestruction?: boolean;
+  quantityNestsWhereEggsDestroyed?: string;
+  chicksToRescueCentre?: boolean;
+  quantityChicksToRescue?: number;
+  chicksRelocateNearby?: boolean;
+  quantityChicksToRelocate?: number;
+  killChicks?: boolean;
+  quantityChicksToKill?: number;
+  killAdults?: boolean;
+  quantityAdultsToKill?: number;
+}
+
+/**
  * Build an Permitted Activity model.
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
@@ -74,3 +93,4 @@ const PActivityModel = (sequelize: Sequelize) => {
 };
 
 export {PActivityModel as default};
+export {PActivityInterface};

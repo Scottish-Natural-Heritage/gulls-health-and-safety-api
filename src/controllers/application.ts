@@ -16,6 +16,7 @@ const {
   Species,
   PSpecies,
   Assessment,
+  AssessmentMeasure,
   License,
   LicenseAdvisory,
   Advisory,
@@ -24,6 +25,9 @@ const {
   Note,
   Revocation,
   Withdrawal,
+  Returns,
+  ReturnSpecies,
+  ReturnActivity,
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -59,6 +63,7 @@ interface ApplicationInterface {
   previousLicenceNumber: string;
   supportingInformation: string;
   confirmedByLicenseHolder: boolean;
+  confirmedAt?: Date;
   staffNumber: string;
   fourteenDayReminder: boolean;
 }
@@ -119,7 +124,7 @@ const setReturnLoginMagicLinkEmailDetails = async (id: number, contact: any, mag
   // Create JWT.
   const token = jwt.sign({}, privateKey as string, {
     algorithm: 'ES256',
-    expiresIn: '30m',
+    expiresIn: '2h',
     noTimestamp: true,
     subject: `${id}`,
   });
@@ -252,7 +257,7 @@ const setLicenceHolderMagicLinkDetails = async (
   // Create JWT.
   const token = jwt.sign({}, privateKey as string, {
     algorithm: 'ES256',
-    expiresIn: '28 days',
+    expiresIn: '21 days',
     noTimestamp: true,
     subject: `${applicationId}`,
   });
@@ -418,6 +423,11 @@ const ApplicationController = {
           paranoid: false,
         },
         {
+          model: AssessmentMeasure,
+          as: 'AssessmentMeasure',
+          paranoid: false,
+        },
+        {
           model: Note,
           as: 'ApplicationNotes',
           paranoid: false,
@@ -448,6 +458,45 @@ const ApplicationController = {
                   model: Condition,
                   as: 'Condition',
                   paranoid: false,
+                },
+              ],
+            },
+            {
+              model: Returns,
+              as: 'Returns',
+              paranoid: false,
+              include: [
+                {
+                  model: ReturnSpecies,
+                  as: 'ReturnSpecies',
+                  paranoid: false,
+                  include: [
+                    {
+                      model: ReturnActivity,
+                      as: 'ReturnHerringGull',
+                      paranoid: false,
+                    },
+                    {
+                      model: ReturnActivity,
+                      as: 'ReturnBlackHeadedGull',
+                      paranoid: false,
+                    },
+                    {
+                      model: ReturnActivity,
+                      as: 'ReturnCommonGull',
+                      paranoid: false,
+                    },
+                    {
+                      model: ReturnActivity,
+                      as: 'ReturnGreatBlackBackedGull',
+                      paranoid: false,
+                    },
+                    {
+                      model: ReturnActivity,
+                      as: 'ReturnLesserBlackBackedGull',
+                      paranoid: false,
+                    },
+                  ],
                 },
               ],
             },
@@ -682,6 +731,7 @@ const ApplicationController = {
       // Send the email using the Notify service's API.
       await sendLicenceApplicantNotificationEmail(emailDetails, onBehalfContact.emailAddress);
       await sendLicenceHolderMagicLinkEmail(magicLinkEmailDetails, licenceHolderContact.emailAddress);
+      await sendLicenceHolderMagicLinkEmail(magicLinkEmailDetails, 'issuedlicence@nature.scot');
     } else {
       // Else if the licence holder applied directly send them a confirmation email.
       // Set the details of the email.
@@ -929,6 +979,8 @@ const ApplicationController = {
         await Issue.destroy({where: {ApplicationId: id}, transaction: t});
         // Soft delete the assessment attached to the application/license.
         await Assessment.destroy({where: {ApplicationId: id}, transaction: t});
+        // Soft delete any Assessment Measure attached to the application/license.
+        await AssessmentMeasure.destroy({where: {ApplicationId: id}, transaction: t});
         // Soft delete any advisories or conditions attached to the application/license.
         await LicenseAdvisory.destroy({where: {LicenseId: id}, transaction: t});
         await LicenseCondition.destroy({where: {LicenseId: id}, transaction: t});
@@ -1093,6 +1145,8 @@ const ApplicationController = {
         await Issue.destroy({where: {ApplicationId: id}, force: true, transaction: t});
         // Delete the assessment attached to the application/license.
         await Assessment.destroy({where: {ApplicationId: id}, force: true, transaction: t});
+        // Delete any assessment Measure attached to the application/license.
+        await AssessmentMeasure.destroy({where: {ApplicationId: id}, force: true, transaction: t});
 
         // If everything worked then return true.
         return true;
