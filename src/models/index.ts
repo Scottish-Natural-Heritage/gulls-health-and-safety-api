@@ -20,8 +20,8 @@ import Note from './note';
 import Revocation from './revocation';
 import Withdrawal from './withdrawal';
 import Returns from './returns';
-import ReturnSpecies from './returns-species';
-import ReturnActivity from './returns-activities';
+import RSpecies from './r-species';
+import RActivity from './r-activities';
 import AssessmentMeasure from './assessment-measure';
 
 const Sequelize = require('sequelize');
@@ -55,8 +55,8 @@ const database = {
   Revocation: Revocation(sequelize),
   Withdrawal: Withdrawal(sequelize),
   Returns: Returns(sequelize),
-  ReturnSpecies: ReturnSpecies(sequelize),
-  ReturnActivity: ReturnActivity(sequelize),
+  RSpecies: RSpecies(sequelize),
+  RActivity: RActivity(sequelize),
   AssessmentMeasure: AssessmentMeasure(sequelize),
 };
 
@@ -153,35 +153,35 @@ database.PActivity.hasOne(database.PSpecies, {
   foreignKey: 'LesserBlackBackedGullId',
 });
 
-database.Returns.belongsTo(database.ReturnSpecies, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
-database.ReturnSpecies.hasOne(database.Returns, {as: 'ReturnSpecies', foreignKey: 'SpeciesId'});
+database.Returns.belongsTo(database.RSpecies, {as: 'RSpecies', foreignKey: 'SpeciesId'});
+database.RSpecies.hasOne(database.Returns, {as: 'RSpecies', foreignKey: 'SpeciesId'});
 database.Returns.belongsTo(database.License, {as: 'Returns', foreignKey: 'LicenceId'});
 database.License.hasMany(database.Returns, {as: 'Returns', foreignKey: 'LicenceId'});
 
-database.ReturnSpecies.belongsTo(database.ReturnActivity, {as: 'ReturnHerringGull', foreignKey: 'HerringGullId'});
-database.ReturnSpecies.belongsTo(database.ReturnActivity, {
-  as: 'ReturnBlackHeadedGull',
+database.RSpecies.belongsTo(database.RActivity, {as: 'RHerringGull', foreignKey: 'HerringGullId'});
+database.RSpecies.belongsTo(database.RActivity, {
+  as: 'RBlackHGull',
   foreignKey: 'BlackHeadedGullId',
 });
-database.ReturnSpecies.belongsTo(database.ReturnActivity, {as: 'ReturnCommonGull', foreignKey: 'CommonGullId'});
-database.ReturnSpecies.belongsTo(database.ReturnActivity, {
-  as: 'ReturnGreatBlackBackedGull',
+database.RSpecies.belongsTo(database.RActivity, {as: 'RCommonGull', foreignKey: 'CommonGullId'});
+database.RSpecies.belongsTo(database.RActivity, {
+  as: 'RGreatBBGull',
   foreignKey: 'GreatBlackBackedGullId',
 });
-database.ReturnSpecies.belongsTo(database.ReturnActivity, {
-  as: 'ReturnLesserBlackBackedGull',
+database.RSpecies.belongsTo(database.RActivity, {
+  as: 'RLesserBBGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 
-database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnHerringGull', foreignKey: 'HerringGullId'});
-database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnBlackHeadedGull', foreignKey: 'BlackHeadedGullId'});
-database.ReturnActivity.hasOne(database.ReturnSpecies, {as: 'ReturnCommonGull', foreignKey: 'CommonGullId'});
-database.ReturnActivity.hasOne(database.ReturnSpecies, {
-  as: 'ReturnGreatBlackBackedGull',
+database.RActivity.hasOne(database.RSpecies, {as: 'RHerringGull', foreignKey: 'HerringGullId'});
+database.RActivity.hasOne(database.RSpecies, {as: 'RBlackHGull', foreignKey: 'BlackHeadedGullId'});
+database.RActivity.hasOne(database.RSpecies, {as: 'RCommonGull', foreignKey: 'CommonGullId'});
+database.RActivity.hasOne(database.RSpecies, {
+  as: 'RGreatBBGull',
   foreignKey: 'GreatBlackBackedGullId',
 });
-database.ReturnActivity.hasOne(database.ReturnSpecies, {
-  as: 'ReturnLesserBlackBackedGull',
+database.RActivity.hasOne(database.RSpecies, {
+  as: 'RLesserBBGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
 
