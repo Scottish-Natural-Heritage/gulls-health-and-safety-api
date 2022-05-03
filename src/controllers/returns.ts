@@ -77,7 +77,7 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
     );
   } else if (activities.removeNests && activities.quantityNestsRemoved) {
     returnActivities.push(
-      `* ${speciesType} - ${String(activities.quantityNestsRemoved)} nests removed on ${createDisplayDate(
+      `${speciesType} - ${String(activities.quantityNestsRemoved)} nests removed on ${createDisplayDate(
         new Date(activities.dateNestsEggsRemoved),
       )}`,
     );
