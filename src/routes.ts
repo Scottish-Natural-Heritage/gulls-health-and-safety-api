@@ -903,6 +903,17 @@ const routes: ServerRoute[] = [
 
         const incomingAdditionalMeasures = CleaningFunctions.cleanAdditionalMeasure(request.payload as any);
 
+        // If we already have an assessment measure entry we need it's ID to upsert the new values,
+        // so cast the application first so we can access the AssessmentMeasure object.
+        const assessmentMeasure = application as any;
+
+        let assessmentMeasureId;
+
+        if (assessmentMeasure?.AssessmentMeasure && incomingAdditionalMeasures) {
+          assessmentMeasureId = assessmentMeasure.AssessmentMeasure.id;
+          incomingAdditionalMeasures.id = assessmentMeasureId;
+        }
+
         // Upsert the assessment.
         const assessment = await Assessment.upsert(incomingAssessment, existingId, incomingAdditionalMeasures);
 
