@@ -909,7 +909,7 @@ const routes: ServerRoute[] = [
 
         let assessmentMeasureId;
 
-        if (assessmentMeasure.AssessmentMeasure) {
+        if (assessmentMeasure.AssessmentMeasure && incomingAdditionalMeasures) {
           assessmentMeasureId = assessmentMeasure.AssessmentMeasure.id
           incomingAdditionalMeasures.id = assessmentMeasureId;
         }
