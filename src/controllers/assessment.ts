@@ -37,7 +37,7 @@ const AssessmentController = {
       // If we have additionalMeasures then we need to create a new record if not we carry on.
       if (additionalMeasures) {
         additionalMeasures.ApplicationId = applicationId;
-        await AssessmentMeasure.create(additionalMeasures, {transaction: t});
+        await AssessmentMeasure.upsert(additionalMeasures, {transaction: t});
       }
 
       // Return the upsert object.
