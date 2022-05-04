@@ -905,12 +905,12 @@ const routes: ServerRoute[] = [
 
         // If we already have an assessment measure entry we need it's ID to upsert the new values,
         // so cast the application first so we can access the AssessmentMeasure object.
-        const assessmentMeasure = <any>application ? <any>application : undefined;
+        const assessmentMeasure = application as any;
 
         let assessmentMeasureId;
 
-        if (assessmentMeasure.AssessmentMeasure && incomingAdditionalMeasures) {
-          assessmentMeasureId = assessmentMeasure.AssessmentMeasure.id
+        if (assessmentMeasure?.AssessmentMeasure && incomingAdditionalMeasures) {
+          assessmentMeasureId = assessmentMeasure.AssessmentMeasure.id;
           incomingAdditionalMeasures.id = assessmentMeasureId;
         }
 
