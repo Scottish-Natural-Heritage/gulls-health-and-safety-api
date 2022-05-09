@@ -19,7 +19,7 @@ module.exports = {
       SpeciesId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'ReturnSpecies',
+          model: 'ASpecies',
           key: 'id',
         },
       },
@@ -27,6 +27,9 @@ module.exports = {
         type: Sequelize.STRING,
       },
       amendedBy: {
+        type: Sequelize.STRING,
+      },
+      assessment: {
         type: Sequelize.STRING,
       },
       createdAt: {
