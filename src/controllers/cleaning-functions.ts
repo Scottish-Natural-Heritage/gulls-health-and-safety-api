@@ -443,7 +443,11 @@ const cleanAdditionalMeasure = (body: any): any => {
         : body.additionalMeasuresIntendToTry.scaringDevices
         ? 'Intend'
         : 'No',
-      hawking: body.measuresToContinue.hawking ? 'Tried' : body.additionalMeasuresIntendToTry.hawking ? 'Intend' : 'No',
+      hawking: body.measuresToContinue.hawking
+        ? 'Continue'
+        : body.additionalMeasuresIntendToTry.hawking
+        ? 'Intend'
+        : 'No',
       disturbanceByDogs: body.measuresToContinue.disturbanceByDogs
         ? 'Continue'
         : body.additionalMeasuresIntendToTry.disturbanceByDogs
