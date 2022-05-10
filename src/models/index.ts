@@ -195,4 +195,46 @@ database.RActivity.hasOne(database.RSpecies, {
   foreignKey: 'LesserBlackBackedGullId',
 });
 
+database.Amendment.belongsTo(database.ASpecies, {as: 'ASpecies', foreignKey: 'AmendSpeciesId'});
+database.ASpecies.hasOne(database.Application, {as: 'ASpecies', foreignKey: 'AmendSpeciesId'});
+
+database.ASpecies.belongsTo(database.AActivity, {as: 'AHerringGull', foreignKey: 'HerringGullId'});
+database.ASpecies.belongsTo(database.AActivity, {
+  as: 'ABlackHGull',
+  foreignKey: 'BlackHeadedGullId',
+});
+database.ASpecies.belongsTo(database.AActivity, {as: 'ACommonGull', foreignKey: 'CommonGullId'});
+database.ASpecies.belongsTo(database.AActivity, {
+  as: 'AGreatBBGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.ASpecies.belongsTo(database.AActivity, {
+  as: 'ALesserBBGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.AActivity.hasOne(database.ASpecies, {as: 'AHerringGull', foreignKey: 'HerringGullId'});
+database.AActivity.hasOne(database.ASpecies, {as: 'ABlackHGull', foreignKey: 'BlackHeadedGullId'});
+database.AActivity.hasOne(database.ASpecies, {as: 'ACommonGull', foreignKey: 'CommonGullId'});
+database.AActivity.hasOne(database.ASpecies, {
+  as: 'AGreatBBGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.AActivity.hasOne(database.ASpecies, {
+  as: 'ALesserBBGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.AmendAdvisory.belongsTo(database.Amendment, {as: 'AmendAdvisories', foreignKey: 'AmendmentId'});
+database.AmendCondition.belongsTo(database.Amendment, {as: 'AmendConditions', foreignKey: 'AmendmentId'});
+
+database.Amendment.hasMany(database.AmendAdvisory, {as: 'AmendAdvisories', foreignKey: 'AmendmentId'});
+database.Amendment.hasMany(database.AmendCondition, {as: 'AmendConditions', foreignKey: 'AmendmentId'});
+
+database.AmendAdvisory.belongsTo(database.Advisory, {as: 'Advisory', foreignKey: 'AdvisoryId'});
+database.AmendCondition.belongsTo(database.Condition, {as: 'Condition', foreignKey: 'ConditionId'});
+
+database.Advisory.hasMany(database.AmendAdvisory, {as: 'Advisory', foreignKey: 'AdvisoryId'});
+database.Condition.hasMany(database.AmendCondition, {as: 'Condition', foreignKey: 'ConditionId'});
+
 export {database as default};
