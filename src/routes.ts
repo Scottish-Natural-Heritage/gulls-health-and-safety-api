@@ -1336,7 +1336,7 @@ const routes: ServerRoute[] = [
    */
   {
     method: 'post',
-    path: `${config.pathPrefix}/application/{id}/return`,
+    path: `${config.pathPrefix}/application/{id}/amendment`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // Is the ID a number?
@@ -1377,24 +1377,24 @@ const routes: ServerRoute[] = [
         cleanedAmendment.LicenceId = existingId;
 
         // Clean all the possible return species activities.
-        if (newAmendment.species.herringGull.hasReturn) {
-          herringAmend = CleaningFunctions.cleanActivity(newAmendment, 'herringGull');
+        if (newAmendment.amendSpecies.herringGull.hasAmend) {
+          herringAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'herringGull');
         }
 
-        if (newAmendment.species.blackHeadedGull.hasReturn) {
-          blackHeadedAmend = CleaningFunctions.cleanActivity(newAmendment, 'blackHeadedGull');
+        if (newAmendment.amendSpecies.blackHeadedGull.hasAmend) {
+          blackHeadedAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'blackHeadedGull');
         }
 
-        if (newAmendment.species.commonGull.hasReturn) {
-          commonAmend = CleaningFunctions.cleanActivity(newAmendment, 'commonGull');
+        if (newAmendment.amendSpecies.commonGull.hasAmend) {
+          commonAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'commonGull');
         }
 
-        if (newAmendment.species.greatBlackBackedGull.hasReturn) {
-          greatBlackBackedAmend = CleaningFunctions.cleanActivity(newAmendment, 'greatBlackBackedGull');
+        if (newAmendment.amendSpecies.greatBlackBackedGull.hasAmend) {
+          greatBlackBackedAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'greatBlackBackedGull');
         }
 
-        if (newAmendment.species.lesserBlackBackedGull.hasReturn) {
-          lesserBlackBackedAmend = CleaningFunctions.cleanActivity(newAmendment, 'lesserBlackBackedGull');
+        if (newAmendment.amendSpecies.lesserBlackBackedGull.hasAmend) {
+          lesserBlackBackedAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'lesserBlackBackedGull');
         }
 
         // Try to add the amendment to the database.
