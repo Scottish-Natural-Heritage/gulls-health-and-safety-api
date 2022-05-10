@@ -95,7 +95,7 @@ const AmendmentController = {
    * @param {any | undefined} lesserBlackBackedAmend Any amendments to lesser black-backed gull activities.
    * @param {ConditionInterface[] | undefined} optionalConditions Amended optional conditions.
    * @param {AdvisoryInterface[] | undefined} optionalAdvisories Amended optional advisories.
-   * @returns
+   * @returns {AmendmentInterface | undefined} Returns a successfully created amendment, or undefined.
    */
   create: async (
     incomingAmendment: any,
@@ -148,7 +148,7 @@ const AmendmentController = {
       const newASpecies = await ASpecies.create(aSpeciesIds, {transaction: t});
 
       // Set the new species ID of the amendment.
-      incomingAmendment.SpeciesId = newASpecies.id
+      incomingAmendment.SpeciesId = newASpecies.id;
 
       // Create the amendment.
       newAmendment = await Amendment.create(incomingAmendment, {transaction: t});
@@ -210,6 +210,8 @@ const AmendmentController = {
           }),
         );
       }
+
+      // Post amendReason to Notes table here...
     });
 
     // If all went well return the new amendment.

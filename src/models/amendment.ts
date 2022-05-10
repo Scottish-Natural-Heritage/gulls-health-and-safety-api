@@ -44,7 +44,7 @@ const AmendmentModel = (sequelize: Sequelize) => {
       },
       assessment: {
         type: DataTypes.STRING,
-      }
+      },
     },
     {
       sequelize,
