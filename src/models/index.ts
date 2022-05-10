@@ -25,6 +25,9 @@ import RActivity from './r-activities';
 import AssessmentMeasure from './assessment-measure';
 import ASpecies from './a-species';
 import AActivity from './a-activity';
+import Amendment from './amendment';
+import AmendCondition from './amend-condition';
+import AmendAdvisory from './amend-advisory';
 
 const Sequelize = require('sequelize');
 
@@ -62,6 +65,9 @@ const database = {
   AssessmentMeasure: AssessmentMeasure(sequelize),
   ASpecies: ASpecies(sequelize),
   AActivity: AActivity(sequelize),
+  Amendment: Amendment(sequelize),
+  AmendCondition: AmendCondition(sequelize),
+  AmendAdvisory: AmendAdvisory(sequelize),
 };
 
 // Relationships go here.

@@ -3,6 +3,7 @@ import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
 import License from './controllers/license';
+import Amendment from './controllers/amendment';
 import Note from './controllers/note';
 import Advisory from './controllers/advisory';
 import Condition from './controllers/condition';
@@ -1363,6 +1364,15 @@ const routes: ServerRoute[] = [
         // Clean the return before we try to insert it into the database.
         const cleanedAmendment = CleaningFunctions.cleanAmendment(newAmendment);
 
+        // Concatenate conditions before cleaning.
+        newAmendment.conditions = [...newAmendment.whatYouMustDo, ...newAmendment.general, ...newAmendment.reporting];
+
+        // We need to do this to reuse cleaning function.
+        newAmendment.advisories = newAmendment.advisoryNotes;
+
+        const optionalConditions = await CleaningFunctions.cleanCondition(newAmendment);
+        const optionalAdvisories = await CleaningFunctions.cleanAdvisory(newAmendment);
+
         // Set the licence ID to be used as the foreign key.
         cleanedAmendment.LicenceId = existingId;
 
@@ -1387,7 +1397,37 @@ const routes: ServerRoute[] = [
           lesserBlackBackedAmend = CleaningFunctions.cleanActivity(newAmendment, 'lesserBlackBackedGull');
         }
 
+        // Try to add the amendment to the database.
+        const insertedAmendment: any = await Amendment.create(
+          cleanedAmendment,
+          herringAmend,
+          blackHeadedAmend,
+          commonAmend,
+          greatBlackBackedAmend,
+          lesserBlackBackedAmend,
+          optionalConditions,
+          optionalAdvisories,
+        );
 
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is an insertedAmendment object and it has the ID property then...
+        if (insertedAmendment?.id) {
+          // Set a string representation of the ID to this local variable.
+          const newAmendmentId = insertedAmendment.id.toString();
+          // Construct a new URL object with the baseUrl declared above and the newAmendmentId.
+          const locationUrl = new URL(newAmendmentId, baseUrl);
+          // If all is well return the amendment, location and 201 created.
+          return h.response(insertedAmendment).location(locationUrl.href).code(201);
+        }
+
+        // If we get here the amendment was not created successfully.
+        return h.response({message: `Failed to create amendment.`}).code(500);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
