@@ -1331,6 +1331,73 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * POST an amendment.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/return`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Licence number ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the license to which the amendment pertains.
+        const license = await License.findOne(existingId);
+        // Did we issue the license?
+        if (license === undefined || license === null) {
+          return h.response({message: `A License for Application ${existingId} has not been issued yet.`}).code(400);
+        }
+
+        // Get the new return from the request's payload.
+        const newAmendment = request.payload as any;
+
+        let herringAmend;
+        let blackHeadedAmend;
+        let commonAmend;
+        let greatBlackBackedAmend;
+        let lesserBlackBackedAmend;
+
+        // Clean the return before we try to insert it into the database.
+        const cleanedAmendment = CleaningFunctions.cleanAmendment(newAmendment);
+
+        // Set the licence ID to be used as the foreign key.
+        cleanedAmendment.LicenceId = existingId;
+
+        // Clean all the possible return species activities.
+        if (newAmendment.species.herringGull.hasReturn) {
+          herringAmend = CleaningFunctions.cleanActivity(newAmendment, 'herringGull');
+        }
+
+        if (newAmendment.species.blackHeadedGull.hasReturn) {
+          blackHeadedAmend = CleaningFunctions.cleanActivity(newAmendment, 'blackHeadedGull');
+        }
+
+        if (newAmendment.species.commonGull.hasReturn) {
+          commonAmend = CleaningFunctions.cleanActivity(newAmendment, 'commonGull');
+        }
+
+        if (newAmendment.species.greatBlackBackedGull.hasReturn) {
+          greatBlackBackedAmend = CleaningFunctions.cleanActivity(newAmendment, 'greatBlackBackedGull');
+        }
+
+        if (newAmendment.species.lesserBlackBackedGull.hasReturn) {
+          lesserBlackBackedAmend = CleaningFunctions.cleanActivity(newAmendment, 'lesserBlackBackedGull');
+        }
+
+
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * GET the public part of our elliptic curve JWK.
    */
   {

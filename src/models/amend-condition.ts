@@ -4,7 +4,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * Local interface to hold the Amended Condition.
  */
 interface AmendConditionInterface {
-  LicenseId?: number;
+  AmendmentId?: number;
   ConditionId?: number;
 }
 
@@ -16,13 +16,13 @@ interface AmendConditionInterface {
  */
 const AmendConditionModel = (sequelize: Sequelize) => {
   class AmendCondition extends Model {
-    public LicenseId!: number;
+    public AmendmentId!: number;
     public ConditionId!: string;
   }
 
   AmendCondition.init(
     {
-      LicenseId: {
+      AmendmentId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         validate: {

@@ -655,6 +655,20 @@ const cleanReturn = (body: any): any => {
   };
 };
 
+/**
+ * Cleans the incoming requests body to ensure that the amendment's details are in a format the DB can use.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up field on it.
+ */
+const cleanAmendment = (body: any): any => {
+  return {
+    amendReason: body.amendReason ? body.amendReason.trim() : undefined,
+    assessment: body.assessment ? body.assessment.trim() : undefined,
+    amendedBy: body.amendedBy ? body.amendedBy.trim() : undefined,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -679,6 +693,7 @@ const CleaningFunctions = {
   cleanAuthenticationInfo,
   cleanReturn,
   cleanReturnActivity,
+  cleanAmendment,
 };
 
 export default CleaningFunctions;

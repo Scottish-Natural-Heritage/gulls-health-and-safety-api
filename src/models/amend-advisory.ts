@@ -4,7 +4,7 @@ import {DataTypes, Model, Sequelize} from 'sequelize';
  * Local interface to hold the Amended Advisory.
  */
 interface AmendAdvisoryInterface {
-  LicenseId?: number;
+  AmendmentId?: number;
   AdvisoryId?: number;
 }
 
@@ -16,13 +16,13 @@ interface AmendAdvisoryInterface {
  */
 const AmendAdvisoryModel = (sequelize: Sequelize) => {
   class AmendAdvisory extends Model {
-    public LicenseId!: number;
+    public AmendmentId!: number;
     public AdvisoryId!: string;
   }
 
   AmendAdvisory.init(
     {
-      LicenseId: {
+      AmendmentId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         validate: {

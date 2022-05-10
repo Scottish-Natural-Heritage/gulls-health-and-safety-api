@@ -3,13 +3,13 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('AmendAdvisories', {
-      LicenseId: {
+      AmendmentId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
         references: {
-          model: 'Licenses',
-          key: 'ApplicationId',
+          model: 'Amendments',
+          key: 'id',
         },
       },
       AdvisoryId: {
