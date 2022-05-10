@@ -23,6 +23,8 @@ import Returns from './returns';
 import RSpecies from './r-species';
 import RActivity from './r-activities';
 import AssessmentMeasure from './assessment-measure';
+import ASpecies from './a-species';
+import AActivity from './a-activity';
 
 const Sequelize = require('sequelize');
 
@@ -58,6 +60,8 @@ const database = {
   RSpecies: RSpecies(sequelize),
   RActivity: RActivity(sequelize),
   AssessmentMeasure: AssessmentMeasure(sequelize),
+  ASpecies: ASpecies(sequelize),
+  AActivity: AActivity(sequelize),
 };
 
 // Relationships go here.
