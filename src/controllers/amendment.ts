@@ -14,10 +14,10 @@ interface SpeciesIds {
 }
 
 interface AmendmentInterface {
-  id: number;
-  amendReason: string;
-  amendedBy: string;
-  assessment: string;
+  id: number | undefined;
+  amendReason: string | undefined;
+  amendedBy: string | undefined;
+  assessment: string | undefined;
 }
 
 const AmendmentController = {
@@ -84,6 +84,19 @@ const AmendmentController = {
     return Amendment.findAll();
   },
 
+  /**
+   * This function creates a new amendment record in the database.
+   *
+   * @param {any} incomingAmendment The new amendment.
+   * @param {any | undefined} herringAmend Any amendments to herring gull activities.
+   * @param {any | undefined} blackHeadedAmend Any amendments to black-headed gull activities.
+   * @param {any | undefined} commonAmend Any amendments to common gull activities.
+   * @param {any | undefined} greatBlackBackedAmend Any amendments to great black-backed gull activities.
+   * @param {any | undefined} lesserBlackBackedAmend Any amendments to lesser black-backed gull activities.
+   * @param {ConditionInterface[] | undefined} optionalConditions Amended optional conditions.
+   * @param {AdvisoryInterface[] | undefined} optionalAdvisories Amended optional advisories.
+   * @returns
+   */
   create: async (
     incomingAmendment: any,
     herringAmend: any | undefined,
@@ -199,10 +212,12 @@ const AmendmentController = {
       }
     });
 
+    // If all went well return the new amendment.
     if (newAmendment) {
       return newAmendment as AmendmentInterface;
     }
 
+    // If all did not go well return undefined.
     return undefined;
   },
 };

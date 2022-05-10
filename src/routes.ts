@@ -1376,7 +1376,7 @@ const routes: ServerRoute[] = [
         // Set the licence ID to be used as the foreign key.
         cleanedAmendment.LicenceId = existingId;
 
-        // Clean all the possible return species activities.
+        // Clean all the possible amended species activities.
         if (newAmendment.amendSpecies.herringGull.hasAmend) {
           herringAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'herringGull');
         }
