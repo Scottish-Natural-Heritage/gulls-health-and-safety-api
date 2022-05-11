@@ -3,7 +3,7 @@ import database from '../models/index.js';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 
-const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Condition, Advisory} = database;
+const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Condition, Advisory, Note} = database;
 
 interface SpeciesIds {
   HerringGullId: number | undefined;
@@ -211,7 +211,14 @@ const AmendmentController = {
         );
       }
 
-      // Post amendReason to Notes table here...
+      // Post amendReason to Notes table.
+      const amendmentNote = {
+        Note: incomingAmendment.amendReason,
+        createdBy: incomingAmendment.amendedBy,
+        ApplicationId: incomingAmendment.LicenceId
+      }
+
+      await Note.create(amendmentNote, {transaction: t});
     });
 
     // If all went well return the new amendment.
