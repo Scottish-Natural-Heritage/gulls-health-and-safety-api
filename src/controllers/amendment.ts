@@ -4,7 +4,7 @@ import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 import config from '../config/app';
 
-const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Condition, Advisory, Note} = database;
+const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Note} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -31,7 +31,7 @@ interface AmendmentInterface {
  *
  * @param {any} emailAddress The email address to send the email to.
  */
- const sendAmendedEmail = async (emailAddress: string) => {
+const sendAmendedEmail = async (emailAddress: string) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     await notifyClient.sendEmail('9cfcaca5-ef5d-46c4-8ccf-328bcf67ad6d', emailAddress, {
@@ -175,21 +175,6 @@ const AmendmentController = {
 
       const amendmentId = newAmendment.id;
 
-      // Fetch all the default conditions.
-      const conditions = await Condition.findAll({where: {default: true}});
-      const advisories = await Advisory.findAll({where: {default: true}});
-      // Add any conditions to the DB.
-      await Promise.all(
-        conditions.map(async (jsonCondition) => {
-          await AmendCondition.create(
-            {
-              AmendmentId: amendmentId,
-              ConditionId: jsonCondition.id,
-            },
-            {transaction: t},
-          );
-        }),
-      );
       if (optionalConditions) {
         await Promise.all(
           optionalConditions.map(async (optionalJsonCondition) => {
@@ -203,19 +188,6 @@ const AmendmentController = {
           }),
         );
       }
-
-      // Add any advisories to the DB.
-      await Promise.all(
-        advisories.map(async (jsonAdvisory) => {
-          await AmendAdvisory.create(
-            {
-              AmendmentId: amendmentId,
-              AdvisoryId: jsonAdvisory.id,
-            },
-            {transaction: t},
-          );
-        }),
-      );
 
       if (optionalAdvisories) {
         await Promise.all(
@@ -235,8 +207,8 @@ const AmendmentController = {
       const amendmentNote = {
         Note: incomingAmendment.amendReason,
         createdBy: incomingAmendment.amendedBy,
-        ApplicationId: incomingAmendment.LicenceId
-      }
+        ApplicationId: incomingAmendment.LicenceId,
+      };
 
       await Note.create(amendmentNote, {transaction: t});
     });
