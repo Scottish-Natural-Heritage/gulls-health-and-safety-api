@@ -241,8 +241,10 @@ const AmendmentController = {
       await Note.create(amendmentNote, {transaction: t});
     });
 
-    // Send Notify email.
-    await sendAmendedEmail(incomingAmendment.licenceHolderEmailAddress);
+    // Send Notify email if we have a licence holder email address.
+    if (incomingAmendment.licenceHolderEmailAddress) {
+      await sendAmendedEmail(incomingAmendment.licenceHolderEmailAddress);
+    }
 
     // If all went well return the new amendment.
     if (newAmendment) {

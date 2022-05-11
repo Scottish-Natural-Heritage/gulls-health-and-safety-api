@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "251f9ec3-b8dd-4128-b2e5-719a222f35f8",
+		"_postman_id": "02d91a48-adae-4130-889c-37b4df833bcf",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -2803,6 +2803,61 @@
 						"application",
 						"{{GULLS_NEW_APP_ID_RETURNS}}",
 						"return"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit amendment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amendReason\": \"This is a test note.\",\r\n  \"amendSpecies\": {\r\n    \"herringGull\": {\r\n      \"hasAmend\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": 200,\r\n        \"eggDestruction\": false,\r\n        \"quantityNestsWhereEggsDestroyed\": null,\r\n        \"chicksToRescueCentre\": false,\r\n        \"quantityChicksToRescue\": null,\r\n        \"chicksRelocateNearby\": false,\r\n        \"quantityChicksToRelocate\": null,\r\n        \"killChicks\": false,\r\n        \"quantityChicksToKill\": null,\r\n        \"killAdults\": false,\r\n        \"quantityAdultsToKill\": null\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"hasAmend\": false,\r\n      \"activities\": null\r\n    },\r\n    \"commonGull\": {\r\n      \"hasAmend\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"quantityNestsToRemove\": null,\r\n        \"eggDestruction\": false,\r\n        \"quantityNestsWhereEggsDestroyed\": null,\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 33,\r\n        \"chicksRelocateNearby\": false,\r\n        \"quantityChicksToRelocate\": null,\r\n        \"killChicks\": false,\r\n        \"quantityChicksToKill\": null,\r\n        \"killAdults\": false,\r\n        \"quantityAdultsToKill\": null\r\n      }\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"hasAmend\": false,\r\n      \"activities\": null\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"hasAmend\": false,\r\n      \"activities\": null\r\n    }\r\n  },\r\n  \"whatYouMustDo\": [\r\n    4,\r\n    6\r\n  ],\r\n  \"general\": [\r\n    12,\r\n    13\r\n  ],\r\n  \"advisoryNotes\": [\r\n    2,\r\n    7\r\n  ],\r\n  \"reporting\": [\r\n    19,\r\n    20\r\n  ],\r\n  \"assessment\": \"This is a test assessment.\",\r\n  \"amendedBy\": 9394699\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/amendment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"amendment"
 					]
 				}
 			},
