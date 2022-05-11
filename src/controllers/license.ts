@@ -31,6 +31,8 @@ interface LicenseInterface {
  * @returns {any} Returns a personalisation shaped object for notify.
  */
 const setLicenceNotificationDetails = (application: any, licence: any) => {
+  const measuresToContinue = createAdditionalMeasures(application?.AssessmentMeasure, 'Continue');
+  const additionalMeasuresIntended = createAdditionalMeasures(application?.AssessmentMeasure, 'Intend');
   return {
     licenceNumber: application.id,
     siteAddressLine1: application.SiteAddress.addressLine1,
@@ -52,6 +54,11 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     measuresTried: createMeasures(application.ApplicationMeasure, 'Tried'),
     measuresIntended: createMeasures(application.ApplicationMeasure, 'Intend'),
     measuresNotTried: createMeasures(application.ApplicationMeasure, 'No'),
+    measuresToContinue,
+    additionalMeasuresIntended,
+    displayContinue: measuresToContinue !== '',
+    displayAdditionalIntended: additionalMeasuresIntended !== '',
+    appliedForSpecies: createAppliedFor(application.Species),
     proposalResult: createProposalResult(application.PSpecies),
     optionalAdvisoriesList: createOptionalAdvisoriesList(application.License.LicenseAdvisories),
     optionalWhatYouMustDoConditionsList: createWhatYouMustDoOptionalConditionsList(
@@ -61,6 +68,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     optionalReportingConditionsList: createReportingOptionalConditionsList(application.License.LicenseConditions),
     test1Details: application.ApplicationAssessment.testOneAssessment,
     test2Details: application.ApplicationAssessment.testTwoAssessment,
+    test3Details: application.ApplicationAssessment.testThreeAssessment,
   };
 };
 
@@ -73,7 +81,7 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
 const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('82e220c4-4534-4da1-940b-353883e5dbab', emailAddress, {
+    await notifyClient.sendEmail('8d995630-dd7b-4bb9-9678-1ad921e70e22', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -158,7 +166,7 @@ const addActivities = (species: any, speciesType: string): string => {
   const activities: string[] = [];
   if (species.removeNests) {
     activities.push(
-      `${speciesType}: To remove ${displayableRanges(
+      `${speciesType}: To take and destroy ${displayableRanges(
         species.quantityNestsToRemove,
       )} nests and any eggs they contain by hand.`,
     );
@@ -166,28 +174,42 @@ const addActivities = (species: any, speciesType: string): string => {
 
   if (species.eggDestruction) {
     activities.push(
-      `${speciesType}: To destroy eggs by oiling, pricking or replacing with dummy eggs from ${displayableRanges(
+      `${speciesType}: To take and destroy eggs from ${displayableRanges(
         species.quantityNestsWhereEggsDestroyed,
-      )} nests.`,
+      )} nests by oiling, pricking or replacing with dummy eggs.`,
     );
   }
 
   if (species.chicksToRescueCentre) {
     activities.push(
-      `${speciesType}: To take ${String(species.quantityChicksToRescue)} chicks to a wildlife rescue centre.`,
+      `${speciesType}: To take ${String(
+        species.quantityChicksToRescue,
+      )} chicks to a wildlife rescue centre by hand, net or trap.`,
     );
   }
 
   if (species.chicksRelocateNearby) {
-    activities.push(`${speciesType}: To take ${String(species.quantityChicksToRelocate)} chicks and relocate nearby.`);
+    activities.push(
+      `${speciesType}: To take ${String(
+        species.quantityChicksToRelocate,
+      )} chicks and relocate nearby by hand, net or trap.`,
+    );
   }
 
   if (species.killChicks) {
-    activities.push(`${speciesType}: To kill ${String(species.quantityChicksToKill)} chicks.`);
+    activities.push(
+      `${speciesType}: To kill up to ${String(
+        species.quantityChicksToKill,
+      )} chicks by shooting or by hand, net or trap.`,
+    );
   }
 
   if (species.killAdults) {
-    activities.push(`${speciesType}: To kill ${String(species.quantityAdultsToKill)} adults.`);
+    activities.push(
+      `${speciesType}: To kill up to ${String(
+        species.quantityAdultsToKill,
+      )} adults by shooting, falconry or by hand, net or trap.`,
+    );
   }
 
   return activities.join('\n');
@@ -316,6 +338,83 @@ const createMeasures = (applicationMeasures: any, measuresStatus: string): strin
 };
 
 /**
+ * This function returns a list of measures, either tried, intended to be tried, or not intended
+ * to be tried, formatted as bullet points for the notify API.
+ *
+ * @param {any} applicationMeasures The list of measures.
+ * @param {string} measuresStatus Either `Tried`, `Intend` or `No`.
+ * @returns {string} Returns a formatted list of bullet pointed measures.
+ */
+const createAdditionalMeasures = (applicationMeasures: any, measuresStatus: string): string => {
+  const measures: string[] = [];
+
+  if (applicationMeasures?.preventNesting === measuresStatus) {
+    measures.push('* Physically preventing nesting');
+  }
+
+  if (applicationMeasures?.removeOldNests === measuresStatus) {
+    measures.push('* Removing old nests and potential nesting material');
+  }
+
+  if (applicationMeasures?.removeLitter === measuresStatus) {
+    measures.push('* Removing or preventing access to attractants such as litter and food waste');
+  }
+
+  if (applicationMeasures?.humanDisturbance === measuresStatus) {
+    measures.push('* Human disturbance');
+  }
+
+  if (applicationMeasures?.scaringDevices === measuresStatus) {
+    measures.push('* Scaring devices - static or automatic');
+  }
+
+  if (applicationMeasures?.hawking === measuresStatus) {
+    measures.push('* Hawking by birds of prey');
+  }
+
+  if (applicationMeasures?.disturbanceByDogs === measuresStatus) {
+    measures.push('* Disturbance by dogs');
+  }
+
+  if (measures.length > 0) {
+    return measures.join('\n');
+  }
+
+  return '';
+};
+
+/**
+ * This function creates a list of the applied for licence activities results.
+ *
+ * @param {any} species The species and activities which the licence will pertain to.
+ * @returns {string} Returns a list of the applied for licence activities results, formatted for the Notify API.
+ */
+const createAppliedFor = (species: any): string => {
+  const proposalResult = [];
+  if (species.HerringGullId) {
+    proposalResult.push(addActivityResults(species.HerringGull, 'Herring gull'));
+  }
+
+  if (species.BlackHeadedGullId) {
+    proposalResult.push(addActivityResults(species.BlackHeadedGull, 'Black-headed gull'));
+  }
+
+  if (species.CommonGullId) {
+    proposalResult.push(addActivityResults(species.CommonGull, 'Common gull'));
+  }
+
+  if (species.GreatBlackBackedGullId) {
+    proposalResult.push(addActivityResults(species.GreatBlackBackedGull, 'Great black-backed gull'));
+  }
+
+  if (species.LesserBlackBackedGullId) {
+    proposalResult.push(addActivityResults(species.LesserBlackBackedGull, 'Lesser black-backed gull'));
+  }
+
+  return proposalResult.join('\n');
+};
+
+/**
  * This function creates a list of the proposed licence activities results.
  *
  * @param {any} species The species and activities which the licence will pertain to.
@@ -324,23 +423,23 @@ const createMeasures = (applicationMeasures: any, measuresStatus: string): strin
 const createProposalResult = (species: any): string => {
   const proposalResult = [];
   if (species.HerringGullId) {
-    proposalResult.push(addProposalResults(species.PHerringGull, 'Herring gull'));
+    proposalResult.push(addActivityResults(species.PHerringGull, 'Herring gull'));
   }
 
   if (species.BlackHeadedGullId) {
-    proposalResult.push(addProposalResults(species.PBlackHeadedGull, 'Black-headed gull'));
+    proposalResult.push(addActivityResults(species.PBlackHeadedGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
-    proposalResult.push(addProposalResults(species.PCommonGull, 'Common gull'));
+    proposalResult.push(addActivityResults(species.PCommonGull, 'Common gull'));
   }
 
   if (species.GreatBlackBackedGullId) {
-    proposalResult.push(addProposalResults(species.PGreatBlackBackedGull, 'Great black-backed gull'));
+    proposalResult.push(addActivityResults(species.PGreatBlackBackedGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    proposalResult.push(addProposalResults(species.PLesserBlackBackedGull, 'Lesser black-backed gull'));
+    proposalResult.push(addActivityResults(species.PLesserBlackBackedGull, 'Lesser black-backed gull'));
   }
 
   return proposalResult.join('\n');
@@ -354,34 +453,54 @@ const createProposalResult = (species: any): string => {
  * @returns {string} Returns a list of proposal results for a given species, formatted as bullet
  * points for the Notify API.
  */
-const addProposalResults = (species: any, speciesType: string): string => {
+const addActivityResults = (species: any, speciesType: string): string => {
   const proposalResults: string[] = [];
   if (species.removeNests) {
-    proposalResults.push(`* ${speciesType} - ${displayableRanges(species.quantityNestsToRemove)} nests removed.`);
+    proposalResults.push(
+      `* ${speciesType}: To take and destroy ${displayableRanges(
+        species.quantityNestsToRemove,
+      )} nests and any eggs they contain by hand.`,
+    );
   }
 
   if (species.eggDestruction) {
     proposalResults.push(
-      `* ${speciesType} - ${displayableRanges(species.quantityNestsWhereEggsDestroyed)} eggs destroyed.`,
+      `* ${speciesType}: To take and destroy eggs from ${displayableRanges(
+        species.quantityNestsWhereEggsDestroyed,
+      )} nests by oiling, pricking or replacing with dummy eggs.`,
     );
   }
 
   if (species.chicksToRescueCentre) {
     proposalResults.push(
-      `* ${speciesType} - ${String(species.quantityChicksToRescue)} chicks taken to a wildlife rescue centre.`,
+      `* ${speciesType}: To take ${String(
+        species.quantityChicksToRescue,
+      )} chicks to a wildlife rescue centre by hand, net or trap.`,
     );
   }
 
   if (species.chicksRelocateNearby) {
-    proposalResults.push(`* ${speciesType} - ${String(species.quantityChicksToRelocate)} chicks relocated nearby.`);
+    proposalResults.push(
+      `* ${speciesType}: To take ${String(
+        species.quantityChicksToRelocate,
+      )} chicks and relocate nearby by hand, net or trap.`,
+    );
   }
 
   if (species.killChicks) {
-    proposalResults.push(`* ${speciesType} - ${String(species.quantityChicksToKill)} chicks killed.`);
+    proposalResults.push(
+      `* ${speciesType}: To kill up to ${String(
+        species.quantityChicksToKill,
+      )} chicks by shooting or by hand, net or trap.`,
+    );
   }
 
   if (species.killAdults) {
-    proposalResults.push(`* ${speciesType} - ${String(species.quantityAdultsToKill)} adults killed.`);
+    proposalResults.push(
+      `* ${speciesType}: To kill up to ${String(
+        species.quantityAdultsToKill,
+      )} adults by shooting, falconry or by hand, net or trap.`,
+    );
   }
 
   return proposalResults.join('\n');
