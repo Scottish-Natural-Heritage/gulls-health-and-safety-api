@@ -2,8 +2,14 @@ import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
+import config from '../config/app';
 
 const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Condition, Advisory, Note} = database;
+
+// Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
+// in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
+/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
+const NotifyClient = require('notifications-node-client').NotifyClient;
 
 interface SpeciesIds {
   HerringGullId: number | undefined;
@@ -19,6 +25,20 @@ interface AmendmentInterface {
   amendedBy: string | undefined;
   assessment: string | undefined;
 }
+
+/**
+ * This function calls the Notify API and asks for an email to be sent to the supplied address.
+ *
+ * @param {any} emailAddress The email address to send the email to.
+ */
+ const sendAmendedEmail = async (emailAddress: string) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('9cfcaca5-ef5d-46c4-8ccf-328bcf67ad6d', emailAddress, {
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
 
 const AmendmentController = {
   /**
@@ -220,6 +240,9 @@ const AmendmentController = {
 
       await Note.create(amendmentNote, {transaction: t});
     });
+
+    // Send Notify email.
+    await sendAmendedEmail(incomingAmendment.licenceHolderEmailAddress);
 
     // If all went well return the new amendment.
     if (newAmendment) {

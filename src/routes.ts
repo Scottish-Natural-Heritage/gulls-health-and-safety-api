@@ -1364,6 +1364,10 @@ const routes: ServerRoute[] = [
         // Clean the return before we try to insert it into the database.
         const cleanedAmendment = CleaningFunctions.cleanAmendment(newAmendment);
 
+        // If we have a licence we'll need the email address of the licence holder to send an amended email.
+        const application = await Application.findOne(existingId) as any;
+        cleanedAmendment.licenceHolderEmailAddress = application.LicenceHolder.emailAddress;
+
         // Concatenate conditions before cleaning.
         newAmendment.conditions = [...newAmendment.whatYouMustDo, ...newAmendment.general, ...newAmendment.reporting];
 
