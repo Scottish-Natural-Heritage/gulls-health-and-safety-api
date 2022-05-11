@@ -196,7 +196,7 @@ database.RActivity.hasOne(database.RSpecies, {
 });
 
 database.Amendment.belongsTo(database.ASpecies, {as: 'ASpecies', foreignKey: 'SpeciesId'});
-database.ASpecies.hasOne(database.Application, {as: 'ASpecies', foreignKey: 'SpeciesId'});
+database.ASpecies.hasOne(database.Amendment, {as: 'ASpecies', foreignKey: 'SpeciesId'});
 
 database.ASpecies.belongsTo(database.AActivity, {as: 'AHerringGull', foreignKey: 'HerringGullId'});
 database.ASpecies.belongsTo(database.AActivity, {
