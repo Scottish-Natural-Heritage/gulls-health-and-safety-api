@@ -218,6 +218,13 @@ const AmendmentController = {
       await sendAmendedEmail(incomingAmendment.licenceHolderEmailAddress);
     }
 
+    // Send Notify email if we have a licence applicant email address.
+    if (incomingAmendment.licenceApplicantEmailAddress) {
+      await sendAmendedEmail(incomingAmendment.licenceApplicantEmailAddress);
+    }
+
+    await sendAmendedEmail('issuedlicence@nature.scot');
+
     // If all went well return the new amendment.
     if (newAmendment) {
       return newAmendment as AmendmentInterface;

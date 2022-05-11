@@ -195,6 +195,9 @@ database.RActivity.hasOne(database.RSpecies, {
   foreignKey: 'LesserBlackBackedGullId',
 });
 
+database.Amendment.belongsTo(database.License, {as: 'Amendment', foreignKey: 'LicenceId'});
+database.License.hasMany(database.Amendment, {as: 'Amendment', foreignKey: 'LicenceId'});
+
 database.Amendment.belongsTo(database.ASpecies, {as: 'ASpecies', foreignKey: 'SpeciesId'});
 database.ASpecies.hasOne(database.Amendment, {as: 'ASpecies', foreignKey: 'SpeciesId'});
 
@@ -231,10 +234,10 @@ database.AmendCondition.belongsTo(database.Amendment, {as: 'AmendConditions', fo
 database.Amendment.hasMany(database.AmendAdvisory, {as: 'AmendAdvisories', foreignKey: 'AmendmentId'});
 database.Amendment.hasMany(database.AmendCondition, {as: 'AmendConditions', foreignKey: 'AmendmentId'});
 
-database.AmendAdvisory.belongsTo(database.Advisory, {as: 'AAdvisory', foreignKey: 'AdvisoryId'});
-database.AmendCondition.belongsTo(database.Condition, {as: 'ACondition', foreignKey: 'ConditionId'});
+database.AmendAdvisory.belongsTo(database.Advisory, {as: 'AmendAdvisory', foreignKey: 'AdvisoryId'});
+database.AmendCondition.belongsTo(database.Condition, {as: 'AmendCondition', foreignKey: 'ConditionId'});
 
-database.Advisory.hasMany(database.AmendAdvisory, {as: 'AAdvisory', foreignKey: 'AdvisoryId'});
-database.Condition.hasMany(database.AmendCondition, {as: 'ACondition', foreignKey: 'ConditionId'});
+database.Advisory.hasMany(database.AmendAdvisory, {as: 'AmendAdvisory', foreignKey: 'AdvisoryId'});
+database.Condition.hasMany(database.AmendCondition, {as: 'AmendCondition', foreignKey: 'ConditionId'});
 
 export {database as default};
