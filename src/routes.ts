@@ -1365,7 +1365,7 @@ const routes: ServerRoute[] = [
         const cleanedAmendment = CleaningFunctions.cleanAmendment(newAmendment);
 
         // If we have a licence we'll need the email address of the licence holder to send an amended email.
-        const application = await Application.findOne(existingId) as any;
+        const application = (await Application.findOne(existingId)) as any;
         cleanedAmendment.licenceHolderEmailAddress = application.LicenceHolder.emailAddress;
 
         // Concatenate conditions before cleaning.
