@@ -31,8 +31,8 @@ interface LicenseInterface {
  * @returns {any} Returns a personalisation shaped object for notify.
  */
 const setLicenceNotificationDetails = (application: any, licence: any) => {
-  const measuresToContinue = createAdditionalMeasures(application.AssessmentMeasure, 'Continue');
-  const additionalMeasuresIntended = createAdditionalMeasures(application.AssessmentMeasure, 'Intend');
+  const measuresToContinue = createAdditionalMeasures(application?.AssessmentMeasure, 'Continue');
+  const additionalMeasuresIntended = createAdditionalMeasures(application?.AssessmentMeasure, 'Intend');
   return {
     licenceNumber: application.id,
     siteAddressLine1: application.SiteAddress.addressLine1,
@@ -348,31 +348,31 @@ const createMeasures = (applicationMeasures: any, measuresStatus: string): strin
 const createAdditionalMeasures = (applicationMeasures: any, measuresStatus: string): string => {
   const measures: string[] = [];
 
-  if (applicationMeasures.preventNesting === measuresStatus) {
+  if (applicationMeasures?.preventNesting === measuresStatus) {
     measures.push('* Physically preventing nesting');
   }
 
-  if (applicationMeasures.removeOldNests === measuresStatus) {
+  if (applicationMeasures?.removeOldNests === measuresStatus) {
     measures.push('* Removing old nests and potential nesting material');
   }
 
-  if (applicationMeasures.removeLitter === measuresStatus) {
+  if (applicationMeasures?.removeLitter === measuresStatus) {
     measures.push('* Removing or preventing access to attractants such as litter and food waste');
   }
 
-  if (applicationMeasures.humanDisturbance === measuresStatus) {
+  if (applicationMeasures?.humanDisturbance === measuresStatus) {
     measures.push('* Human disturbance');
   }
 
-  if (applicationMeasures.scaringDevices === measuresStatus) {
+  if (applicationMeasures?.scaringDevices === measuresStatus) {
     measures.push('* Scaring devices - static or automatic');
   }
 
-  if (applicationMeasures.hawking === measuresStatus) {
+  if (applicationMeasures?.hawking === measuresStatus) {
     measures.push('* Hawking by birds of prey');
   }
 
-  if (applicationMeasures.disturbanceByDogs === measuresStatus) {
+  if (applicationMeasures?.disturbanceByDogs === measuresStatus) {
     measures.push('* Disturbance by dogs');
   }
 
