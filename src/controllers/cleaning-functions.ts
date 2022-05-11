@@ -190,6 +190,42 @@ const cleanActivity = (body: any, gullType: string): any => {
 };
 
 /**
+ * Cleans the amendment activity details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @param {string} gullType The type of gull the activities relate to.
+ * @returns {any} The cleaned amendment activity details.
+ */
+const cleanAmendActivity = (body: any, gullType: string): any => {
+  return {
+    removeNests: body.amendSpecies?.[gullType].activities.removeNests,
+    quantityNestsToRemove: body.amendSpecies?.[gullType].activities.quantityNestsToRemove
+      ? body.amendSpecies?.[gullType].activities.quantityNestsToRemove
+      : undefined,
+    eggDestruction: body.amendSpecies?.[gullType].activities.eggDestruction,
+    quantityNestsWhereEggsDestroyed: body.amendSpecies?.[gullType].activities.quantityNestsWhereEggsDestroyed
+      ? body.amendSpecies?.[gullType].activities.quantityNestsWhereEggsDestroyed
+      : undefined,
+    chicksToRescueCentre: body.amendSpecies?.[gullType].activities.chicksToRescueCentre,
+    quantityChicksToRescue: body.amendSpecies?.[gullType].activities.quantityChicksToRescue
+      ? body.amendSpecies?.[gullType].activities.quantityChicksToRescue
+      : undefined,
+    chicksRelocateNearby: body.amendSpecies?.[gullType].activities.chicksRelocateNearby,
+    quantityChicksToRelocate: body.amendSpecies?.[gullType].activities.quantityChicksToRelocate
+      ? body.amendSpecies?.[gullType].activities.quantityChicksToRelocate
+      : undefined,
+    killChicks: body.amendSpecies?.[gullType].activities.killChicks,
+    quantityChicksToKill: body.amendSpecies?.[gullType].activities.quantityChicksToKill
+      ? body.amendSpecies?.[gullType].activities.quantityChicksToKill
+      : undefined,
+    killAdults: body.amendSpecies?.[gullType].activities.killAdults,
+    quantityAdultsToKill: body.amendSpecies?.[gullType].activities.quantityAdultsToKill
+      ? body.amendSpecies?.[gullType].activities.quantityAdultsToKill
+      : undefined,
+  };
+};
+
+/**
  * Cleans a return's activity details into something the database can use.
  *
  * @param {any} body The body of the request to be cleaned.
@@ -655,6 +691,20 @@ const cleanReturn = (body: any): any => {
   };
 };
 
+/**
+ * Cleans the incoming requests body to ensure that the amendment's details are in a format the DB can use.
+ *
+ * @param {any} body The incoming request's body.
+ * @returns {any} A json object that's just got our cleaned up field on it.
+ */
+const cleanAmendment = (body: any): any => {
+  return {
+    amendReason: body.amendReason ? body.amendReason.trim() : undefined,
+    assessment: body.assessment ? body.assessment.trim() : undefined,
+    amendedBy: body.amendedBy ? String(body.amendedBy).trim() : undefined,
+  };
+};
+
 /* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
@@ -679,6 +729,8 @@ const CleaningFunctions = {
   cleanAuthenticationInfo,
   cleanReturn,
   cleanReturnActivity,
+  cleanAmendment,
+  cleanAmendActivity,
 };
 
 export default CleaningFunctions;
