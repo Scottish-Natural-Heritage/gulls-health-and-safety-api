@@ -3,6 +3,7 @@ import PostcodeLookupController from './controllers/postcode-lookup-controller';
 import PostcodeLookup from './models/postcode-lookup';
 import Application from './controllers/application';
 import License from './controllers/license';
+import Amendment from './controllers/amendment';
 import Note from './controllers/note';
 import Advisory from './controllers/advisory';
 import Condition from './controllers/condition';
@@ -1321,6 +1322,117 @@ const routes: ServerRoute[] = [
 
         // If we get here the return was not created successfully.
         return h.response({message: `Failed to create return.`}).code(500);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * POST an amendment.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/amendment`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Licence number ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the license to which the amendment pertains.
+        const license = await License.findOne(existingId);
+        // Did we issue the license?
+        if (license === undefined || license === null) {
+          return h.response({message: `A License for Application ${existingId} has not been issued yet.`}).code(400);
+        }
+
+        // Get the new return from the request's payload.
+        const newAmendment = request.payload as any;
+
+        let herringAmend;
+        let blackHeadedAmend;
+        let commonAmend;
+        let greatBlackBackedAmend;
+        let lesserBlackBackedAmend;
+
+        // Clean the return before we try to insert it into the database.
+        const cleanedAmendment = CleaningFunctions.cleanAmendment(newAmendment);
+
+        // If we have a licence we'll need the email address of the licence holder to send an amended email.
+        const application = (await Application.findOne(existingId)) as any;
+        cleanedAmendment.licenceHolderEmailAddress = application.LicenceHolder?.emailAddress;
+        cleanedAmendment.licenceApplicantEmailAddress = application.LicenceApplicant?.emailAddress;
+
+        // Concatenate conditions before cleaning.
+        newAmendment.conditions = [...newAmendment.whatYouMustDo, ...newAmendment.general, ...newAmendment.reporting];
+
+        // We need to do this to reuse cleaning function.
+        newAmendment.advisories = newAmendment.advisoryNotes;
+
+        const optionalConditions = await CleaningFunctions.cleanCondition(newAmendment);
+        const optionalAdvisories = await CleaningFunctions.cleanAdvisory(newAmendment);
+
+        // Set the licence ID to be used as the foreign key.
+        cleanedAmendment.LicenceId = existingId;
+
+        // Clean all the possible amended species activities.
+        if (newAmendment.amendSpecies.herringGull.hasAmend) {
+          herringAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'herringGull');
+        }
+
+        if (newAmendment.amendSpecies.blackHeadedGull.hasAmend) {
+          blackHeadedAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'blackHeadedGull');
+        }
+
+        if (newAmendment.amendSpecies.commonGull.hasAmend) {
+          commonAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'commonGull');
+        }
+
+        if (newAmendment.amendSpecies.greatBlackBackedGull.hasAmend) {
+          greatBlackBackedAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'greatBlackBackedGull');
+        }
+
+        if (newAmendment.amendSpecies.lesserBlackBackedGull.hasAmend) {
+          lesserBlackBackedAmend = CleaningFunctions.cleanAmendActivity(newAmendment, 'lesserBlackBackedGull');
+        }
+
+        // Try to add the amendment to the database.
+        const insertedAmendment: any = await Amendment.create(
+          cleanedAmendment,
+          herringAmend,
+          blackHeadedAmend,
+          commonAmend,
+          greatBlackBackedAmend,
+          lesserBlackBackedAmend,
+          optionalConditions,
+          optionalAdvisories,
+        );
+
+        // Create baseUrl.
+        const baseUrl = new URL(
+          `${request.url.protocol}${request.url.hostname}:${3017}${request.url.pathname}${
+            request.url.pathname.endsWith('/') ? '' : '/'
+          }`,
+        );
+
+        // If there is an insertedAmendment object and it has the ID property then...
+        if (insertedAmendment?.id) {
+          // Set a string representation of the ID to this local variable.
+          const newAmendmentId = insertedAmendment.id.toString();
+          // Construct a new URL object with the baseUrl declared above and the newAmendmentId.
+          const locationUrl = new URL(newAmendmentId, baseUrl);
+          // If all is well return the amendment, location and 201 created.
+          return h.response(insertedAmendment).location(locationUrl.href).code(201);
+        }
+
+        // If we get here the amendment was not created successfully.
+        return h.response({message: `Failed to create amendment.`}).code(500);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
