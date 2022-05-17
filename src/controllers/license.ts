@@ -68,7 +68,9 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     optionalReportingConditionsList: createReportingOptionalConditionsList(application.License.LicenseConditions),
     test1Details: application.ApplicationAssessment.testOneAssessment,
     test2Details: application.ApplicationAssessment.testTwoAssessment,
-    test3Details: application.ApplicationAssessment.testThreeAssessment,
+    test3Details: application.ApplicationAssessment.testThreeAssessment
+      ? application.ApplicationAssessment.testThreeAssessment
+      : '',
   };
 };
 
