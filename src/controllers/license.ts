@@ -336,7 +336,7 @@ const createMeasures = (applicationMeasures: any, measuresStatus: string): strin
     return measures.join('\n');
   }
 
-  return '* Nothing';
+  return '* Nothing selected by applicant';
 };
 
 /**
