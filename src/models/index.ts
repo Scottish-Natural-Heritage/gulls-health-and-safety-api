@@ -23,6 +23,11 @@ import Returns from './returns';
 import RSpecies from './r-species';
 import RActivity from './r-activities';
 import AssessmentMeasure from './assessment-measure';
+import ASpecies from './a-species';
+import AActivity from './a-activity';
+import Amendment from './amendment';
+import AmendCondition from './amend-condition';
+import AmendAdvisory from './amend-advisory';
 
 const Sequelize = require('sequelize');
 
@@ -58,6 +63,11 @@ const database = {
   RSpecies: RSpecies(sequelize),
   RActivity: RActivity(sequelize),
   AssessmentMeasure: AssessmentMeasure(sequelize),
+  ASpecies: ASpecies(sequelize),
+  AActivity: AActivity(sequelize),
+  Amendment: Amendment(sequelize),
+  AmendCondition: AmendCondition(sequelize),
+  AmendAdvisory: AmendAdvisory(sequelize),
 };
 
 // Relationships go here.
@@ -184,5 +194,50 @@ database.RActivity.hasOne(database.RSpecies, {
   as: 'RLesserBBGull',
   foreignKey: 'LesserBlackBackedGullId',
 });
+
+database.Amendment.belongsTo(database.License, {as: 'Amendment', foreignKey: 'LicenceId'});
+database.License.hasMany(database.Amendment, {as: 'Amendment', foreignKey: 'LicenceId'});
+
+database.Amendment.belongsTo(database.ASpecies, {as: 'ASpecies', foreignKey: 'SpeciesId'});
+database.ASpecies.hasOne(database.Amendment, {as: 'ASpecies', foreignKey: 'SpeciesId'});
+
+database.ASpecies.belongsTo(database.AActivity, {as: 'AHerringGull', foreignKey: 'HerringGullId'});
+database.ASpecies.belongsTo(database.AActivity, {
+  as: 'ABlackHGull',
+  foreignKey: 'BlackHeadedGullId',
+});
+database.ASpecies.belongsTo(database.AActivity, {as: 'ACommonGull', foreignKey: 'CommonGullId'});
+database.ASpecies.belongsTo(database.AActivity, {
+  as: 'AGreatBBGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.ASpecies.belongsTo(database.AActivity, {
+  as: 'ALesserBBGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.AActivity.hasOne(database.ASpecies, {as: 'AHerringGull', foreignKey: 'HerringGullId'});
+database.AActivity.hasOne(database.ASpecies, {as: 'ABlackHGull', foreignKey: 'BlackHeadedGullId'});
+database.AActivity.hasOne(database.ASpecies, {as: 'ACommonGull', foreignKey: 'CommonGullId'});
+database.AActivity.hasOne(database.ASpecies, {
+  as: 'AGreatBBGull',
+  foreignKey: 'GreatBlackBackedGullId',
+});
+database.AActivity.hasOne(database.ASpecies, {
+  as: 'ALesserBBGull',
+  foreignKey: 'LesserBlackBackedGullId',
+});
+
+database.AmendAdvisory.belongsTo(database.Amendment, {as: 'AmendAdvisories', foreignKey: 'AmendmentId'});
+database.AmendCondition.belongsTo(database.Amendment, {as: 'AmendConditions', foreignKey: 'AmendmentId'});
+
+database.Amendment.hasMany(database.AmendAdvisory, {as: 'AmendAdvisories', foreignKey: 'AmendmentId'});
+database.Amendment.hasMany(database.AmendCondition, {as: 'AmendConditions', foreignKey: 'AmendmentId'});
+
+database.AmendAdvisory.belongsTo(database.Advisory, {as: 'AmendAdvisory', foreignKey: 'AdvisoryId'});
+database.AmendCondition.belongsTo(database.Condition, {as: 'AmendCondition', foreignKey: 'ConditionId'});
+
+database.Advisory.hasMany(database.AmendAdvisory, {as: 'AmendAdvisory', foreignKey: 'AdvisoryId'});
+database.Condition.hasMany(database.AmendCondition, {as: 'AmendCondition', foreignKey: 'ConditionId'});
 
 export {database as default};
