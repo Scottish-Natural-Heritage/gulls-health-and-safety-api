@@ -147,16 +147,132 @@ const addActivities = (species: any, speciesType: string): string => {
   return activities.join('\n');
 };
 
+/**
+ * This function returns a list of optional advisory notes.
+ *
+ * @param {any} advisories The list of advisories associated with the licence.
+ * @returns {string} Returns a formatted list of optional advisories.
+ */
+ const createAdvisoriesList = (advisories: any): string => {
+  const optionalAdvisoryIds = new Set([1, 2, 7]);
+
+  const advisoryList = [];
+
+  const optionalAdvisories = advisories.filter((optional: any) => {
+    return optionalAdvisoryIds.has(optional.Advisory.id);
+  });
+  for (const advisory of optionalAdvisories) {
+    advisoryList.push(advisory.Advisory.advisory);
+  }
+
+  return advisoryList.join('\n\n');
+};
+
+/**
+ * This function returns a list of optional general conditions.
+ *
+ * @param {any} conditions The list of conditions associated with the licence.
+ * @returns {string} Returns a formatted list of optional general conditions.
+ */
+const createGeneralConditionsList = (conditions: any): string => {
+  const optionalGeneralConditionIds = new Set([12, 13]);
+
+  const conditionList = [];
+
+  const optionalConditions = conditions.filter((optional: any) => {
+    return optionalGeneralConditionIds.has(optional.Condition.id);
+  });
+  for (const condition of optionalConditions) {
+    conditionList.push(condition.Condition.condition);
+  }
+
+  return conditionList.join('\n\n');
+};
+
+/**
+ * This function returns a list of optional what you must do conditions.
+ *
+ * @param {any} conditions The list of conditions associated with the licence.
+ * @returns {string} Returns a formatted list of optional what you must do conditions.
+ */
+const createWhatYouMustDoConditionsList = (conditions: any): string => {
+  const optionalWhatMustBeDoneConditionIds = new Set([4, 6, 7]);
+
+  const conditionList = [];
+
+  const optionalConditions = conditions.filter((optional: any) => {
+    return optionalWhatMustBeDoneConditionIds.has(optional.Condition.id);
+  });
+  for (const condition of optionalConditions) {
+    conditionList.push(condition.Condition.condition);
+  }
+
+  return conditionList.join('\n\n');
+};
+
+/**
+ * This function returns a list of optional reporting conditions.
+ *
+ * @param {any} conditions The list of conditions associated with the licence.
+ * @returns {string} Returns a formatted list of optional general conditions.
+ */
+const createReportingConditionsList = (conditions: any): string => {
+  const optionalReportingConditionIds = new Set([19, 20, 21, 22, 23, 24, 25]);
+
+  const conditionList = [];
+
+  const optionalConditions = conditions.filter((optional: any) => {
+    return optionalReportingConditionIds.has(optional.Condition.id);
+  });
+  for (const condition of optionalConditions) {
+    conditionList.push(condition.Condition.condition);
+  }
+
+  return conditionList.join('\n\n');
+};
+
+/**
+ * This function creates a list of conservation status details for each species the licence applies to.
+ *
+ * @param {any} species The species object that contains the species for which the licence will apply.
+ * @returns {string} Returns a string with the HTML formatted conservation status of the selected species.
+ */
+ const createConservationStatus = (species: any): string => {
+  const conservationStatuses: string[] = [];
+  if (species.HerringGullId) {
+    conservationStatuses.push('<li>Herring gull - Red in UK (Amber in Europe and least concern globally)</li>');
+  }
+
+  if (species.BlackHeadedGullId) {
+    conservationStatuses.push('<li>Black-headed gull - Amber in UK (Least concern in Europe and globally)</li>');
+  }
+
+  if (species.CommonGullId) {
+    conservationStatuses.push('<li>Common gull - Amber in UK (Least concern in Europe and globally)</li>');
+  }
+
+  if (species.GreatBlackBackedGullId) {
+    conservationStatuses.push('<li>Great black-backed gull - Amber in UK (Least concern in Europe and globally)</li>');
+  }
+
+  if (species.LesserBlackBackedGullId) {
+    conservationStatuses.push('<li>Lesser black-backed gull - Amber in UK (Least concern in Europe and globally)</li>');
+  }
+
+  return conservationStatuses.join('');
+};
+
 
 /**
  * This function calls the Notify API and asks for an email to be sent to the supplied address.
  *
  * @param {any} emailAddress The email address to send the email to.
  */
-const sendAmendedEmail = async (emailAddress: string) => {
+const sendAmendedEmail = async (emailAddress: string, emailDetails: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     await notifyClient.sendEmail('9cfcaca5-ef5d-46c4-8ccf-328bcf67ad6d', emailAddress, {
+      personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
   }
@@ -170,11 +286,15 @@ const setAmendEmailPersonalisationFields = (application: any) => {
     endDate: createDisplayDate(application.License.periodTo),
     licenceHolderName: application.LicenceHolder.name,
     licenceHolderAddress: createSummaryAddress(application.LicenceHolderAddress),
-    permittedActivities: createPermittedActivitiesList(application.License.Amendment.ASpecies)
-    licenceConditions:
-    advisoryNotes:
-    statementReason:
-    conservationStatus:
+    permittedActivities: createPermittedActivitiesList(application.License.Amendment.ASpecies),
+    advisoryNotes: createAdvisoriesList(application.License.LicenseAdvisories),
+    whatYouMustDoConditionsList: createWhatYouMustDoConditionsList(
+      application.License.LicenseConditions,
+    ),
+    generalConditionsList: createGeneralConditionsList(application.License.LicenseConditions),
+    reportingConditionsList: createReportingConditionsList(application.License.LicenseConditions),
+    statementReason: application.License.Amendment.assessment,
+    conservationStatus: createConservationStatus(application.License.Amendment.ASpecies)
   }
 }
 
@@ -354,18 +474,19 @@ const AmendmentController = {
     // We need the licence application details to create the amendment email.
     const application = (await ApplicationController.findOne(incomingAmendment.LicenceId)) as any;
 
+    const emailDetails = setAmendEmailPersonalisationFields(application)
+
     // Send Notify email if we have a licence holder email address.
     if (incomingAmendment.licenceHolderEmailAddress) {
-      const emailDetails = setAmendEmailPersonalisationFields(application)
       await sendAmendedEmail(incomingAmendment.licenceHolderEmailAddress, emailDetails);
     }
 
     // Send Notify email if we have a licence applicant email address.
     if (incomingAmendment.licenceApplicantEmailAddress) {
-      await sendAmendedEmail(incomingAmendment.licenceApplicantEmailAddress);
+      await sendAmendedEmail(incomingAmendment.licenceApplicantEmailAddress, emailDetails);
     }
 
-    await sendAmendedEmail('issuedlicence@nature.scot');
+    await sendAmendedEmail('issuedlicence@nature.scot', emailDetails);
 
     // If all went well return the new amendment.
     if (newAmendment) {
