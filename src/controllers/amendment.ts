@@ -5,7 +5,7 @@ import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 import config from '../config/app';
 
-const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Note} = database;
+const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Note, Advisory, Condition} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -62,7 +62,7 @@ const createPermittedActivitiesList = (species: any): string => {
   const permittedActivities = [];
 
   permittedActivities.push(
-    'Numbers permitted for amended activities are the total for the site, not additional to those already permitted.',
+    'Numbers permitted for amended activities are the total for the site, not additional to those already permitted.\n',
   );
 
   if (species.HerringGullId) {
@@ -163,7 +163,7 @@ const createAdvisoriesList = (advisories: any): string => {
     return optionalAdvisoryIds.has(optional.AdvisoryId);
   });
   for (const advisory of optionalAdvisories) {
-    advisoryList.push(advisory.Advisory.advisory);
+    advisoryList.push(advisory.AmendAdvisory.advisory);
   }
 
   return advisoryList.join('\n\n');
@@ -184,7 +184,7 @@ const createGeneralConditionsList = (conditions: any): string => {
     return optionalGeneralConditionIds.has(optional.ConditionId);
   });
   for (const condition of optionalConditions) {
-    conditionList.push(condition.Condition.condition);
+    conditionList.push(condition.AmendCondition.condition);
   }
 
   return conditionList.join('\n\n');
@@ -205,7 +205,7 @@ const createWhatYouMustDoConditionsList = (conditions: any): string => {
     return optionalWhatMustBeDoneConditionIds.has(optional.ConditionId);
   });
   for (const condition of optionalConditions) {
-    conditionList.push(condition.Condition.condition);
+    conditionList.push(condition.AmendCondition.condition);
   }
 
   return conditionList.join('\n\n');
@@ -226,7 +226,7 @@ const createReportingConditionsList = (conditions: any): string => {
     return optionalReportingConditionIds.has(optional.ConditionId);
   });
   for (const condition of optionalConditions) {
-    conditionList.push(condition.Condition.condition);
+    conditionList.push(condition.AmendCondition.condition);
   }
 
   return conditionList.join('\n\n');
@@ -241,26 +241,26 @@ const createReportingConditionsList = (conditions: any): string => {
 const createConservationStatus = (species: any): string => {
   const conservationStatuses: string[] = [];
   if (species.HerringGullId) {
-    conservationStatuses.push('<li>Herring gull - Red in UK (Amber in Europe and least concern globally)</li>');
+    conservationStatuses.push('* Herring gull - Red in UK (Amber in Europe and least concern globally)');
   }
 
   if (species.BlackHeadedGullId) {
-    conservationStatuses.push('<li>Black-headed gull - Amber in UK (Least concern in Europe and globally)</li>');
+    conservationStatuses.push('* Black-headed gull - Amber in UK (Least concern in Europe and globally)');
   }
 
   if (species.CommonGullId) {
-    conservationStatuses.push('<li>Common gull - Amber in UK (Least concern in Europe and globally)</li>');
+    conservationStatuses.push('* Common gull - Amber in UK (Least concern in Europe and globally)');
   }
 
   if (species.GreatBlackBackedGullId) {
-    conservationStatuses.push('<li>Great black-backed gull - Amber in UK (Least concern in Europe and globally)</li>');
+    conservationStatuses.push('* Great black-backed gull - Amber in UK (Least concern in Europe and globally)');
   }
 
   if (species.LesserBlackBackedGullId) {
-    conservationStatuses.push('<li>Lesser black-backed gull - Amber in UK (Least concern in Europe and globally)</li>');
+    conservationStatuses.push('* Lesser black-backed gull - Amber in UK (Least concern in Europe and globally)');
   }
 
-  return conservationStatuses.join('');
+  return conservationStatuses.join('\n');
 };
 
 /**
@@ -293,6 +293,11 @@ const setAmendEmailPersonalisationFields = (application: any, amendmentDetails: 
     reportingConditionsList: createReportingConditionsList(amendmentDetails.AmendConditions),
     statementReason: amendmentDetails.assessment,
     conservationStatus: createConservationStatus(amendmentDetails.ASpecies),
+    hasConditions: amendmentDetails.AmendConditions ? 'yes' : 'no',
+    hasWhatYouMustDo: createWhatYouMustDoConditionsList(amendmentDetails.AmendConditions).length > 0 ? 'yes' : 'no',
+    hasRecording: createReportingConditionsList(amendmentDetails.AmendConditions).length > 0 ? 'yes' : 'no',
+    hasGeneral: createGeneralConditionsList(amendmentDetails.AmendConditions).length > 0 ? 'yes' : 'no',
+    hasAdvisoryNotes: createAdvisoriesList(amendmentDetails.AmendAdvisories).length > 0 ? 'yes' : 'no',
   };
 };
 
@@ -342,10 +347,26 @@ const AmendmentController = {
         {
           model: AmendCondition,
           as: 'AmendConditions',
+          paranoid: false,
+          include: [
+            {
+              model: Condition,
+              as: 'AmendCondition',
+              paranoid: false,
+            },
+          ],
         },
         {
           model: AmendAdvisory,
           as: 'AmendAdvisories',
+          paranoid: false,
+          include: [
+            {
+              model: Advisory,
+              as: 'AmendAdvisory',
+              paranoid: false,
+            },
+          ],
         },
       ],
     });
