@@ -33,7 +33,7 @@ interface AmendmentInterface {
  * @param {any} fullAddress The address to use to build the summary address from.
  * @returns {string} Returns a string containing the summary address.
  */
- const createSummaryAddress = (fullAddress: any): string => {
+const createSummaryAddress = (fullAddress: any): string => {
   const address = [];
   address.push(fullAddress.addressLine1.trim());
   // As addressLine2 is optional we need to check if it exists.
@@ -45,7 +45,6 @@ interface AmendmentInterface {
 
   return address.join(', ');
 };
-
 
 // Create a more user friendly displayable date from a date object.
 const createDisplayDate = (date: Date) => {
@@ -59,10 +58,12 @@ const createDisplayDate = (date: Date) => {
  * @param {any} species The species the activities pertain to.
  * @returns {string} Returns a string with all species and licenced activities.
  */
- const createPermittedActivitiesList = (species: any): string => {
+const createPermittedActivitiesList = (species: any): string => {
   const permittedActivities = [];
 
-  permittedActivities.push('Numbers permitted for amended activities are the total for the site, not additional to those already permitted.');
+  permittedActivities.push(
+    'Numbers permitted for amended activities are the total for the site, not additional to those already permitted.',
+  );
 
   if (species.HerringGullId) {
     permittedActivities.push(addActivities(species.AHerringGull, 'Herring gull'));
@@ -153,13 +154,13 @@ const addActivities = (species: any, speciesType: string): string => {
  * @param {any} advisories The list of advisories associated with the licence.
  * @returns {string} Returns a formatted list of optional advisories.
  */
- const createAdvisoriesList = (advisories: any): string => {
+const createAdvisoriesList = (advisories: any): string => {
   const optionalAdvisoryIds = new Set([1, 2, 7]);
 
   const advisoryList = [];
 
   const optionalAdvisories = advisories.filter((optional: any) => {
-    return optionalAdvisoryIds.has(optional.Advisory.id);
+    return optionalAdvisoryIds.has(optional.AdvisoryId);
   });
   for (const advisory of optionalAdvisories) {
     advisoryList.push(advisory.Advisory.advisory);
@@ -180,7 +181,7 @@ const createGeneralConditionsList = (conditions: any): string => {
   const conditionList = [];
 
   const optionalConditions = conditions.filter((optional: any) => {
-    return optionalGeneralConditionIds.has(optional.Condition.id);
+    return optionalGeneralConditionIds.has(optional.ConditionId);
   });
   for (const condition of optionalConditions) {
     conditionList.push(condition.Condition.condition);
@@ -201,7 +202,7 @@ const createWhatYouMustDoConditionsList = (conditions: any): string => {
   const conditionList = [];
 
   const optionalConditions = conditions.filter((optional: any) => {
-    return optionalWhatMustBeDoneConditionIds.has(optional.Condition.id);
+    return optionalWhatMustBeDoneConditionIds.has(optional.ConditionId);
   });
   for (const condition of optionalConditions) {
     conditionList.push(condition.Condition.condition);
@@ -222,7 +223,7 @@ const createReportingConditionsList = (conditions: any): string => {
   const conditionList = [];
 
   const optionalConditions = conditions.filter((optional: any) => {
-    return optionalReportingConditionIds.has(optional.Condition.id);
+    return optionalReportingConditionIds.has(optional.ConditionId);
   });
   for (const condition of optionalConditions) {
     conditionList.push(condition.Condition.condition);
@@ -237,7 +238,7 @@ const createReportingConditionsList = (conditions: any): string => {
  * @param {any} species The species object that contains the species for which the licence will apply.
  * @returns {string} Returns a string with the HTML formatted conservation status of the selected species.
  */
- const createConservationStatus = (species: any): string => {
+const createConservationStatus = (species: any): string => {
   const conservationStatuses: string[] = [];
   if (species.HerringGullId) {
     conservationStatuses.push('<li>Herring gull - Red in UK (Amber in Europe and least concern globally)</li>');
@@ -262,7 +263,6 @@ const createReportingConditionsList = (conditions: any): string => {
   return conservationStatuses.join('');
 };
 
-
 /**
  * This function calls the Notify API and asks for an email to be sent to the supplied address.
  *
@@ -278,7 +278,7 @@ const sendAmendedEmail = async (emailAddress: string, emailDetails: any) => {
   }
 };
 
-const setAmendEmailPersonalisationFields = (application: any) => {
+const setAmendEmailPersonalisationFields = (application: any, amendmentDetails: any) => {
   return {
     licenceNumber: application.id,
     siteAddress: createSummaryAddress(application.SiteAddress),
@@ -286,17 +286,15 @@ const setAmendEmailPersonalisationFields = (application: any) => {
     endDate: createDisplayDate(application.License.periodTo),
     licenceHolderName: application.LicenceHolder.name,
     licenceHolderAddress: createSummaryAddress(application.LicenceHolderAddress),
-    permittedActivities: createPermittedActivitiesList(application.License.Amendment.ASpecies),
-    advisoryNotes: createAdvisoriesList(application.License.LicenseAdvisories),
-    whatYouMustDoConditionsList: createWhatYouMustDoConditionsList(
-      application.License.LicenseConditions,
-    ),
-    generalConditionsList: createGeneralConditionsList(application.License.LicenseConditions),
-    reportingConditionsList: createReportingConditionsList(application.License.LicenseConditions),
-    statementReason: application.License.Amendment.assessment,
-    conservationStatus: createConservationStatus(application.License.Amendment.ASpecies)
-  }
-}
+    permittedActivities: createPermittedActivitiesList(amendmentDetails.ASpecies), // Multiple amendments possible.
+    advisoryNotes: createAdvisoriesList(amendmentDetails.AmendAdvisories),
+    whatYouMustDoConditionsList: createWhatYouMustDoConditionsList(amendmentDetails.AmendConditions),
+    generalConditionsList: createGeneralConditionsList(amendmentDetails.AmendConditions),
+    reportingConditionsList: createReportingConditionsList(amendmentDetails.AmendConditions),
+    statementReason: amendmentDetails.assessment,
+    conservationStatus: createConservationStatus(amendmentDetails.ASpecies),
+  };
+};
 
 const AmendmentController = {
   /**
@@ -394,6 +392,8 @@ const AmendmentController = {
     };
 
     let newAmendment;
+    let amendmentId: number = 0;
+
     // Start a transaction.
     await database.sequelize.transaction(async (t: transaction) => {
       // Add any species specific activities to the DB and get their IDs.
@@ -431,7 +431,7 @@ const AmendmentController = {
       // Create the amendment.
       newAmendment = await Amendment.create(incomingAmendment, {transaction: t});
 
-      const amendmentId = newAmendment.id;
+      amendmentId = newAmendment.id;
 
       if (optionalConditions) {
         await Promise.all(
@@ -474,7 +474,10 @@ const AmendmentController = {
     // We need the licence application details to create the amendment email.
     const application = (await ApplicationController.findOne(incomingAmendment.LicenceId)) as any;
 
-    const emailDetails = setAmendEmailPersonalisationFields(application)
+    // We need the newly created amendment to create the amendment email.
+    const amendmentDetails = (await AmendmentController.findOne(amendmentId)) as any;
+
+    const emailDetails = setAmendEmailPersonalisationFields(application, amendmentDetails);
 
     // Send Notify email if we have a licence holder email address.
     if (incomingAmendment.licenceHolderEmailAddress) {
