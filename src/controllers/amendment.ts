@@ -1,9 +1,9 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
-import ApplicationController from './application';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 import config from '../config/app';
+import ApplicationController from './application';
 
 const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Note, Advisory, Condition} = database;
 
@@ -413,7 +413,7 @@ const AmendmentController = {
     };
 
     let newAmendment;
-    let amendmentId: number = 0;
+    let amendmentId: number | undefined;
 
     // Start a transaction.
     await database.sequelize.transaction(async (t: transaction) => {
@@ -496,7 +496,10 @@ const AmendmentController = {
     const application = (await ApplicationController.findOne(incomingAmendment.LicenceId)) as any;
 
     // We need the newly created amendment to create the amendment email.
-    const amendmentDetails = (await AmendmentController.findOne(amendmentId)) as any;
+    let amendmentDetails;
+    if (amendmentId) {
+      amendmentDetails = (await AmendmentController.findOne(amendmentId)) as any;
+    }
 
     const emailDetails = setAmendEmailPersonalisationFields(application, amendmentDetails);
 
