@@ -28,7 +28,6 @@ const {
   Returns,
   RSpecies,
   RActivity,
-  Amendment
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -500,11 +499,6 @@ const ApplicationController = {
                   ],
                 },
               ],
-            },
-            {
-              model: Amendment,
-              as: 'Amendment',
-              paranoid: false,
             },
           ],
         },
