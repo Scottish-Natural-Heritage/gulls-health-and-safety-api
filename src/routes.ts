@@ -1443,6 +1443,35 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Resend licences issued before test 3 deployment.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/resend-licences`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get any applications submitted before 20th May 2022.
+        const applications = await Scheduled.getPreTest3Applications();
+
+        // Filter out non-licences or revoked licences.
+        const filteredLicences = applications.filter((application: any) => {
+          return application.License !== null && application.Revocation === null;
+        });
+
+        // Call the scheduled controller's resendEmails function.
+        const resentLicences = await Scheduled.resendLicenceEmails(filteredLicences);
+
+        return h.response({message: `Resent ${resentLicences} licences.`}).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * GET the public part of our elliptic curve JWK.
    */
   {
