@@ -8,6 +8,8 @@ import {ApplicationInterface} from './application.js';
 
 import LicenceController from '../controllers/license';
 
+const { Op } = require("sequelize");
+
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
@@ -224,9 +226,17 @@ const ScheduledController = {
     });
   },
 
+  /**
+   * Gets all applications submitted before the 20th May 2022.
+   * @returns A collection of all applications submitted before 20th May 2022.
+   */
   getPreTest3Applications: async () => {
     return Application.findAll({
-      where: {},
+      where: {
+        createdAt: {
+          [Op.lt]: new Date('2022-05-20 00:00:01.001 +00:00')
+        }
+      },
       include: [
         {
           model: Revocation,
@@ -309,12 +319,20 @@ const ScheduledController = {
     return unconfirmed ? (unconfirmed as ApplicationInterface[]) : undefined;
   },
 
-  resendLicenceEmails: async (filteredLicences: any) => {
-    for (const licence of filteredLicences) {
+  /**
+   * This function will call the LicenceController's reSendEmails function to re-issue licences.
+   * @param {any} licences The collection of licenses to be re-issued.
+   * @returns {number} Returns the count of licences re-issued.
+   */
+  resendLicenceEmails: async (licences: any): Promise<number> => {
+    let sentCount: number = 0;
+
+    for (const licence of licences) {
       await LicenceController.reSendEmails(licence.id)
+      sentCount++;
     }
 
-    return undefined;
+    return sentCount;
   }
 };
 

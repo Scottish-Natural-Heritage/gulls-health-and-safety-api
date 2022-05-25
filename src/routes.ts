@@ -1461,10 +1461,13 @@ const routes: ServerRoute[] = [
         // Call the scheduled controller's resendEmails function.
         const resentLicences = await Scheduled.resendLicenceEmails(filteredLicences);
 
-        console.log('BURP: ' + applications);
-        console.log('BURP 2: ' + filteredLicences);
-        console.log('BURP 3:' + resentLicences);
-      } catch {}
+        return h.response({message: `Resent ${resentLicences} licences.`}).code(200);
+      } catch(error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
     },
   },
 
