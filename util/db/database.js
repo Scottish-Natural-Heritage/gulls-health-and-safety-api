@@ -26,7 +26,7 @@ if (process.env.NODE_ENV === 'production') {
       host: config.databaseHost,
       dialect: 'postgres',
       schema: 'gulls',
-      logging: false,
+      logging: console.log,
     },
     ssDatabase: {
       username: 'rogulls',

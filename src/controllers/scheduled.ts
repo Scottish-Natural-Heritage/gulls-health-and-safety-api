@@ -11,7 +11,27 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Contact, Address} = database;
+const {
+  Application,
+  Contact,
+  Address,
+  Activity,
+  PActivity,
+  Issue,
+  Measure,
+  Species,
+  PSpecies,
+  Assessment,
+  AssessmentMeasure,
+  License,
+  LicenseAdvisory,
+  Advisory,
+  LicenseCondition,
+  Condition,
+  Note,
+  Revocation,
+  Withdrawal,
+} = database;
 
 /**
  * This function returns a summary address built from the address fields of an address object.
@@ -211,6 +231,162 @@ const ScheduledController = {
         {
           model: Address,
           as: 'SiteAddress',
+        },
+      ],
+    });
+  },
+
+  getPreTest3Applications: async () => {
+    return Application.findAll({
+      where: {},
+      include: [
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+          paranoid: false,
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+          paranoid: false,
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddress',
+          paranoid: false,
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+          paranoid: false,
+        },
+        {
+          model: Species,
+          as: 'Species',
+          paranoid: false,
+          include: [
+            {
+              model: Activity,
+              as: 'HerringGull',
+              paranoid: false,
+            },
+            {
+              model: Activity,
+              as: 'BlackHeadedGull',
+              paranoid: false,
+            },
+            {
+              model: Activity,
+              as: 'CommonGull',
+              paranoid: false,
+            },
+            {
+              model: Activity,
+              as: 'GreatBlackBackedGull',
+              paranoid: false,
+            },
+            {
+              model: Activity,
+              as: 'LesserBlackBackedGull',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: PSpecies,
+          as: 'PSpecies',
+          paranoid: false,
+          include: [
+            {
+              model: PActivity,
+              as: 'PHerringGull',
+              paranoid: false,
+            },
+            {
+              model: PActivity,
+              as: 'PBlackHeadedGull',
+              paranoid: false,
+            },
+            {
+              model: PActivity,
+              as: 'PCommonGull',
+              paranoid: false,
+            },
+            {
+              model: PActivity,
+              as: 'PGreatBlackBackedGull',
+              paranoid: false,
+            },
+            {
+              model: PActivity,
+              as: 'PLesserBlackBackedGull',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: Issue,
+          as: 'ApplicationIssue',
+          paranoid: false,
+        },
+        {
+          model: Measure,
+          as: 'ApplicationMeasure',
+          paranoid: false,
+        },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
+          paranoid: false,
+        },
+        {
+          model: AssessmentMeasure,
+          as: 'AssessmentMeasure',
+          paranoid: false,
+        },
+        {
+          model: Note,
+          as: 'ApplicationNotes',
+          paranoid: false,
+        },
+        {
+          model: License,
+          as: 'License',
+          paranoid: false,
+          include: [
+            {
+              model: LicenseAdvisory,
+              as: 'LicenseAdvisories',
+              paranoid: false,
+              include: [
+                {
+                  model: Advisory,
+                  as: 'Advisory',
+                  paranoid: false,
+                },
+              ],
+            },
+            {
+              model: LicenseCondition,
+              as: 'LicenseConditions',
+              paranoid: false,
+              include: [
+                {
+                  model: Condition,
+                  as: 'Condition',
+                  paranoid: false,
+                },
+              ],
+            },
+          ],
         },
       ],
     });
