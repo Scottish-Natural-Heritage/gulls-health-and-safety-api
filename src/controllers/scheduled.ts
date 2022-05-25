@@ -6,6 +6,8 @@ import database from '../models/index.js';
 import config from '../config/app';
 import {ApplicationInterface} from './application.js';
 
+import LicenceController from '../controllers/license';
+
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
@@ -15,22 +17,8 @@ const {
   Application,
   Contact,
   Address,
-  Activity,
-  PActivity,
-  Issue,
-  Measure,
-  Species,
-  PSpecies,
-  Assessment,
-  AssessmentMeasure,
   License,
-  LicenseAdvisory,
-  Advisory,
-  LicenseCondition,
-  Condition,
-  Note,
-  Revocation,
-  Withdrawal,
+  Revocation
 } = database;
 
 /**
@@ -245,148 +233,8 @@ const ScheduledController = {
           as: 'Revocation',
         },
         {
-          model: Withdrawal,
-          as: 'Withdrawal',
-        },
-        {
-          model: Contact,
-          as: 'LicenceHolder',
-          paranoid: false,
-        },
-        {
-          model: Contact,
-          as: 'LicenceApplicant',
-          paranoid: false,
-        },
-        {
-          model: Address,
-          as: 'LicenceHolderAddress',
-          paranoid: false,
-        },
-        {
-          model: Address,
-          as: 'SiteAddress',
-          paranoid: false,
-        },
-        {
-          model: Species,
-          as: 'Species',
-          paranoid: false,
-          include: [
-            {
-              model: Activity,
-              as: 'HerringGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'BlackHeadedGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'CommonGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'GreatBlackBackedGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'LesserBlackBackedGull',
-              paranoid: false,
-            },
-          ],
-        },
-        {
-          model: PSpecies,
-          as: 'PSpecies',
-          paranoid: false,
-          include: [
-            {
-              model: PActivity,
-              as: 'PHerringGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PBlackHeadedGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PCommonGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PGreatBlackBackedGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PLesserBlackBackedGull',
-              paranoid: false,
-            },
-          ],
-        },
-        {
-          model: Issue,
-          as: 'ApplicationIssue',
-          paranoid: false,
-        },
-        {
-          model: Measure,
-          as: 'ApplicationMeasure',
-          paranoid: false,
-        },
-        {
-          model: Assessment,
-          as: 'ApplicationAssessment',
-          paranoid: false,
-        },
-        {
-          model: AssessmentMeasure,
-          as: 'AssessmentMeasure',
-          paranoid: false,
-        },
-        {
-          model: Note,
-          as: 'ApplicationNotes',
-          paranoid: false,
-        },
-        {
           model: License,
           as: 'License',
-          paranoid: false,
-          include: [
-            {
-              model: LicenseAdvisory,
-              as: 'LicenseAdvisories',
-              paranoid: false,
-              include: [
-                {
-                  model: Advisory,
-                  as: 'Advisory',
-                  paranoid: false,
-                },
-              ],
-            },
-            {
-              model: LicenseCondition,
-              as: 'LicenseConditions',
-              paranoid: false,
-              include: [
-                {
-                  model: Condition,
-                  as: 'Condition',
-                  paranoid: false,
-                },
-              ],
-            },
-          ],
         },
       ],
     });
@@ -460,6 +308,14 @@ const ScheduledController = {
     // Return the unconfirmed array of applications or undefined if empty.
     return unconfirmed ? (unconfirmed as ApplicationInterface[]) : undefined;
   },
+
+  resendLicenceEmails: async (filteredLicences: any) => {
+    for (const licence of filteredLicences) {
+      await LicenceController.reSendEmails(licence.id)
+    }
+
+    return undefined;
+  }
 };
 
 export {ScheduledController as default};

@@ -1443,6 +1443,32 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Resend licences issued before test 3 deployment.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/resend-licences`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get any applications submitted before 20th May 2022.
+        const applications = await Scheduled.getPreTest3Applications();
+
+        // Filter out non-licences or revoked licences.
+        const filteredLicences = applications.filter((application: any) => {
+          return (application.License !== null && application.Revocation === null);
+        });
+
+        // Call the scheduled controller's resendEmails function.
+        const resentLicences = await Scheduled.resendLicenceEmails(filteredLicences);
+
+        console.log('BURP: ' + applications);
+        console.log('BURP 2: ' + filteredLicences);
+        console.log('BURP 3:' + resentLicences);
+      } catch {}
+    },
+  },
+
+  /**
    * GET the public part of our elliptic curve JWK.
    */
   {
