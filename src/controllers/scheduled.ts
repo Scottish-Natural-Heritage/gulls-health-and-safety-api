@@ -1,27 +1,19 @@
 import * as jwt from 'jsonwebtoken';
+import {Op} from 'sequelize';
 
 import jwk from '../config/jwk.js';
 import database from '../models/index.js';
 
 import config from '../config/app';
+import LicenceController from './license';
 import {ApplicationInterface} from './application.js';
-
-import LicenceController from '../controllers/license';
-
-const { Op } = require("sequelize");
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {
-  Application,
-  Contact,
-  Address,
-  License,
-  Revocation
-} = database;
+const {Application, Contact, Address, License, Revocation} = database;
 
 /**
  * This function returns a summary address built from the address fields of an address object.
@@ -228,14 +220,15 @@ const ScheduledController = {
 
   /**
    * Gets all applications submitted before the 20th May 2022.
-   * @returns A collection of all applications submitted before 20th May 2022.
+   *
+   * @returns {Application[]} A collection of all applications submitted before 20th May 2022.
    */
   getPreTest3Applications: async () => {
     return Application.findAll({
       where: {
         createdAt: {
-          [Op.lt]: new Date('2022-05-20 00:00:01.001 +00:00')
-        }
+          [Op.lt]: new Date('2022-05-20 00:00:01.001 +00:00'),
+        },
       },
       include: [
         {
@@ -321,19 +314,22 @@ const ScheduledController = {
 
   /**
    * This function will call the LicenceController's reSendEmails function to re-issue licences.
+   *
    * @param {any} licences The collection of licenses to be re-issued.
    * @returns {number} Returns the count of licences re-issued.
    */
   resendLicenceEmails: async (licences: any): Promise<number> => {
-    let sentCount: number = 0;
+    let sentCount = 0;
 
+    /* eslint-disable no-await-in-loop */
     for (const licence of licences) {
-      await LicenceController.reSendEmails(licence.id)
+      await LicenceController.reSendEmails(licence.id);
       sentCount++;
     }
+    /* eslint-enable no-await-in-loop */
 
     return sentCount;
-  }
+  },
 };
 
 export {ScheduledController as default};

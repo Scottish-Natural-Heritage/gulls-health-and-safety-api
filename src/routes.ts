@@ -1455,14 +1455,14 @@ const routes: ServerRoute[] = [
 
         // Filter out non-licences or revoked licences.
         const filteredLicences = applications.filter((application: any) => {
-          return (application.License !== null && application.Revocation === null);
+          return application.License !== null && application.Revocation === null;
         });
 
         // Call the scheduled controller's resendEmails function.
         const resentLicences = await Scheduled.resendLicenceEmails(filteredLicences);
 
         return h.response({message: `Resent ${resentLicences} licences.`}).code(200);
-      } catch(error: unknown) {
+      } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
