@@ -38,12 +38,13 @@ cron.schedule('0 6 * * *', async () => {
     console.error(JsonUtils.unErrorJson(error));
   }
 
-  // Resend any licences issued before test 3 deployment.
-  try {
-    await axios.post(`http://localhost:3017${config.pathPrefix}/resend-licences`);
-  } catch (error: unknown) {
-    console.error(JsonUtils.unErrorJson(error));
-  }
+  // Resend any licences issued before test 3 deployment. Commented out but left in
+  // as we may want to use this again.
+  // try {
+  //   await axios.post(`http://localhost:3017${config.pathPrefix}/resend-licences`);
+  // } catch (error: unknown) {
+  //   console.error(JsonUtils.unErrorJson(error));
+  // }
 
   console.log('Ending cron job(s).');
 });
