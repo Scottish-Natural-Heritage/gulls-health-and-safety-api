@@ -25,6 +25,7 @@ interface RActivityInterface {
   killAdults?: boolean;
   quantityAdultsKilled?: number;
   dateAdultsKilled?: Date;
+  wildlifeCentre?: string;
 }
 
 /**
@@ -56,6 +57,7 @@ const RActivityModel = (sequelize: Sequelize) => {
     public killAdults!: boolean;
     public quantityAdultsKilled!: number;
     public dateAdultsKilled!: Date;
+    public wildlifeCentre!: string;
   }
 
   RActivity.init(
@@ -119,6 +121,9 @@ const RActivityModel = (sequelize: Sequelize) => {
       },
       dateAdultsKilled: {
         type: DataTypes.DATE,
+      },
+      wildlifeCentre: {
+        type: DataTypes.STRING,
       },
     },
     {
