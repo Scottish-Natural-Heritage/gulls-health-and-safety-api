@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bc2dbb80-861a-48fc-b6e0-724d5b14682d",
+		"_postman_id": "0f4e2702-853d-4753-bfe2-8a5f6882d6ec",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "5746803"
@@ -1065,9 +1065,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('Status code is 400 Bad Request', function () {\r",
-							"    pm.response.to.have.status(400);\r",
-							"    pm.response.to.have.status('Bad Request');\r",
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
 							"});\r",
 							""
 						],
