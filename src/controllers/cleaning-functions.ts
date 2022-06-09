@@ -258,6 +258,9 @@ const cleanReturnActivity = (body: any, gullType: string): any => {
     quantityChicksToRescue: body.species?.[gullType].activities.quantityChicksToRescue
       ? body.species?.[gullType].activities.quantityChicksToRescue
       : undefined,
+    wildlifeCentre: body.species?.[gullType].activities.wildlifeCentre
+      ? body.species?.[gullType].activities.wildlifeCentre
+      : undefined,
     dateChicksToRescue: body.species?.[gullType].activities.dateChicksToRescue
       ? body.species?.[gullType].activities.dateChicksToRescue
       : undefined,

@@ -589,18 +589,6 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
-        // Try to get the requested Licence.
-        const licence = await License.findOne(existingId);
-
-        // Did we get an licence?
-        if (licence !== undefined && licence !== null) {
-          return h
-            .response({
-              message: `Application ${existingId} has already been issued as a licence so you will need to amend the Licence.`,
-            })
-            .code(400);
-        }
-
         // Try to get the requested contact.
         const contact = await Contact.findOne(existingContactId);
 
