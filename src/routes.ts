@@ -1320,6 +1320,94 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * GET all licence Returns from ID endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}/return`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get all the returns.
+        const gullReturns = await Returns.findAllForLicence(existingId);
+
+        // Did we get any returns?
+        if (gullReturns === undefined || gullReturns === null) {
+          return h.response({message: `No returns found.`}).code(404);
+        }
+
+        // Return the gullReturns.
+        return h.response(gullReturns).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * GET single licence Return from ID endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}/return/{returnId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Is the returnId a number?
+        const existingReturnId = Number(request.params.returnId);
+        if (Number.isNaN(existingReturnId)) {
+          return h.response({message: `Return ${existingReturnId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested return.
+        const gullReturn = await Returns.findOne(existingReturnId);
+
+        // Did we get an return?
+        if (gullReturn === undefined || gullReturn === null) {
+          return h.response({message: `Return ${existingReturnId} not found.`}).code(404);
+        }
+
+        // Return the gullReturn.
+        return h.response(gullReturn).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * POST an amendment.
    */
   {
@@ -1421,6 +1509,94 @@ const routes: ServerRoute[] = [
 
         // If we get here the amendment was not created successfully.
         return h.response({message: `Failed to create amendment.`}).code(500);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * GET all licence Amendments from ID endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}/amendment`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get all the returns.
+        const amendments = await Amendment.findAllForLicence(existingId);
+
+        // Did we get any amendments?
+        if (amendments === undefined || amendments === null) {
+          return h.response({message: `No amendments found.`}).code(404);
+        }
+
+        // Return the gullReturns.
+        return h.response(amendments).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * GET single licence amendment from ID endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}/amendment/{amendId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Is the amendId a number?
+        const existingAmendId = Number(request.params.amendId);
+        if (Number.isNaN(existingAmendId)) {
+          return h.response({message: `Amendment ${existingAmendId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested amendment.
+        const amendment = await Amendment.findOne(existingAmendId);
+
+        // Did we get an amendment?
+        if (amendment === undefined || amendment === null) {
+          return h.response({message: `Amendment ${existingAmendId} not found.`}).code(404);
+        }
+
+        // Return the amendment.
+        return h.response(amendment).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
