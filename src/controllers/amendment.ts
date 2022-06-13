@@ -373,6 +373,78 @@ const AmendmentController = {
   },
 
   /**
+   * This function gets all amendments for a licence from the database.
+   *
+   * @returns {any} Returns all amendments for licence.
+   */
+  findAllForLicence: async (id: number) => {
+    return Amendment.findAll({
+      paranoid: false,
+      include: [
+        {
+          model: ASpecies,
+          as: 'ASpecies',
+          paranoid: false,
+          include: [
+            {
+              model: AActivity,
+              as: 'AHerringGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ABlackHGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ACommonGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'AGreatBBGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ALesserBBGull',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: AmendCondition,
+          as: 'AmendConditions',
+          paranoid: false,
+          include: [
+            {
+              model: Condition,
+              as: 'AmendCondition',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: AmendAdvisory,
+          as: 'AmendAdvisories',
+          paranoid: false,
+          include: [
+            {
+              model: Advisory,
+              as: 'AmendAdvisory',
+              paranoid: false,
+            },
+          ],
+        },
+      ],
+      where: {
+        LicenceId: id,
+      },
+    });
+  },
+
+  /**
    * This function gets all amendments from the database.
    *
    * @returns {any} Returns all amendments.
