@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "0f4e2702-853d-4753-bfe2-8a5f6882d6ec",
+		"_postman_id": "f57ae67f-5a8e-4b9e-919c-f39e33c87754",
 		"name": "v1-gulls-health-and-safety-api",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "5746803"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -2773,7 +2772,7 @@
 							"    );\r",
 							"});\r",
 							"\r",
-							""
+							"pm.collectionVariables.set(\"GULLS_NEW_RETURN_ID\", pm.response.headers.get('Location').split('/').pop());"
 						],
 						"type": "text/javascript"
 					}
@@ -2810,6 +2809,45 @@
 			"response": []
 		},
 		{
+			"name": "Get new return",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/return/{{GULLS_NEW_RETURN_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"return",
+						"{{GULLS_NEW_RETURN_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Submit amendment",
 			"event": [
 				{
@@ -2828,7 +2866,8 @@
 							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
 							"    );\r",
 							"});\r",
-							""
+							"\r",
+							"pm.collectionVariables.set(\"GULLS_NEW_AMEND_ID\", pm.response.headers.get('Location').split('/').pop());"
 						],
 						"type": "text/javascript"
 					}
@@ -2859,6 +2898,45 @@
 						"application",
 						"{{GULLS_NEW_APP_ID_RETURNS}}",
 						"amendment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get new amendment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID_RETURNS}}/amendment/{{GULLS_NEW_AMEND_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID_RETURNS}}",
+						"amendment",
+						"{{GULLS_NEW_AMEND_ID}}"
 					]
 				}
 			},
@@ -2896,11 +2974,18 @@
 		},
 		{
 			"key": "GULLS_NEW_APP_ID_RETURNS",
-			"value": "0",
-			"type": "string"
+			"value": "0"
 		},
 		{
 			"key": "GULLS_ACTIVITY_ID",
+			"value": ""
+		},
+		{
+			"key": "GULLS_NEW_RETURN_ID",
+			"value": ""
+		},
+		{
+			"key": "GULLS_NEW_AMEND_ID",
 			"value": ""
 		}
 	]
