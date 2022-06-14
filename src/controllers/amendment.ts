@@ -60,7 +60,6 @@ const createDisplayDate = (date: Date) => {
  */
 const createPermittedActivitiesList = (species: any): string => {
   const permittedActivities = [];
-
   permittedActivities.push(
     'Numbers permitted for amended activities are the total for the site, not additional to those already permitted.\n',
   );
@@ -70,7 +69,7 @@ const createPermittedActivitiesList = (species: any): string => {
   }
 
   if (species.BlackHeadedGullId) {
-    permittedActivities.push(addActivities(species.ABlackHeadedGull, 'Black-headed gull'));
+    permittedActivities.push(addActivities(species.ABlackHGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
@@ -78,11 +77,11 @@ const createPermittedActivitiesList = (species: any): string => {
   }
 
   if (species.GreatBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.AGreatBlackBackedGull, 'Great black-backed gull'));
+    permittedActivities.push(addActivities(species.AGreatBBGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.ALesserBlackBackedGull, 'Lesser black-backed gull'));
+    permittedActivities.push(addActivities(species.ALesserBBGull, 'Lesser black-backed gull'));
   }
 
   return permittedActivities.join('\n');
