@@ -7,7 +7,7 @@
   ],
   "repository": "github:Scottish-Natural-Heritage/gulls-health-and-safety-api",
   "engines": {
-    "node": "^16.13.0"
+    "node": ">=16.0.0"
   },
   "scripts": {
     "lint:spelling": "cspell \"{src/**/*.ts,**/*.json}\"",
@@ -43,15 +43,15 @@
     "xo": "^0.42.0"
   },
   "dependencies": {
-    "@hapi/hapi": "^20.1.5",
-    "axios": "^0.21.1",
-    "axios-mock-adapter": "^1.19.0",
-    "hapi-pino": "^8.3.0",
+    "@hapi/hapi": "^20.2.2",
+    "axios": "^0.21.4",
+    "axios-mock-adapter": "^1.21.1",
+    "hapi-pino": "^8.5.0",
     "jsonwebtoken": "^8.5.1",
     "naturescot-utils": "^1.2.0",
     "node-cron": "3.0.0",
-    "notifications-node-client": "^5.1.0",
-    "pg": "^8.7.1",
+    "notifications-node-client": "^5.1.1",
+    "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "6.8.0",
     "sequelize-cli": "^6.2.0",
