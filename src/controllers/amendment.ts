@@ -98,7 +98,7 @@ const addActivities = (species: any, speciesType: string): string => {
   const activities: string[] = [];
   if (species.removeNests) {
     activities.push(
-      `${speciesType}: To take and destroy ${String(
+      `${speciesType}: To take and destroy up to ${String(
         species.quantityNestsToRemove,
       )} nests and any eggs they contain by hand.`,
     );
@@ -106,7 +106,7 @@ const addActivities = (species: any, speciesType: string): string => {
 
   if (species.eggDestruction) {
     activities.push(
-      `${speciesType}: To take and destroy eggs from ${String(
+      `${speciesType}: To take and destroy eggs from up to ${String(
         species.quantityNestsWhereEggsDestroyed,
       )} nests by oiling, pricking or replacing with dummy eggs.`,
     );
