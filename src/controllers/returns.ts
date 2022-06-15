@@ -258,6 +258,7 @@ const ReturnsController = {
   /**
    * This function gets all returns for a licence from the database.
    *
+   * @param {number} id The id number of the licence in question.
    * @returns {any} Returns all amendments for licence.
    */
   findAllForLicence: async (id: number) => {

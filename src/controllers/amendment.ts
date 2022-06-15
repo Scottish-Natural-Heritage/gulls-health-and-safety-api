@@ -266,6 +266,7 @@ const createConservationStatus = (species: any): string => {
  * This function calls the Notify API and asks for an email to be sent to the supplied address.
  *
  * @param {any} emailAddress The email address to send the email to.
+ * @param {any} emailDetails The details of the amendment to use with the email.
  */
 const sendAmendedEmail = async (emailAddress: string, emailDetails: any) => {
   if (config.notifyApiKey) {
@@ -281,7 +282,7 @@ const setAmendEmailPersonalisationFields = (application: any, amendmentDetails: 
   return {
     licenceNumber: application.id,
     siteAddress: createSummaryAddress(application.SiteAddress),
-    startDate: createDisplayDate(application.License.periodFrom),
+    startDate: createDisplayDate(new Date()),
     endDate: createDisplayDate(application.License.periodTo),
     licenceHolderName: application.LicenceHolder.name,
     licenceHolderAddress: createSummaryAddress(application.LicenceHolderAddress),
@@ -374,6 +375,7 @@ const AmendmentController = {
   /**
    * This function gets all amendments for a licence from the database.
    *
+   * @param {number} id The id number of the licence in question.
    * @returns {any} Returns all amendments for licence.
    */
   findAllForLicence: async (id: number) => {
@@ -580,7 +582,10 @@ const AmendmentController = {
     }
 
     // Send Notify email if we have a licence applicant email address.
-    if (incomingAmendment.licenceApplicantEmailAddress) {
+    if (
+      incomingAmendment.licenceApplicantEmailAddress &&
+      application.LicenceHolderId !== application.LicenceApplicantId
+    ) {
       await sendAmendedEmail(incomingAmendment.licenceApplicantEmailAddress, emailDetails);
     }
 
