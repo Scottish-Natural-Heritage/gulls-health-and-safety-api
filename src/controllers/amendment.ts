@@ -60,7 +60,6 @@ const createDisplayDate = (date: Date) => {
  */
 const createPermittedActivitiesList = (species: any): string => {
   const permittedActivities = [];
-
   permittedActivities.push(
     'Numbers permitted for amended activities are the total for the site, not additional to those already permitted.\n',
   );
@@ -70,7 +69,7 @@ const createPermittedActivitiesList = (species: any): string => {
   }
 
   if (species.BlackHeadedGullId) {
-    permittedActivities.push(addActivities(species.ABlackHeadedGull, 'Black-headed gull'));
+    permittedActivities.push(addActivities(species.ABlackHGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
@@ -78,11 +77,11 @@ const createPermittedActivitiesList = (species: any): string => {
   }
 
   if (species.GreatBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.AGreatBlackBackedGull, 'Great black-backed gull'));
+    permittedActivities.push(addActivities(species.AGreatBBGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.ALesserBlackBackedGull, 'Lesser black-backed gull'));
+    permittedActivities.push(addActivities(species.ALesserBBGull, 'Lesser black-backed gull'));
   }
 
   return permittedActivities.join('\n');
@@ -369,6 +368,78 @@ const AmendmentController = {
           ],
         },
       ],
+    });
+  },
+
+  /**
+   * This function gets all amendments for a licence from the database.
+   *
+   * @returns {any} Returns all amendments for licence.
+   */
+  findAllForLicence: async (id: number) => {
+    return Amendment.findAll({
+      paranoid: false,
+      include: [
+        {
+          model: ASpecies,
+          as: 'ASpecies',
+          paranoid: false,
+          include: [
+            {
+              model: AActivity,
+              as: 'AHerringGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ABlackHGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ACommonGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'AGreatBBGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ALesserBBGull',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: AmendCondition,
+          as: 'AmendConditions',
+          paranoid: false,
+          include: [
+            {
+              model: Condition,
+              as: 'AmendCondition',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: AmendAdvisory,
+          as: 'AmendAdvisories',
+          paranoid: false,
+          include: [
+            {
+              model: Advisory,
+              as: 'AmendAdvisory',
+              paranoid: false,
+            },
+          ],
+        },
+      ],
+      where: {
+        LicenceId: id,
+      },
     });
   },
 
