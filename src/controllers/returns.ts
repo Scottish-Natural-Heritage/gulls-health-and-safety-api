@@ -256,6 +256,55 @@ const ReturnsController = {
   },
 
   /**
+   * This function gets all returns for a licence from the database.
+   *
+   * @param {number} id The id number of the licence in question.
+   * @returns {any} Returns all amendments for licence.
+   */
+  findAllForLicence: async (id: number) => {
+    return Returns.findAll({
+      paranoid: false,
+      include: [
+        {
+          model: RSpecies,
+          as: 'RSpecies',
+          paranoid: false,
+          include: [
+            {
+              model: RActivity,
+              as: 'RHerringGull',
+              paranoid: false,
+            },
+            {
+              model: RActivity,
+              as: 'RBlackHGull',
+              paranoid: false,
+            },
+            {
+              model: RActivity,
+              as: 'RCommonGull',
+              paranoid: false,
+            },
+            {
+              model: RActivity,
+              as: 'RGreatBBGull',
+              paranoid: false,
+            },
+            {
+              model: RActivity,
+              as: 'RLesserBBGull',
+              paranoid: false,
+            },
+          ],
+        },
+      ],
+      where: {
+        LicenceId: id,
+      },
+    });
+  },
+
+  /**
    * This function gets all returns from the database.
    *
    * @returns {any} Returns all returns.

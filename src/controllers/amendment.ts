@@ -60,7 +60,6 @@ const createDisplayDate = (date: Date) => {
  */
 const createPermittedActivitiesList = (species: any): string => {
   const permittedActivities = [];
-
   permittedActivities.push(
     'Numbers permitted for amended activities are the total for the site, not additional to those already permitted.\n',
   );
@@ -70,7 +69,7 @@ const createPermittedActivitiesList = (species: any): string => {
   }
 
   if (species.BlackHeadedGullId) {
-    permittedActivities.push(addActivities(species.ABlackHeadedGull, 'Black-headed gull'));
+    permittedActivities.push(addActivities(species.ABlackHGull, 'Black-headed gull'));
   }
 
   if (species.CommonGullId) {
@@ -78,11 +77,11 @@ const createPermittedActivitiesList = (species: any): string => {
   }
 
   if (species.GreatBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.AGreatBlackBackedGull, 'Great black-backed gull'));
+    permittedActivities.push(addActivities(species.AGreatBBGull, 'Great black-backed gull'));
   }
 
   if (species.LesserBlackBackedGullId) {
-    permittedActivities.push(addActivities(species.ALesserBlackBackedGull, 'Lesser black-backed gull'));
+    permittedActivities.push(addActivities(species.ALesserBBGull, 'Lesser black-backed gull'));
   }
 
   return permittedActivities.join('\n');
@@ -99,7 +98,7 @@ const addActivities = (species: any, speciesType: string): string => {
   const activities: string[] = [];
   if (species.removeNests) {
     activities.push(
-      `${speciesType}: To take and destroy ${String(
+      `${speciesType}: To take and destroy up to ${String(
         species.quantityNestsToRemove,
       )} nests and any eggs they contain by hand.`,
     );
@@ -107,7 +106,7 @@ const addActivities = (species: any, speciesType: string): string => {
 
   if (species.eggDestruction) {
     activities.push(
-      `${speciesType}: To take and destroy eggs from ${String(
+      `${speciesType}: To take and destroy eggs from up to ${String(
         species.quantityNestsWhereEggsDestroyed,
       )} nests by oiling, pricking or replacing with dummy eggs.`,
     );
@@ -267,6 +266,7 @@ const createConservationStatus = (species: any): string => {
  * This function calls the Notify API and asks for an email to be sent to the supplied address.
  *
  * @param {any} emailAddress The email address to send the email to.
+ * @param {any} emailDetails The details of the amendment to use with the email.
  */
 const sendAmendedEmail = async (emailAddress: string, emailDetails: any) => {
   if (config.notifyApiKey) {
@@ -282,7 +282,7 @@ const setAmendEmailPersonalisationFields = (application: any, amendmentDetails: 
   return {
     licenceNumber: application.id,
     siteAddress: createSummaryAddress(application.SiteAddress),
-    startDate: createDisplayDate(application.License.periodFrom),
+    startDate: createDisplayDate(new Date()),
     endDate: createDisplayDate(application.License.periodTo),
     licenceHolderName: application.LicenceHolder.name,
     licenceHolderAddress: createSummaryAddress(application.LicenceHolderAddress),
@@ -369,6 +369,79 @@ const AmendmentController = {
           ],
         },
       ],
+    });
+  },
+
+  /**
+   * This function gets all amendments for a licence from the database.
+   *
+   * @param {number} id The id number of the licence in question.
+   * @returns {any} Returns all amendments for licence.
+   */
+  findAllForLicence: async (id: number) => {
+    return Amendment.findAll({
+      paranoid: false,
+      include: [
+        {
+          model: ASpecies,
+          as: 'ASpecies',
+          paranoid: false,
+          include: [
+            {
+              model: AActivity,
+              as: 'AHerringGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ABlackHGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ACommonGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'AGreatBBGull',
+              paranoid: false,
+            },
+            {
+              model: AActivity,
+              as: 'ALesserBBGull',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: AmendCondition,
+          as: 'AmendConditions',
+          paranoid: false,
+          include: [
+            {
+              model: Condition,
+              as: 'AmendCondition',
+              paranoid: false,
+            },
+          ],
+        },
+        {
+          model: AmendAdvisory,
+          as: 'AmendAdvisories',
+          paranoid: false,
+          include: [
+            {
+              model: Advisory,
+              as: 'AmendAdvisory',
+              paranoid: false,
+            },
+          ],
+        },
+      ],
+      where: {
+        LicenceId: id,
+      },
     });
   },
 
@@ -509,7 +582,10 @@ const AmendmentController = {
     }
 
     // Send Notify email if we have a licence applicant email address.
-    if (incomingAmendment.licenceApplicantEmailAddress) {
+    if (
+      incomingAmendment.licenceApplicantEmailAddress &&
+      application.LicenceHolderId !== application.LicenceApplicantId
+    ) {
       await sendAmendedEmail(incomingAmendment.licenceApplicantEmailAddress, emailDetails);
     }
 

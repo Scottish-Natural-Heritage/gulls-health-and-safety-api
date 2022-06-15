@@ -26,13 +26,7 @@ const {
   Revocation,
   Withdrawal,
   Returns,
-  RSpecies,
-  RActivity,
   Amendment,
-  ASpecies,
-  AActivity,
-  AmendCondition,
-  AmendAdvisory,
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -470,103 +464,11 @@ const ApplicationController = {
               model: Returns,
               as: 'Returns',
               paranoid: false,
-              include: [
-                {
-                  model: RSpecies,
-                  as: 'RSpecies',
-                  paranoid: false,
-                  include: [
-                    {
-                      model: RActivity,
-                      as: 'RHerringGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: RActivity,
-                      as: 'RBlackHGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: RActivity,
-                      as: 'RCommonGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: RActivity,
-                      as: 'RGreatBBGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: RActivity,
-                      as: 'RLesserBBGull',
-                      paranoid: false,
-                    },
-                  ],
-                },
-              ],
             },
             {
               model: Amendment,
               as: 'Amendment',
               paranoid: false,
-              include: [
-                {
-                  model: ASpecies,
-                  as: 'ASpecies',
-                  paranoid: false,
-                  include: [
-                    {
-                      model: AActivity,
-                      as: 'AHerringGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: AActivity,
-                      as: 'ABlackHGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: AActivity,
-                      as: 'ACommonGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: AActivity,
-                      as: 'AGreatBBGull',
-                      paranoid: false,
-                    },
-                    {
-                      model: AActivity,
-                      as: 'ALesserBBGull',
-                      paranoid: false,
-                    },
-                  ],
-                },
-                {
-                  model: AmendCondition,
-                  as: 'AmendConditions',
-                  paranoid: false,
-                  include: [
-                    {
-                      model: Condition,
-                      as: 'AmendCondition',
-                      paranoid: false,
-                    },
-                  ],
-                },
-                {
-                  model: AmendAdvisory,
-                  as: 'AmendAdvisories',
-                  paranoid: false,
-                  include: [
-                    {
-                      model: Advisory,
-                      as: 'AmendAdvisory',
-                      paranoid: false,
-                    },
-                  ],
-                },
-              ],
             },
           ],
         },
