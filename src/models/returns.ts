@@ -8,6 +8,13 @@ interface ReturnsInterface {
   LicenceId?: number;
   SpeciesId?: number;
   confirmedReturn?: boolean;
+  name?: string;
+  returnType?: string;
+  siteVisitDate?: string;
+  preventMeasure?: boolean;
+  preventMeasureDetails?: string;
+  compliance?: boolean;
+  complianceDetails?: string;
 }
 
 /**
@@ -22,6 +29,13 @@ const ReturnsModel = (sequelize: Sequelize) => {
     public LicenceId!: number;
     public SpeciesId!: number;
     public confirmedReturn!: boolean;
+    public name!: string;
+    public returnType!: string;
+    public siteVisitDate!: string;
+    public preventMeasure!: boolean;
+    public preventMeasureDetails!: string;
+    public compliance!: boolean;
+    public complianceDetails!: string;
   }
 
   Returns.init(
@@ -34,6 +48,33 @@ const ReturnsModel = (sequelize: Sequelize) => {
       },
       confirmedReturn: {
         type: DataTypes.BOOLEAN,
+      },
+      name: {
+        type: DataTypes.STRING,
+      },
+      isReportingReturn: {
+        type: DataTypes.BOOLEAN,
+      },
+      isSiteVisitReturn: {
+        type: DataTypes.BOOLEAN,
+      },
+      isFinalReturn: {
+        type: DataTypes.BOOLEAN,
+      },
+      siteVisitDate: {
+        type: DataTypes.DATE,
+      },
+      hasTriedPreventativeMeasures: {
+        type: DataTypes.BOOLEAN,
+      },
+      preventativeMeasuresDetails: {
+        type: DataTypes.TEXT,
+      },
+      wasCompliant: {
+        type: DataTypes.BOOLEAN,
+      },
+      complianceDetails: {
+        type: DataTypes.TEXT,
       },
     },
     {
