@@ -176,6 +176,7 @@ const createReturnDetails = (returnDetails: Map<string, any>): string => {
  * @param {any} returnDate The date of the return details.
  * @param {any} siteAddress The address of the site to which the return pertains.
  * @param {Map<string, any>} returnDetails A map containing the return details mapped to a species type string as a key.
+ * @param {any} submittedName The name of the person submitting the return.
  * @returns {any} An object with the required details set.
  */
 const setReturnNotificationDetails = (
@@ -183,12 +184,75 @@ const setReturnNotificationDetails = (
   returnDate: any,
   siteAddress: any,
   returnDetails: Map<string, any>,
+  submittedName: any,
 ) => {
   return {
     id: licenceId,
     returnDate: createDisplayDate(new Date(returnDate)),
     siteAddress: createSummaryAddress(siteAddress),
     returnDetails: createReturnDetails(returnDetails),
+    submittedName,
+  };
+};
+
+/**
+ * This function returns an object containing the details required for the license return notification email.
+ *
+ * @param {any} licenceId The ID of the licence to which the return pertains.
+ * @param {any} returnDate The date of the return details.
+ * @param {any} siteAddress The address of the site to which the return pertains.
+ * @param {any} submittedName The name of the person submitting the return.
+ * @param {any} hasTriedPreventativeMeasures A bool representing whether the the person tried all measures.
+ * @param {any} preventativeMeasuresDetails The further details of the preventative measures.
+ * @param {any} wasCompliant A bool representing whether the the person was compliant.
+ * @param {any} complianceDetails The further details of the compliance.
+ * @returns {any} An object with the required details set.
+ */
+const setFinalReturnNotificationDetails = (
+  licenceId: any,
+  returnDate: any,
+  siteAddress: any,
+  submittedName: any,
+  hasTriedPreventativeMeasures: any,
+  preventativeMeasuresDetails: any,
+  wasCompliant: any,
+  complianceDetails: any,
+) => {
+  return {
+    id: licenceId,
+    returnDate: createDisplayDate(new Date(returnDate)),
+    siteAddress: createSummaryAddress(siteAddress),
+    submittedName,
+    hasTriedPreventativeMeasures: hasTriedPreventativeMeasures ? 'Yes' : 'No',
+    preventativeMeasuresDetails,
+    wasCompliant: wasCompliant ? 'Yes' : 'No',
+    complianceDetails: complianceDetails ? complianceDetails : '',
+  };
+};
+
+/**
+ * This function returns an object containing the details required for the license return notification email.
+ *
+ * @param {any} licenceId The ID of the licence to which the return pertains.
+ * @param {any} returnDate The date of the return details.
+ * @param {any} siteAddress The address of the site to which the return pertains.
+ * @param {any} submittedName The name of the person submitting the return.
+ * @param {any} siteVisitDate The date the site was visited.
+ * @returns {any} An object with the required details set.
+ */
+const setSiteVisitReturnNotificationDetails = (
+  licenceId: any,
+  returnDate: any,
+  siteAddress: any,
+  submittedName: any,
+  siteVisitDate: any,
+) => {
+  return {
+    id: licenceId,
+    returnDate: createDisplayDate(new Date(returnDate)),
+    siteAddress: createSummaryAddress(siteAddress),
+    submittedName,
+    siteVisitDate: createDisplayDate(new Date(siteVisitDate)),
   };
 };
 
@@ -201,7 +265,39 @@ const setReturnNotificationDetails = (
 const sendLicenceReturnNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('d5f606fd-2bc2-4d4e-ae46-faa2ea20e900', emailAddress, {
+    await notifyClient.sendEmail('c10f2e74-370c-41b0-b0f9-5ae6d73576c7', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for an email to be sent with the supplied details.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendFinalReturnNotificationEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('caaede4f-cdc1-4837-85d5-cd4ded68ae1b', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for an email to be sent with the supplied details.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendSiteVisitReturnNotificationEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('ce6c7959-08b7-4694-a162-fac62667c942', emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
@@ -369,11 +465,13 @@ const ReturnsController = {
         speciesIds.LesserBlackBackedGullId = lesserBlackBackedGull.id;
       }
 
-      // Set the return's species foreign keys in the DB.
-      const newReturnSpecies = await RSpecies.create(speciesIds, {transaction: t});
+      if (cleanedReturn.isReportingReturn) {
+        // Set the return's species foreign keys in the DB.
+        const newReturnSpecies = await RSpecies.create(speciesIds, {transaction: t});
 
-      // Set the return's species foreign key.
-      cleanedReturn.SpeciesId = newReturnSpecies.id;
+        // Set the return's species foreign key.
+        cleanedReturn.SpeciesId = newReturnSpecies.id;
+      }
 
       // Add the return to the database.
       newReturn = await Returns.create(cleanedReturn, {transaction: t});
@@ -430,12 +528,13 @@ const ReturnsController = {
     }
 
     // If we have successfully submitted a return set the email details.
-    if (newReturn) {
+    if (newReturn && cleanedReturn.isReportingReturn) {
       const emailDetails = setReturnNotificationDetails(
         (newReturn as any).LicenceId,
         (newReturn as any).createdAt,
         siteAddress,
         returnDetails,
+        cleanedReturn.name,
       );
 
       // If the licence holder and applicant are the same person only send a single email.
@@ -449,6 +548,57 @@ const ReturnsController = {
 
         if (licenceApplicant?.emailAddress)
           await sendLicenceReturnNotificationEmail(emailDetails, licenceApplicant.emailAddress);
+      }
+    }
+
+    // If we have successfully submitted a return set the email details.
+    if (newReturn && cleanedReturn.isFinalReturn) {
+      const emailDetails = setFinalReturnNotificationDetails(
+        (newReturn as any).LicenceId,
+        (newReturn as any).createdAt,
+        siteAddress,
+        cleanedReturn.name,
+        cleanedReturn.hasTriedPreventativeMeasures,
+        cleanedReturn.preventativeMeasuresDetails,
+        cleanedReturn.wasCompliant,
+        cleanedReturn.complianceDetails,
+      );
+
+      // If the licence holder and applicant are the same person only send a single email.
+      if (licenceHolder && licenceHolder?.id === licenceApplicant?.id) {
+        await sendFinalReturnNotificationEmail(emailDetails, licenceHolder.emailAddress);
+      } else {
+        // Send an email to both holder and applicant.
+        if (licenceHolder?.emailAddress) {
+          await sendFinalReturnNotificationEmail(emailDetails, licenceHolder.emailAddress);
+        }
+
+        if (licenceApplicant?.emailAddress)
+          await sendFinalReturnNotificationEmail(emailDetails, licenceApplicant.emailAddress);
+      }
+    }
+
+    // If we have successfully submitted a return set the email details.
+    if (newReturn && cleanedReturn.isSiteVisitReturn) {
+      const emailDetails = setSiteVisitReturnNotificationDetails(
+        (newReturn as any).LicenceId,
+        (newReturn as any).createdAt,
+        siteAddress,
+        cleanedReturn.name,
+        cleanedReturn.siteVisitDate,
+      );
+
+      // If the licence holder and applicant are the same person only send a single email.
+      if (licenceHolder && licenceHolder?.id === licenceApplicant?.id) {
+        await sendSiteVisitReturnNotificationEmail(emailDetails, licenceHolder.emailAddress);
+      } else {
+        // Send an email to both holder and applicant.
+        if (licenceHolder?.emailAddress) {
+          await sendSiteVisitReturnNotificationEmail(emailDetails, licenceHolder.emailAddress);
+        }
+
+        if (licenceApplicant?.emailAddress)
+          await sendSiteVisitReturnNotificationEmail(emailDetails, licenceApplicant.emailAddress);
       }
     }
 

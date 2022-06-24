@@ -1259,26 +1259,27 @@ const routes: ServerRoute[] = [
 
         // Set the licence ID to be used as the foreign key.
         cleanedReturn.LicenceId = existingId;
+        if (newReturn.isReportingReturn) {
+          // Clean all the possible return species activities.
+          if (newReturn.species.herringGull.hasReturn) {
+            herringReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'herringGull');
+          }
 
-        // Clean all the possible return species activities.
-        if (newReturn.species.herringGull.hasReturn) {
-          herringReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'herringGull');
-        }
+          if (newReturn.species.blackHeadedGull.hasReturn) {
+            blackHeadedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'blackHeadedGull');
+          }
 
-        if (newReturn.species.blackHeadedGull.hasReturn) {
-          blackHeadedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'blackHeadedGull');
-        }
+          if (newReturn.species.commonGull.hasReturn) {
+            commonReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'commonGull');
+          }
 
-        if (newReturn.species.commonGull.hasReturn) {
-          commonReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'commonGull');
-        }
+          if (newReturn.species.greatBlackBackedGull.hasReturn) {
+            greatBlackBackedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'greatBlackBackedGull');
+          }
 
-        if (newReturn.species.greatBlackBackedGull.hasReturn) {
-          greatBlackBackedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'greatBlackBackedGull');
-        }
-
-        if (newReturn.species.lesserBlackBackedGull.hasReturn) {
-          lesserBlackBackedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'lesserBlackBackedGull');
+          if (newReturn.species.lesserBlackBackedGull.hasReturn) {
+            lesserBlackBackedReturn = CleaningFunctions.cleanReturnActivity(newReturn, 'lesserBlackBackedGull');
+          }
         }
 
         // Try to add the return to the database.
