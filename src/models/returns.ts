@@ -9,11 +9,13 @@ interface ReturnsInterface {
   SpeciesId?: number;
   confirmedReturn?: boolean;
   name?: string;
-  returnType?: string;
+  isReportingReturn?: boolean;
+  isSiteVisitReturn?: boolean;
+  isFinalReturn?: boolean;
   siteVisitDate?: string;
-  preventMeasure?: boolean;
-  preventMeasureDetails?: string;
-  compliance?: boolean;
+  hasTriedPreventativeMeasures?: boolean;
+  preventativeMeasuresDetails?: string;
+  wasCompliant?: boolean;
   complianceDetails?: string;
 }
 
@@ -30,11 +32,13 @@ const ReturnsModel = (sequelize: Sequelize) => {
     public SpeciesId!: number;
     public confirmedReturn!: boolean;
     public name!: string;
-    public returnType!: string;
+    public isReportingReturn!: boolean;
+    public isSiteVisitReturn!: boolean;
+    public isFinalReturn!: boolean;
     public siteVisitDate!: string;
-    public preventMeasure!: boolean;
-    public preventMeasureDetails!: string;
-    public compliance!: boolean;
+    public hasTriedPreventativeMeasures!: boolean;
+    public preventativeMeasuresDetails!: string;
+    public wasCompliant!: boolean;
     public complianceDetails!: string;
   }
 
