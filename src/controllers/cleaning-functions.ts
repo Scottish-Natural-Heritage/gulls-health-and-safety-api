@@ -691,6 +691,15 @@ const cleanAuthenticationInfo = (body: any, existingId: string): any => {
 const cleanReturn = (body: any): any => {
   return {
     confirmedReturn: body.confirmDeclaration,
+    name: body.name,
+    isFinalReturn: body.isFinalReturn ? body.isFinalReturn : false,
+    isSiteVisitReturn: body.isSiteVisitReturn ? body.isSiteVisitReturn : false,
+    isReportingReturn: body.isReportingReturn ? body.isReportingReturn : false,
+    siteVisitDate: body.siteVisitDate ? body.siteVisitDate : undefined,
+    hasTriedPreventativeMeasures: body.hasTriedPreventativeMeasures ? body.hasTriedPreventativeMeasures : undefined,
+    preventativeMeasuresDetails: body.preventativeMeasuresDetails ? body.preventativeMeasuresDetails : undefined,
+    wasCompliant: body.wasCompliant ? body.wasCompliant : undefined,
+    complianceDetails: body.complianceDetails ? body.complianceDetails : undefined,
   };
 };
 
