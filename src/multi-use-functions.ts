@@ -4,7 +4,7 @@
  * @param {any} fullAddress The address to use to build the summary address from.
  * @returns {string} Returns a string containing the summary address.
  */
- const createSummaryAddress = (fullAddress: any): string => {
+const createSummaryAddress = (fullAddress: any): string => {
   const address = [];
   address.push(fullAddress.addressLine1.trim());
   // As addressLine2 is optional we need to check if it exists.

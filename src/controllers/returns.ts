@@ -4,6 +4,7 @@ import config from '../config/app';
 import ApplicationController from './application';
 import AddressController from './address';
 import ContactController from './contact';
+import MultiUseFunctions from '../multi-use-functions';
 
 const {Returns, RSpecies, RActivity} = database;
 
@@ -33,30 +34,6 @@ interface ReturnInterface {
   SpeciesId: number;
 }
 
-// Create a more user friendly displayable date from a date object.
-const createDisplayDate = (date: Date) => {
-  return date.toLocaleDateString('en-GB');
-};
-
-/**
- * This function returns a summary address built from the address fields of an address object.
- *
- * @param {any} fullAddress The address to use to build the summary address from.
- * @returns {string} Returns a string containing the summary address.
- */
-const createSummaryAddress = (fullAddress: any): string => {
-  const address = [];
-  address.push(fullAddress.addressLine1.trim());
-  // As addressLine2 is optional we need to check if it exists.
-  if (fullAddress.addressLine2) {
-    address.push(fullAddress.addressLine2.trim());
-  }
-
-  address.push(fullAddress.addressTown.trim(), fullAddress.addressCounty.trim(), fullAddress.postcode.trim());
-
-  return address.join(', ');
-};
-
 /**
  * This function will create a formatted string of specific species activities, used by Notify
  * to create the list of returned activities.
@@ -73,13 +50,13 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
     returnActivities.push(
       `${speciesType} - ${String(activities.quantityNestsRemoved)} nests removed and ${String(
         activities.quantityEggsRemoved,
-      )} eggs destroyed on ${createDisplayDate(new Date(activities.dateNestsEggsRemoved))}`,
+      )} eggs destroyed on ${MultiUseFunctions.createShortDisplayDate(new Date(activities.dateNestsEggsRemoved))}`,
     );
   } else if (activities.removeNests && activities.quantityNestsRemoved) {
     returnActivities.push(
-      `${speciesType} - ${String(activities.quantityNestsRemoved)} nests removed on ${createDisplayDate(
-        new Date(activities.dateNestsEggsRemoved),
-      )}`,
+      `${speciesType} - ${String(
+        activities.quantityNestsRemoved,
+      )} nests removed on ${MultiUseFunctions.createShortDisplayDate(new Date(activities.dateNestsEggsRemoved))}`,
     );
   }
 
@@ -90,7 +67,7 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
         activities.quantityEggsDestroyed,
       )} eggs oiled pricked or replaced with dummy eggs from ${String(
         activities.quantityNestsAffected,
-      )} nests on ${createDisplayDate(new Date(activities.dateNestsEggsDestroyed))}`,
+      )} nests on ${MultiUseFunctions.createShortDisplayDate(new Date(activities.dateNestsEggsDestroyed))}`,
     );
   }
 
@@ -99,14 +76,16 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
     returnActivities.push(
       `${speciesType} - ${String(activities.quantityChicksToRescue)} chicks taken to ${String(
         activities.rescueCentre,
-      )} on ${createDisplayDate(new Date(activities.dateChicksToRescue))}`,
+      )} on ${MultiUseFunctions.createShortDisplayDate(new Date(activities.dateChicksToRescue))}`,
     );
   }
 
   // Build the string for chicks relocated nearby.
   if (activities.chicksRelocatedNearby) {
     returnActivities.push(
-      `${speciesType} - ${String(activities.quantityChicksRelocated)} chicks relocated nearby on ${createDisplayDate(
+      `${speciesType} - ${String(
+        activities.quantityChicksRelocated,
+      )} chicks relocated nearby on ${MultiUseFunctions.createShortDisplayDate(
         new Date(activities.dateChicksRelocated),
       )}`,
     );
@@ -115,18 +94,18 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
   // Build the string for chicks killed.
   if (activities.killChicks) {
     returnActivities.push(
-      `${speciesType} - ${String(activities.quantityChicksKilled)} chicks killed on ${createDisplayDate(
-        new Date(activities.dateChicksKilled),
-      )}`,
+      `${speciesType} - ${String(
+        activities.quantityChicksKilled,
+      )} chicks killed on ${MultiUseFunctions.createShortDisplayDate(new Date(activities.dateChicksKilled))}`,
     );
   }
 
   // Build the string for adults killed.
   if (activities.killAdults) {
     returnActivities.push(
-      `${speciesType} - ${String(activities.quantityAdultsKilled)} adults killed on ${createDisplayDate(
-        new Date(activities.dateAdultsKilled),
-      )}`,
+      `${speciesType} - ${String(
+        activities.quantityAdultsKilled,
+      )} adults killed on ${MultiUseFunctions.createShortDisplayDate(new Date(activities.dateAdultsKilled))}`,
     );
   }
 
@@ -188,8 +167,8 @@ const setReturnNotificationDetails = (
 ) => {
   return {
     id: licenceId,
-    returnDate: createDisplayDate(new Date(returnDate)),
-    siteAddress: createSummaryAddress(siteAddress),
+    returnDate: MultiUseFunctions.createShortDisplayDate(new Date(returnDate)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     returnDetails: createReturnDetails(returnDetails),
     submittedName,
   };
@@ -220,8 +199,8 @@ const setFinalReturnNotificationDetails = (
 ) => {
   return {
     id: licenceId,
-    returnDate: createDisplayDate(new Date(returnDate)),
-    siteAddress: createSummaryAddress(siteAddress),
+    returnDate: MultiUseFunctions.createShortDisplayDate(new Date(returnDate)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     submittedName,
     hasTriedPreventativeMeasures: hasTriedPreventativeMeasures ? 'Yes' : 'No',
     preventativeMeasuresDetails,
@@ -249,10 +228,10 @@ const setSiteVisitReturnNotificationDetails = (
 ) => {
   return {
     id: licenceId,
-    returnDate: createDisplayDate(new Date(returnDate)),
-    siteAddress: createSummaryAddress(siteAddress),
+    returnDate: MultiUseFunctions.createShortDisplayDate(new Date(returnDate)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     submittedName,
-    siteVisitDate: createDisplayDate(new Date(siteVisitDate)),
+    siteVisitDate: MultiUseFunctions.createShortDisplayDate(new Date(siteVisitDate)),
   };
 };
 

@@ -3,8 +3,8 @@ import database from '../models/index.js';
 import config from '../config/app';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
-
 import Application from './application';
+import MultiUseFunctions from '../multi-use-functions';
 
 const {License, LicenseCondition, LicenseAdvisory, Advisory, Condition} = database;
 
@@ -39,8 +39,8 @@ const setLicenceNotificationDetails = (application: any, licence: any) => {
     siteAddressLine2: application.SiteAddress.addressLine2 ? application.SiteAddress.addressLine2 : 'No address line 2',
     siteAddressTown: application.SiteAddress.addressTown,
     sitePostcode: application.SiteAddress.postcode,
-    dateFrom: createDisplayDate(new Date(licence.periodFrom)),
-    dateTo: createDisplayDate(new Date(licence.periodTo)),
+    dateFrom: MultiUseFunctions.createShortDisplayDate(new Date(licence.periodFrom)),
+    dateTo: MultiUseFunctions.createShortDisplayDate(new Date(licence.periodTo)),
     lhName: application.LicenceHolder.name,
     addressLine1: application.LicenceHolderAddress.addressLine1,
     addressLine2: application.LicenceHolderAddress.addressLine2
@@ -88,11 +88,6 @@ const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
   }
-};
-
-// Create a more user friendly displayable date from a date object, format (dd/mm/yyy).
-const createDisplayDate = (date: Date) => {
-  return date.toLocaleDateString('en-GB', {year: 'numeric', month: 'numeric', day: 'numeric'});
 };
 
 /**

@@ -1,12 +1,11 @@
 import * as jwt from 'jsonwebtoken';
 import {Op} from 'sequelize';
-
 import jwk from '../config/jwk.js';
 import database from '../models/index.js';
-
 import config from '../config/app';
 import LicenceController from './license';
 import {ApplicationInterface} from './application.js';
+import MultiUseFunctions from '../multi-use-functions';
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -14,30 +13,6 @@ import {ApplicationInterface} from './application.js';
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
 const {Application, Contact, Address, License, Revocation} = database;
-
-/**
- * This function returns a summary address built from the address fields of an address object.
- *
- * @param {any} fullAddress The address to use to build the summary address from.
- * @returns {string} Returns a string containing the summary address.
- */
-const createSummaryAddress = (fullAddress: any): string => {
-  const address = [];
-  address.push(fullAddress.addressLine1.trim());
-  // As addressLine2 is optional we need to check if it exists.
-  if (fullAddress.addressLine2) {
-    address.push(fullAddress.addressLine2.trim());
-  }
-
-  address.push(fullAddress.addressTown.trim(), fullAddress.addressCounty.trim(), fullAddress.postcode.trim());
-
-  return address.join(', ');
-};
-
-// Create a more user friendly displayable date from a date object, format (dd/mm/yyy).
-const createDisplayDate = (date: Date) => {
-  return date.toLocaleDateString('en-GB', {year: 'numeric', month: 'numeric', day: 'numeric'});
-};
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -125,11 +100,11 @@ const set14DayReminderEmailDetails = async (
 
   return {
     lhName: licenceHolderContact.name,
-    applicationDate: createDisplayDate(new Date(applicationDate)),
+    applicationDate: MultiUseFunctions.createShortDisplayDate(new Date(applicationDate)),
     onBehalfName: onBehalfContact.name,
     onBehalfOrg: onBehalfContact.organisation ? onBehalfContact.organisation : 'No organisation provided',
     onBehalfEmail: onBehalfContact.emailAddress,
-    siteAddress: createSummaryAddress(siteAddress),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     magicLink,
     id,
   };
@@ -144,11 +119,11 @@ const set14DayReminderEmailDetailsForApplicant = async (
 ) => {
   return {
     lhName: licenceHolderContact.name,
-    applicationDate: createDisplayDate(new Date(applicationDate)),
+    applicationDate: MultiUseFunctions.createShortDisplayDate(new Date(applicationDate)),
     laName: onBehalfContact.name,
     lhOrg: licenceHolderContact.organisation ? licenceHolderContact.organisation : 'No organisation provided',
     lhEmail: licenceHolderContact.emailAddress,
-    siteAddress: createSummaryAddress(siteAddress),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     id,
   };
 };
@@ -163,8 +138,8 @@ const set21DayWithdrawEmailDetails = (
   return {
     lhName: licenceHolderContact.name,
     onBehalfName: onBehalfContact.name,
-    applicationDate: createDisplayDate(new Date(applicationDate)),
-    siteAddress: createSummaryAddress(siteAddress),
+    applicationDate: MultiUseFunctions.createShortDisplayDate(new Date(applicationDate)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     id,
   };
 };
