@@ -29,11 +29,9 @@ jobs:
       run: |
         npm run lint
 
-    # - name: Check the integration tests
-    #   env:
-    #     GULLS_NOTIFY_API_KEY: ${{ secrets.GULLS_NOTIFY_TEST_KEY }}
-    #   run: |
-    #     npm run test
+    - name: Check the integration tests
+      run: |
+        npm run test
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
