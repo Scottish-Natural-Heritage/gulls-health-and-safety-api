@@ -3,9 +3,9 @@ import {Op} from 'sequelize';
 import jwk from '../config/jwk.js';
 import database from '../models/index.js';
 import config from '../config/app';
+import MultiUseFunctions from '../multi-use-functions';
 import LicenceController from './license';
 import {ApplicationInterface} from './application.js';
-import MultiUseFunctions from '../multi-use-functions';
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html

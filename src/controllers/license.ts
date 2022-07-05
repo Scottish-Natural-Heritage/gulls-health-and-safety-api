@@ -3,8 +3,8 @@ import database from '../models/index.js';
 import config from '../config/app';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
-import Application from './application';
 import MultiUseFunctions from '../multi-use-functions';
+import Application from './application';
 
 const {License, LicenseCondition, LicenseAdvisory, Advisory, Condition} = database;
 

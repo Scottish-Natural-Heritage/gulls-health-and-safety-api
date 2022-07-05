@@ -3,8 +3,8 @@ import database from '../models/index.js';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 import config from '../config/app';
-import ApplicationController from './application';
 import MultiUseFunctions from '../multi-use-functions';
+import ApplicationController from './application';
 
 const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Note, Advisory, Condition} = database;
 

@@ -1,10 +1,10 @@
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
+import MultiUseFunctions from '../multi-use-functions';
 import ApplicationController from './application';
 import AddressController from './address';
 import ContactController from './contact';
-import MultiUseFunctions from '../multi-use-functions';
 
 const {Returns, RSpecies, RActivity} = database;
 
