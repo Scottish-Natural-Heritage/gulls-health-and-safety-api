@@ -1,9 +1,9 @@
 import * as jwt from 'jsonwebtoken';
-
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
 import jwk from '../config/jwk.js';
+import MultiUseFunctions from '../multi-use-functions';
 
 const {
   Application,
@@ -67,11 +67,6 @@ interface ApplicationInterface {
   fourteenDayReminder: boolean;
 }
 
-// Create a more user friendly displayable date from a date object.
-const createDisplayDate = (date: Date) => {
-  return date.toLocaleDateString('en-GB', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
-};
-
 /**
  * This function returns an object containing the details required for the license holder direct email.
  *
@@ -83,29 +78,10 @@ const createDisplayDate = (date: Date) => {
 const setLicenceHolderDirectEmailDetails = (newApplication: any, licenceHolderContact: any, siteAddress: any) => {
   return {
     licenceName: licenceHolderContact.name,
-    applicationDate: createDisplayDate(new Date(newApplication.createdAt)),
-    siteAddress: createSummaryAddress(siteAddress),
+    applicationDate: MultiUseFunctions.createDisplayDate(new Date(newApplication.createdAt)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     id: newApplication.id,
   };
-};
-
-/**
- * This function returns a summary address built from the address fields of an address object.
- *
- * @param {any} fullAddress The address to use to build the summary address from.
- * @returns {string} Returns a string containing the summary address.
- */
-const createSummaryAddress = (fullAddress: any): string => {
-  const address = [];
-  address.push(fullAddress.addressLine1.trim());
-  // As addressLine2 is optional we need to check if it exists.
-  if (fullAddress.addressLine2) {
-    address.push(fullAddress.addressLine2.trim());
-  }
-
-  address.push(fullAddress.addressTown.trim(), fullAddress.addressCounty.trim(), fullAddress.postcode.trim());
-
-  return address.join(', ');
 };
 
 /**
@@ -175,8 +151,8 @@ const setHolderApplicantConfirmEmailDetails = (
   return {
     lhName: licenceHolderContact.name,
     laName: onBehalfContact.name,
-    applicationDate: createDisplayDate(new Date(createdAt)),
-    siteAddress: createSummaryAddress(siteAddress),
+    applicationDate: MultiUseFunctions.createDisplayDate(new Date(createdAt)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
     id,
   };
 };
