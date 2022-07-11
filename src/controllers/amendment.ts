@@ -4,9 +4,9 @@ import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 import config from '../config/app';
 import MultiUseFunctions from '../multi-use-functions';
+import AdvisoryController from './advisory';
+import ConditionController from './condition';
 import ApplicationController from './application';
-import AdvisoryController from '../controllers/advisory';
-import ConditionController from '../controllers/condition';
 
 const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Note, Advisory, Condition} = database;
 
@@ -136,7 +136,7 @@ const createAdvisoriesList = async (advisories: any): Promise<string> => {
   // Get all optional advisories from the database.
   const allOptionalAdvisories = await AdvisoryController.findAllOptional();
 
-  const optionalAdvisoryIds = new Set(); // new Set([1, 2, 7]);
+  const optionalAdvisoryIds = new Set();
 
   // Add the advisory IDs to a set.
   for (const advisory of allOptionalAdvisories) {
@@ -174,7 +174,7 @@ const createGeneralConditionsList = async (conditions: any): Promise<string> => 
     return condition.category === 'General';
   });
 
-  const optionalGeneralConditionIds = new Set(); // new Set([12, 13]);
+  const optionalGeneralConditionIds = new Set();
 
   // Add the condition IDs to a set.
   for (const condition of allOptionalGeneralConditions) {
@@ -212,7 +212,7 @@ const createWhatYouMustDoConditionsList = async (conditions: any): Promise<strin
     return condition.category === 'What you must do';
   });
 
-  const optionalWhatMustBeDoneConditionIds = new Set(); // new Set([4, 6, 7]);
+  const optionalWhatMustBeDoneConditionIds = new Set();
 
   // Add the condition IDs to a set.
   for (const condition of allOptionalWhatYouMustDoConditions) {
@@ -250,7 +250,7 @@ const createReportingConditionsList = async (conditions: any): Promise<string> =
     return condition.category === 'Recording and reporting requirements';
   });
 
-  const optionalReportingConditionIds = new Set(); // new Set([19, 20, 21, 22, 23, 24, 25]);
+  const optionalReportingConditionIds = new Set();
 
   // Add the condition IDs to a set.
   for (const condition of allOptionalReportingConditions) {
