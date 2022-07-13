@@ -75,7 +75,7 @@ const addReturnActivities = (activities: any, speciesType: string): string => {
   if (activities.chicksToRescueCentre) {
     returnActivities.push(
       `${speciesType} - ${String(activities.quantityChicksToRescue)} chicks taken to ${String(
-        activities.rescueCentre,
+        activities.wildlifeCentre,
       )} on ${MultiUseFunctions.createShortDisplayDate(new Date(activities.dateChicksToRescue))}`,
     );
   }
