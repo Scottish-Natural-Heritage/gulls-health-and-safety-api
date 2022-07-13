@@ -289,6 +289,49 @@ const cleanReturnActivity = (body: any, gullType: string): any => {
 };
 
 /**
+ * Cleans the activity details into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned activity details.
+ */
+const cleanNewPermittedActivity = (body: any): any => {
+  return {
+    removeNests: body.activities.removeNests,
+    quantityNestsToRemove: body.activities.quantityNestsToRemove ? body.activities.quantityNestsToRemove : undefined,
+    eggDestruction: body.activities.eggDestruction,
+    quantityNestsWhereEggsDestroyed: body.activities.quantityNestsWhereEggsDestroyed
+      ? body.activities.quantityNestsWhereEggsDestroyed
+      : undefined,
+    chicksToRescueCentre: body.activities.chicksToRescueCentre,
+    quantityChicksToRescue: body.activities.quantityChicksToRescue ? body.activities.quantityChicksToRescue : undefined,
+    chicksRelocateNearby: body.activities.chicksRelocateNearby,
+    quantityChicksToRelocate: body.activities.quantityChicksToRelocate
+      ? body.activities.quantityChicksToRelocate
+      : undefined,
+    killChicks: body.activities.killChicks,
+    quantityChicksToKill: body.activities.quantityChicksToKill ? body.activities.quantityChicksToKill : undefined,
+    killAdults: body.activities.killAdults,
+    quantityAdultsToKill: body.activities.quantityAdultsToKill ? body.activities.quantityAdultsToKill : undefined,
+  };
+};
+
+/**
+ * Cleans the species into something the database can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned species.
+ */
+const cleanUpdatedSpecies = (body: any): any => {
+  return {
+    HerringGull: body.HerringGull,
+    BlackHeadedGull: body.BlackHeadedGull,
+    CommonGull: body.CommonGull,
+    GreatBlackBackedGull: body.GreatBlackBackedGull,
+    LesserBlackBackedGull: body.LesserBlackBackedGull,
+  };
+};
+
+/**
  * Cleans the permitted activity details into something the database can use.
  *
  * @param {any} body The body of the request to be cleaned.
@@ -743,6 +786,8 @@ const CleaningFunctions = {
   cleanReturnActivity,
   cleanAmendment,
   cleanAmendActivity,
+  cleanNewPermittedActivity,
+  cleanUpdatedSpecies,
 };
 
 export default CleaningFunctions;

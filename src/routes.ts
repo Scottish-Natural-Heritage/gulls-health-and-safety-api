@@ -9,6 +9,7 @@ import Advisory from './controllers/advisory';
 import Condition from './controllers/condition';
 import Assessment from './controllers/assessment';
 import PActivity from './controllers/p-activity';
+import AdditionalSpecies from './controllers/additional-species';
 import Contact from './controllers/contact';
 import Returns from './controllers/returns';
 import CleaningFunctions from './controllers/cleaning-functions';
@@ -1598,6 +1599,108 @@ const routes: ServerRoute[] = [
 
         // Return the amendment.
         return h.response(amendment).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * GET single application additional species from ID endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/application/{id}/add-additional-species/{speciesId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Is the speciesId a number?
+        const existingSpeciesId = Number(request.params.speciesId);
+        if (Number.isNaN(existingSpeciesId)) {
+          return h.response({message: `Add additional species ${existingSpeciesId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get the requested additional activity.
+        const additionalSpecies = await AdditionalSpecies.findOne(existingSpeciesId);
+
+        // Did we get an additional activity?
+        if (additionalSpecies === undefined || additionalSpecies === null) {
+          return h.response({message: `Additional Activity ${existingSpeciesId} not found.`}).code(404);
+        }
+
+        // Return the additionalSpecies record.
+        return h.response(additionalSpecies).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * PATCH application additional activity endpoint.
+   */
+  {
+    method: 'POST',
+    path: `${config.pathPrefix}/application/{id}/add-additional-species`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Clean the fields on the incoming activity.
+        const incomingActivity = await CleaningFunctions.cleanNewPermittedActivity(request.payload as any);
+
+        // Create the additional activity.
+        const newActivity = await PActivity.create(incomingActivity);
+
+        // If they're not successful, send a 500 error.
+        if (!newActivity) {
+          return h.response({message: `Could not add activity to application ${existingId}.`}).code(500);
+        }
+
+        // Clean the fields on the updated species.
+        const updateSpecies = CleaningFunctions.cleanUpdatedSpecies(request.payload as any);
+
+        // Add the the fields on the applications permitted activity record.
+        const updateAndAddSpecies = await PActivity.addNewSpecies(newActivity, updateSpecies, existingId);
+
+        // If they're not successful, send a 500 error.
+        if (!updateAndAddSpecies) {
+          return h.response({message: `Could not add additional species to application ${existingId}.`}).code(500);
+        }
+
+        // If they are, send back the updated fields.
+        return h.response().code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

@@ -2,7 +2,7 @@ import {PActivityInterface} from 'models/p-activity.js';
 import transaction from 'sequelize/types/lib/transaction';
 import database from '../models/index.js';
 
-const {PActivity} = database;
+const {PActivity, PSpecies} = database;
 
 const PActivityController = {
   findOne: async (id: number) => {
@@ -19,6 +19,44 @@ const PActivityController = {
       newActivity = await PActivity.create(activity, {transaction: t});
     });
     return newActivity;
+  },
+
+  addNewSpecies: async (activity: any, speciesType: string, id: any) => {
+    const newActivityAndUpdatedSpecies = await database.sequelize.transaction(async (t: transaction) => {
+      const newActivity = await PActivity.create(activity, {transaction: t});
+
+      let item;
+      // prettier-ignore
+      switch (speciesType) {
+        case 'HerringGull':
+          item = await PSpecies.update({HerringGullId: newActivity.id}, {where: {id}, returning: true, transaction: t});
+          break;
+        case 'BlackHeadedGull':
+          item = await PSpecies.update({BlackHeadedGullId: newActivity.id}, {where: {id}, returning: true, transaction: t});
+          break;
+        case 'CommonGull':
+          item = await PSpecies.update({CommonGullId: newActivity.id}, {where: {id}, returning: true, transaction: t});
+          break;
+        case 'GreatBlackBackedGull':
+          item = await PSpecies.update({GreatBlackBackedGullId: newActivity.id}, {where: {id}, returning: true, transaction: t});
+          break;
+        case 'LesserBlackBackedGull':
+          item = await PSpecies.update({LesserBlackBackedGullId: newActivity.id}, {where: {id}, returning: true, transaction: t});
+          break;
+        default:
+          item = undefined;
+          break;
+      }
+
+      return item;
+    });
+    // If a record was updated return true.
+    if (newActivityAndUpdatedSpecies) {
+      return true;
+    }
+
+    // Something went wrong so return false.
+    return false;
   },
 
   update: async (id: number, activity: PActivityInterface) => {
