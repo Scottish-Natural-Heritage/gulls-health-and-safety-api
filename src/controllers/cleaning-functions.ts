@@ -316,22 +316,6 @@ const cleanNewPermittedActivity = (body: any): any => {
 };
 
 /**
- * Cleans the species into something the database can use.
- *
- * @param {any} body The body of the request to be cleaned.
- * @returns {any} The cleaned species.
- */
-const cleanUpdatedSpecies = (body: any): any => {
-  return {
-    HerringGull: body.HerringGull,
-    BlackHeadedGull: body.BlackHeadedGull,
-    CommonGull: body.CommonGull,
-    GreatBlackBackedGull: body.GreatBlackBackedGull,
-    LesserBlackBackedGull: body.LesserBlackBackedGull,
-  };
-};
-
-/**
  * Cleans the permitted activity details into something the database can use.
  *
  * @param {any} body The body of the request to be cleaned.
@@ -787,7 +771,6 @@ const CleaningFunctions = {
   cleanAmendment,
   cleanAmendActivity,
   cleanNewPermittedActivity,
-  cleanUpdatedSpecies,
 };
 
 export default CleaningFunctions;

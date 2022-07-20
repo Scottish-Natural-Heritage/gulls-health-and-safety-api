@@ -1647,8 +1647,8 @@ const routes: ServerRoute[] = [
           return h.response({message: `Could not add additional species to application ${existingId}.`}).code(500);
         }
 
-        // If they are, send back the updated fields.
-        return h.response().code(200);
+        // If all is well return 201 created.
+        return h.response().code(201);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

@@ -592,9 +592,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('Status code is 200 OK', function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"    pm.response.to.have.status('OK');\r",
+							"pm.test('Status code is 200 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
 							"});"
 						],
 						"type": "text/javascript"
