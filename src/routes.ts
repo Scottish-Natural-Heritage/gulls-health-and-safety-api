@@ -1608,6 +1608,57 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * POST application additional species endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/add-additional-species`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application to retrieve a permitted application (not a bogus app no)
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Get the new activity from the request's payload.
+        const newIncomingSpeciesActivity = request.payload as any;
+
+        // Clean the fields on the incoming activity.
+        const incomingActivity = await CleaningFunctions.cleanNewPermittedActivity(newIncomingSpeciesActivity);
+
+        // Add the the fields on the applications permitted activity record.
+        const updateAndAddSpecies = await Application.addNewSpecies(
+          incomingActivity,
+          newIncomingSpeciesActivity.speciesType,
+          application.PermittedSpeciesId,
+        );
+
+        // If they're not successful, send a 500 error.
+        if (!updateAndAddSpecies) {
+          return h.response({message: `Could not add additional species to application ${existingId}.`}).code(500);
+        }
+
+        // If all is well return 201 created.
+        return h.response().code(201);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * Resend licences issued before test 3 deployment.
    */
   {
