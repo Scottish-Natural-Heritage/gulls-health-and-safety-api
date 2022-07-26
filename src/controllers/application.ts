@@ -696,6 +696,61 @@ const ApplicationController = {
     return undefined;
   },
 
+  /**
+   * Adds a new species to an already created activity.
+   *
+   * @param {any} activity Creates a new activity.
+   * @param {string} speciesType The specific species that is selected in the form.
+   * @param {any} id The ID of the application.
+   * @returns {boolean} True if the record is updated, otherwise false.
+   */
+  addNewSpecies: async (activity: any, speciesType: string, id: any) => {
+    const newActivityAndUpdatedSpecies = await database.sequelize.transaction(async (t: transaction) => {
+      const newActivity = await PActivity.create(activity, {transaction: t});
+
+      let item;
+      switch (speciesType) {
+        case 'herringGull':
+          // Save the new object activity id to the relevant species type property where id equal to permitted species id.
+          item = await PSpecies.update({HerringGullId: newActivity.id}, {where: {id}, returning: true, transaction: t});
+          break;
+        case 'blackHeadedGull':
+          item = await PSpecies.update(
+            {BlackHeadedGullId: newActivity.id},
+            {where: {id}, returning: true, transaction: t},
+          );
+          break;
+        case 'commonGull':
+          item = await PSpecies.update({CommonGullId: newActivity.id}, {where: {id}, returning: true, transaction: t});
+          break;
+        case 'greatBlackBackedGull':
+          item = await PSpecies.update(
+            {GreatBlackBackedGullId: newActivity.id},
+            {where: {id}, returning: true, transaction: t},
+          );
+          break;
+        case 'lesserBlackBackedGull':
+          item = await PSpecies.update(
+            {LesserBlackBackedGullId: newActivity.id},
+            {where: {id}, returning: true, transaction: t},
+          );
+          break;
+        default:
+          item = undefined;
+          break;
+      }
+
+      return item;
+    });
+    // If a record was updated return true.
+    if (newActivityAndUpdatedSpecies) {
+      return true;
+    }
+
+    // Something went wrong so return false.
+    return false;
+  },
+
   confirm: async (id: number, confirmApplication: ApplicationInterface) => {
     let confirmedApplication;
     // Start the transaction.

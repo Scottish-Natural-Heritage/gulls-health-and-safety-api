@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f57ae67f-5a8e-4b9e-919c-f39e33c87754",
+		"_postman_id": "577e8882-80cb-46d1-b225-69b9f13f5348",
 		"name": "v1-gulls-health-and-safety-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -560,6 +560,95 @@
 							"    pm.response.to.have.status('OK');\r",
 							"});\r",
 							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submit additional species",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"speciesType\": \"commonGull\",\r\n      \"activities\": \r\n\t  {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": 100,\r\n        \"eggDestruction\": false,\r\n        \"quantityNestsWhereEggsDestroyed\": null,\r\n        \"chicksToRescueCentre\": false,\r\n        \"quantityChicksToRescue\": null,\r\n        \"chicksRelocateNearby\": false,\r\n        \"quantityChicksToRelocate\": null,\r\n        \"killChicks\": false,\r\n        \"quantityChicksToKill\": null,\r\n        \"killAdults\": false,\r\n        \"quantityAdultsToKill\": null\r\n\t  }\r\n\t}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{GULLS_NEW_APP_ID}}/add-additional-species",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{GULLS_NEW_APP_ID}}",
+						"add-additional-species"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get application with additional species",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							"\r",
+							"pm.test('Returned object matches posted object', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(jsonData.PSpecies.CommonGullId).not.equal(null);\r",
+							"    pm.expect(jsonData.PSpecies.PCommonGull.removeNests).to.eql(true);\r",
+							"});"
 						],
 						"type": "text/javascript"
 					}
