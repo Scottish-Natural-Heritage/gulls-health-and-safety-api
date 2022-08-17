@@ -121,10 +121,9 @@ const cleanEditAddress = (body: any): any => {
     addressLine1: body.addressLine1 === undefined ? undefined : body.addressLine1.trim(),
     addressLine2: body.addressLine2 === undefined ? undefined : body.addressLine2.trim(),
     addressTown: body.addressTown === undefined ? undefined : body.addressTown.trim(),
-    addressCounty:
-      body.addressCounty === undefined ? undefined : body.addressCounty.trim(),
+    addressCounty: body.addressCounty === undefined ? undefined : body.addressCounty.trim(),
   };
-}
+};
 
 /**
  * Cleans the application details into something the database can use.

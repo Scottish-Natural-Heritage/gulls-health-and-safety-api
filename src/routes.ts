@@ -1788,7 +1788,7 @@ const routes: ServerRoute[] = [
 
         // If we make it here all is good, return 20 OK and the updated address object.
         return h.response(editedAddress).code(200);
-      } catch(error: unknown) {
+      } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.

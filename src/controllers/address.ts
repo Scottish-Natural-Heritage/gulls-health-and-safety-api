@@ -3,6 +3,15 @@ import database from '../models/index.js';
 
 const {Address, Application} = database;
 
+interface AddressInterface {
+  id: number;
+  addressLine1: string;
+  addressLine2: string;
+  addressTown: string;
+  addressCounty: string;
+  postcode: string;
+}
+
 const AddressController = {
   findOne: async (id: number) => {
     return Address.findByPk(id);
@@ -31,7 +40,11 @@ const AddressController = {
       );
     });
 
-    return newAddress;
+    if (newAddress) {
+      return newAddress as AddressInterface;
+    }
+
+    return undefined;
   },
 
   update: async (address: any, addressId: number) => {
@@ -40,7 +53,11 @@ const AddressController = {
       editedAddress = await Address.update(address, {where: {id: addressId}, returning: true, transaction: t});
     });
 
-    return editedAddress;
+    if (editedAddress) {
+      return editedAddress as AddressInterface;
+    }
+
+    return undefined;
   },
 };
 
