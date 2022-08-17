@@ -1735,18 +1735,66 @@ const routes: ServerRoute[] = [
         request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
-    }
+      }
+    },
   },
 
   /**
    * PATCH existing licence holder address.
    */
-   {
+  {
     method: 'patch',
     path: `${config.pathPrefix}/application/{id}/address/{addressId}`,
     handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
 
-    }
+        // Is the address ID a number?
+        const existingAddressId = Number(request.params.addressId);
+        if (Number.isNaN(existingAddressId)) {
+          return h.response({message: `Address ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Try to get the requested address.
+        const address = await Address.findOne(existingAddressId);
+
+        // Did we get an address?
+        if (address === undefined || address === null) {
+          return h.response({message: `Address ${existingAddressId} not found.`}).code(404);
+        }
+
+        // Clean the request payload into an address object the DB can use.
+        const cleanedAddress = await CleaningFunctions.cleanEditAddress(request.payload as any);
+
+        // Update the existing address row.
+        const editedAddress = await Address.update(cleanedAddress, existingAddressId);
+
+        // Check if the new address was correctly added to the DB.
+        if (editedAddress === undefined || editedAddress === null) {
+          return h.response({message: `Failed to update address ${existingAddressId} in database`}).code(500);
+        }
+
+        // If we make it here all is good, return 20 OK and the updated address object.
+        return h.response(editedAddress).code(200);
+      } catch(error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
   },
 
   /**

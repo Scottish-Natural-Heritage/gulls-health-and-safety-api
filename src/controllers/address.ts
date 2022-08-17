@@ -31,6 +31,15 @@ const AddressController = {
 
     return newAddress;
   },
+
+  update: async (address: any, addressId: number) => {
+    let editedAddress;
+    await database.sequelize.transaction(async (t: transaction) => {
+      editedAddress = await Address.update(address, {where: {id: addressId}});
+    });
+
+    return editedAddress;
+  },
 };
 
 export {AddressController as default};
