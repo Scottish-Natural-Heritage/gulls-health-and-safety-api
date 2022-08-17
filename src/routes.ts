@@ -13,6 +13,7 @@ import Contact from './controllers/contact';
 import Returns from './controllers/returns';
 import CleaningFunctions from './controllers/cleaning-functions';
 import Scheduled from './controllers/scheduled';
+import Address from './controllers/address';
 import config from './config/app';
 import JsonUtils from './json-utils';
 import jwk from './config/jwk.js';
@@ -1694,7 +1695,46 @@ const routes: ServerRoute[] = [
     method: 'post',
     path: `${config.pathPrefix}/application/{id}/address`,
     handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
 
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Are the licence holder's address and site address different? We only want to create a
+        // new address record if they're the same. Otherwise we should patch the existing licence
+        // holder's address.
+        if (application.LicenceHolderAddressId !== application.SiteAddressId) {
+          return h.response({message: `Licence holder address and site address are different`}).code(400);
+        }
+
+        // Clean the incoming request's fields.
+        const address = await CleaningFunctions.cleanEditAddress(request.payload as any);
+
+        // Create the new address entry.
+        const newAddress = await Address.create(address, existingId);
+
+        // Check if the new address was correctly added to the DB.
+        if (newAddress === undefined || newAddress === null) {
+          return h.response({message: `Failed to create new address in database`}).code(500);
+        }
+
+        // If we make it here all is good, return 201 created and the new address object.
+        return h.response(newAddress).code(201);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
     }
   },
 
