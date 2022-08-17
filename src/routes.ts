@@ -1688,6 +1688,28 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * POST new licence holder address.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/address`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+
+    }
+  },
+
+  /**
+   * PATCH existing licence holder address.
+   */
+   {
+    method: 'patch',
+    path: `${config.pathPrefix}/application/{id}/address/{addressId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+
+    }
+  },
+
+  /**
    * GET the public part of our elliptic curve JWK.
    */
   {
