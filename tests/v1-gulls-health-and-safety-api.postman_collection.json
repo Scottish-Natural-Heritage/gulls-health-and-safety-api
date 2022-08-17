@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "577e8882-80cb-46d1-b225-69b9f13f5348",
+		"_postman_id": "48db6bd4-29db-42d9-9fc0-d7278d2e4208",
 		"name": "v1-gulls-health-and-safety-api",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5746803"
 	},
 	"item": [
 		{
@@ -3142,6 +3143,214 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create new application with same site address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"ID_SAME_ADDRESS\", pm.response.headers.get('Location').split('/').pop());\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n   \"manualAddress\": {\r\n   \"addressLine1\": \"KATTEDAL FARM   AULDEARN\",\r\n   \"addressLine2\": \"WATERLOO - EASTERTON - INSHOCH\",\r\n   \"addressTown\": \"NAIRN\",\r\n   \"addressCounty\": \"HIGHLAND\"\r\n   },\r\n  \"sameAddressAsLicenceHolder\": true,\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new application with different site address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							"\r",
+							"pm.test('Location is present', function () {\r",
+							"    pm.response.to.have.header('Location');\r",
+							"    \r",
+							"    pm.expect(pm.response.headers.get('Location')).to.include(\r",
+							"        `http://localhost:3017/gulls-health-and-safety-api/v1/application/`\r",
+							"    );\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"ID_DIFFERENT_ADDRESS\", pm.response.headers.get('Location').split('/').pop());\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"ADDRESS_ID_DIFFERENT_ADDRESS\", jsonData.LicenceHolderAddressId);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"onBehalf\": true,\r\n  \"onBehalfDetails\": {\r\n    \"name\": \"Test User 1\",\r\n    \"organisation\": \"Nature Scot\",\r\n    \"emailAddress\": \"john.moore@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"licenceHolderDetails\": {\r\n    \"name\": \"Test User 2\",\r\n    \"organisation\": \"Test Org\",\r\n    \"emailAddress\": \"paul.cox@nature.scot\",\r\n    \"phoneNumber\": \"01234567890\"\r\n  },\r\n  \"postcode\": \"IV38NW\",\r\n  \"uprn\": 10092032547,\r\n   \"manualAddress\": {\r\n   \"addressLine1\": \"KATTEDAL FARM   AULDEARN\",\r\n   \"addressLine2\": \"WATERLOO - EASTERTON - INSHOCH\",\r\n   \"addressTown\": \"NAIRN\",\r\n   \"addressCounty\": \"HIGHLAND\"\r\n   },\r\n  \"sameAddressAsLicenceHolder\": false,\r\n  \"sitePostcode\": \"IV38NW\",\r\n  \"siteUprn\": 10092032547,\r\n  \"siteManualAddress\": {\r\n  \"addressLine1\": \" FORESTRY & LAND SCOTLAND  \",\r\n  \"addressLine2\": \"AUCHTERAW ROAD\",\r\n  \"addressTown\": \"FORT AUGUSTUS\",\r\n  \"addressCounty\": \"HIGHLAND\"\r\n  },\r\n  \"issueOnSite\": {\r\n    \"aggression\": true,\r\n    \"diveBombing\": false,\r\n    \"noise\": true,\r\n    \"droppings\": false,\r\n    \"nestingMaterial\": true,\r\n    \"atHeightAggression\": false,\r\n    \"other\": true\r\n  },\r\n  \"siteIssueDetails\": {\r\n    \"whenIssue\": \"13/03/2023\",\r\n    \"whoAffected\": \"Test Users\",\r\n    \"howAffected\": \"For test reasons\",\r\n    \"otherIssueInformation\": \"Test other information\"\r\n  },\r\n  \"species\": {\r\n    \"herringGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": true,\r\n        \"quantityNestsToRemove\": \"upTo1000\",\r\n        \"eggDestruction\": false,\r\n        \"chicksToRescueCentre\": false,\r\n        \"chicksRelocateNearby\": false,\r\n        \"killChicks\": false,\r\n        \"killAdults\": true,\r\n        \"quantityAdultsToKill\": 99999\r\n      }\r\n    },\r\n    \"blackHeadedGull\": {\r\n      \"requiresLicense\": true,\r\n      \"activities\": {\r\n        \"removeNests\": false,\r\n        \"eggDestruction\": true,\r\n        \"quantityNestsWhereEggsDestroyed\": \"upTo10\",\r\n        \"chicksToRescueCentre\": true,\r\n        \"quantityChicksToRescue\": 3,\r\n        \"chicksRelocateNearby\": true,\r\n        \"quantityChicksToRelocate\": 33\r\n      }\r\n    },\r\n    \"commonGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"greatBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    },\r\n    \"lesserBlackBackedGull\": {\r\n      \"requiresLicense\": false,\r\n      \"activities\": {}\r\n    }\r\n  },\r\n  \"measuresTried\": {\r\n    \"preventNesting\": true,\r\n    \"removeOldNests\": false,\r\n    \"removeLitter\": true,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": true,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": true\r\n  },\r\n  \"measuresIntendToTry\": {\r\n    \"preventNesting\": false,\r\n    \"removeOldNests\": true,\r\n    \"removeLitter\": false,\r\n    \"humanDisturbance\": false,\r\n    \"scaringDevices\": false,\r\n    \"hawking\": false,\r\n    \"disturbanceByDogs\": false\r\n  },\r\n  \"measuresTriedMoreDetail\": \"Test measures tried more detail\",\r\n  \"measuresIntendNotToTry\": \"Test measures intend not to try more detail\",\r\n  \"isResidentialSite\": true,\r\n  \"residentialType\": \"wasteDisposal\",\r\n  \"previousLicence\": true,\r\n  \"previousLicenceNumber\": \"123456\",\r\n  \"supportingInformation\": \"Test supporting information\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new licence holder address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 201 Created', function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status('Created');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"addressLine1\": \"Test edit address 1\",\r\n    \"addressLine2\": \"Test edit address 2\",\r\n    \"addressTown\": \"Test edit address Town\",\r\n    \"addressCounty\": \"Test edit address County\",\r\n    \"postcode\": \"AB123CD\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{ID_SAME_ADDRESS}}/address",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{ID_SAME_ADDRESS}}",
+						"address"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update existing licence holder address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200 OK', function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"addressLine1\": \"Test edit address 1\",\r\n    \"addressLine2\": \"Test edit address 2\",\r\n    \"addressTown\": \"Test edit address Town\",\r\n    \"addressCounty\": \"Test edit address County\",\r\n    \"postcode\": \"AB123CD\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3017/gulls-health-and-safety-api/v1/application/{{ID_DIFFERENT_ADDRESS}}/address/{{ADDRESS_ID_DIFFERENT_ADDRESS}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3017",
+					"path": [
+						"gulls-health-and-safety-api",
+						"v1",
+						"application",
+						"{{ID_DIFFERENT_ADDRESS}}",
+						"address",
+						"{{ADDRESS_ID_DIFFERENT_ADDRESS}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -3187,6 +3396,18 @@
 		},
 		{
 			"key": "GULLS_NEW_AMEND_ID",
+			"value": ""
+		},
+		{
+			"key": "ID_SAME_ADDRESS",
+			"value": ""
+		},
+		{
+			"key": "ID_DIFFERENT_ADDRESS",
+			"value": ""
+		},
+		{
+			"key": "ADDRESS_ID_DIFFERENT_ADDRESS",
 			"value": ""
 		}
 	]
