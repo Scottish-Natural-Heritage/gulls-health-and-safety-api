@@ -25,6 +25,8 @@ const AddressController = {
         },
         {
           where: {id: applicationId},
+          returning: true,
+          transaction: t,
         },
       );
     });
@@ -35,7 +37,7 @@ const AddressController = {
   update: async (address: any, addressId: number) => {
     let editedAddress;
     await database.sequelize.transaction(async (t: transaction) => {
-      editedAddress = await Address.update(address, {where: {id: addressId}});
+      editedAddress = await Address.update(address, {where: {id: addressId}, returning: true, transaction: t});
     });
 
     return editedAddress;
