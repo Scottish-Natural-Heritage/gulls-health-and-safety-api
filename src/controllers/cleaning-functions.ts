@@ -109,6 +109,23 @@ const cleanSiteAddress = (body: any): any => {
 };
 
 /**
+ * Cleans the address fields from a newly added / edited address object into something the DB can use.
+ *
+ * @param {any} body The body of the request to be cleaned.
+ * @returns {any} The cleaned address object ready for the DB.
+ */
+const cleanEditAddress = (body: any): any => {
+  return {
+    uprn: body.uprn === undefined ? undefined : (body.uprn as string),
+    postcode: body.postcode.trim(),
+    addressLine1: body.addressLine1 === undefined ? undefined : body.addressLine1.trim(),
+    addressLine2: body.addressLine2 === undefined ? undefined : body.addressLine2.trim(),
+    addressTown: body.addressTown === undefined ? undefined : body.addressTown.trim(),
+    addressCounty: body.addressCounty === undefined ? undefined : body.addressCounty.trim(),
+  };
+};
+
+/**
  * Cleans the application details into something the database can use.
  *
  * @param {any} body The body of the request to be cleaned.
@@ -752,6 +769,7 @@ const CleaningFunctions = {
   cleanLicenseHolderContact,
   cleanAddress,
   cleanSiteAddress,
+  cleanEditAddress,
   cleanApplication,
   cleanIssue,
   cleanActivity,
