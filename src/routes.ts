@@ -13,7 +13,6 @@ import Contact from './controllers/contact';
 import Returns from './controllers/returns';
 import CleaningFunctions from './controllers/cleaning-functions';
 import Scheduled from './controllers/scheduled';
-import Address from './controllers/address';
 import config from './config/app';
 import JsonUtils from './json-utils';
 import jwk from './config/jwk.js';
@@ -1167,6 +1166,56 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * POST resend amendment emails endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/amendment/{amendId}/resend`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        // Is the amendId a number?
+        const existingAmendId = Number(request.params.amendId);
+        if (Number.isNaN(existingAmendId)) {
+          return h.response({message: `Amendment ${existingAmendId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested amendment.
+        const amendment = await Amendment.findOne(existingAmendId);
+
+        // Did we get an amendment?
+        if (amendment === undefined || amendment === null) {
+          return h.response({message: `Amendment ${existingAmendId} not found.`}).code(404);
+        }
+
+        // Call the controllers to resend the emails.
+        await Amendment.resendEmails(application, amendment);
+
+        // Return a 200 response if the emails were sent successfully.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * POST new application note endpoint.
    */
   {
@@ -1609,57 +1658,6 @@ const routes: ServerRoute[] = [
   },
 
   /**
-   * POST application additional species endpoint.
-   */
-  {
-    method: 'post',
-    path: `${config.pathPrefix}/application/{id}/add-additional-species`,
-    handler: async (request: Request, h: ResponseToolkit) => {
-      try {
-        // Is the ID a number?
-        const existingId = Number(request.params.id);
-        if (Number.isNaN(existingId)) {
-          return h.response({message: `Application ${existingId} not valid.`}).code(404);
-        }
-
-        // Try to get the requested application to retrieve a permitted application (not a bogus app no)
-        const application = await Application.findOne(existingId);
-
-        // Did we get an application?
-        if (application === undefined || application === null) {
-          return h.response({message: `Application ${existingId} not found.`}).code(404);
-        }
-
-        // Get the new activity from the request's payload.
-        const newIncomingSpeciesActivity = request.payload as any;
-
-        // Clean the fields on the incoming activity.
-        const incomingActivity = await CleaningFunctions.cleanNewPermittedActivity(newIncomingSpeciesActivity);
-
-        // Add the the fields on the applications permitted activity record.
-        const updateAndAddSpecies = await Application.addNewSpecies(
-          incomingActivity,
-          newIncomingSpeciesActivity.speciesType,
-          application.PermittedSpeciesId,
-        );
-
-        // If they're not successful, send a 500 error.
-        if (!updateAndAddSpecies) {
-          return h.response({message: `Could not add additional species to application ${existingId}.`}).code(500);
-        }
-
-        // If all is well return 201 created.
-        return h.response().code(201);
-      } catch (error: unknown) {
-        // Log any error.
-        request.logger.error(JsonUtils.unErrorJson(error));
-        // Something bad happened? Return 500 and the error.
-        return h.response({error}).code(500);
-      }
-    },
-  },
-
-  /**
    * Resend licences issued before test 3 deployment.
    */
   {
@@ -1679,115 +1677,6 @@ const routes: ServerRoute[] = [
         const resentLicences = await Scheduled.resendLicenceEmails(filteredLicences);
 
         return h.response({message: `Resent ${resentLicences} licences.`}).code(200);
-      } catch (error: unknown) {
-        // Log any error.
-        request.logger.error(JsonUtils.unErrorJson(error));
-        // Something bad happened? Return 500 and the error.
-        return h.response({error}).code(500);
-      }
-    },
-  },
-
-  /**
-   * POST new licence holder address.
-   */
-  {
-    method: 'post',
-    path: `${config.pathPrefix}/application/{id}/address`,
-    handler: async (request: Request, h: ResponseToolkit) => {
-      try {
-        // Is the ID a number?
-        const existingId = Number(request.params.id);
-        if (Number.isNaN(existingId)) {
-          return h.response({message: `Application ${existingId} not valid.`}).code(404);
-        }
-
-        // Try to get the requested application.
-        const application = await Application.findOne(existingId);
-
-        // Did we get an application?
-        if (application === undefined || application === null) {
-          return h.response({message: `Application ${existingId} not found.`}).code(404);
-        }
-
-        // Are the licence holder's address and site address different? We only want to create a
-        // new address record if they're the same. Otherwise we should patch the existing licence
-        // holder's address.
-        if (application.LicenceHolderAddressId !== application.SiteAddressId) {
-          return h.response({message: `Licence holder address and site address are different`}).code(400);
-        }
-
-        // Clean the incoming request's fields.
-        const address = await CleaningFunctions.cleanEditAddress(request.payload as any);
-
-        // Create the new address entry.
-        const newAddress = await Address.create(address, existingId);
-
-        // Check if the new address was correctly added to the DB.
-        if (newAddress === undefined || newAddress === null) {
-          return h.response({message: `Failed to create new address in database`}).code(500);
-        }
-
-        // If we make it here all is good, return 201 created and the new address object.
-        return h.response(newAddress).code(201);
-      } catch (error: unknown) {
-        // Log any error.
-        request.logger.error(JsonUtils.unErrorJson(error));
-        // Something bad happened? Return 500 and the error.
-        return h.response({error}).code(500);
-      }
-    },
-  },
-
-  /**
-   * PATCH existing licence holder address.
-   */
-  {
-    method: 'patch',
-    path: `${config.pathPrefix}/application/{id}/address/{addressId}`,
-    handler: async (request: Request, h: ResponseToolkit) => {
-      try {
-        // Is the ID a number?
-        const existingId = Number(request.params.id);
-        if (Number.isNaN(existingId)) {
-          return h.response({message: `Application ${existingId} not valid.`}).code(404);
-        }
-
-        // Is the address ID a number?
-        const existingAddressId = Number(request.params.addressId);
-        if (Number.isNaN(existingAddressId)) {
-          return h.response({message: `Address ${existingId} not valid.`}).code(404);
-        }
-
-        // Try to get the requested application.
-        const application = await Application.findOne(existingId);
-
-        // Did we get an application?
-        if (application === undefined || application === null) {
-          return h.response({message: `Application ${existingId} not found.`}).code(404);
-        }
-
-        // Try to get the requested address.
-        const address = await Address.findOne(existingAddressId);
-
-        // Did we get an address?
-        if (address === undefined || address === null) {
-          return h.response({message: `Address ${existingAddressId} not found.`}).code(404);
-        }
-
-        // Clean the request payload into an address object the DB can use.
-        const cleanedAddress = await CleaningFunctions.cleanEditAddress(request.payload as any);
-
-        // Update the existing address row.
-        const editedAddress = await Address.update(cleanedAddress, existingAddressId);
-
-        // Check if the new address was correctly added to the DB.
-        if (editedAddress === undefined || editedAddress === null) {
-          return h.response({message: `Failed to update address ${existingAddressId} in database`}).code(500);
-        }
-
-        // If we make it here all is good, return 20 OK and the updated address object.
-        return h.response(editedAddress).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

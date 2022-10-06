@@ -4,8 +4,6 @@ import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
 import config from '../config/app';
 import MultiUseFunctions from '../multi-use-functions';
-import AdvisoryController from './advisory';
-import ConditionController from './condition';
 import ApplicationController from './application';
 
 const {Amendment, ASpecies, AActivity, AmendCondition, AmendAdvisory, Note, Advisory, Condition} = database;
@@ -132,30 +130,18 @@ const addActivities = (species: any, speciesType: string): string => {
  * @param {any} advisories The list of advisories associated with the licence.
  * @returns {string} Returns a formatted list of optional advisories.
  */
-const createAdvisoriesList = async (advisories: any): Promise<string> => {
-  // Get all optional advisories from the database.
-  const allOptionalAdvisories = await AdvisoryController.findAllOptional();
-
-  const optionalAdvisoryIds = new Set();
-
-  // Add the advisory IDs to a set.
-  for (const advisory of allOptionalAdvisories) {
-    optionalAdvisoryIds.add(advisory.id);
-  }
+const createAdvisoriesList = (advisories: any): string => {
+  const optionalAdvisoryIds = new Set([1, 2, 7]);
 
   const advisoryList = [];
 
-  // Filter the advisories to get the ones we want.
   const optionalAdvisories = advisories.filter((optional: any) => {
     return optionalAdvisoryIds.has(optional.AdvisoryId);
   });
-
-  // Create an array of advisories.
   for (const advisory of optionalAdvisories) {
     advisoryList.push(advisory.AmendAdvisory.advisory);
   }
 
-  // Join the advisories together with an escaped newline.
   return advisoryList.join('\n\n');
 };
 
@@ -165,35 +151,18 @@ const createAdvisoriesList = async (advisories: any): Promise<string> => {
  * @param {any} conditions The list of conditions associated with the licence.
  * @returns {string} Returns a formatted list of optional general conditions.
  */
-const createGeneralConditionsList = async (conditions: any): Promise<string> => {
-  // Get all optional conditions from the database.
-  const allOptionalConditions = await ConditionController.findAllOptional();
-
-  // Filter so we only have `General` conditions.
-  const allOptionalGeneralConditions = allOptionalConditions.filter((condition) => {
-    return condition.category === 'General';
-  });
-
-  const optionalGeneralConditionIds = new Set();
-
-  // Add the condition IDs to a set.
-  for (const condition of allOptionalGeneralConditions) {
-    optionalGeneralConditionIds.add(condition.id);
-  }
+const createGeneralConditionsList = (conditions: any): string => {
+  const optionalGeneralConditionIds = new Set([12, 13]);
 
   const conditionList = [];
 
-  // Filter the conditions to get the ones we want.
   const optionalConditions = conditions.filter((optional: any) => {
     return optionalGeneralConditionIds.has(optional.ConditionId);
   });
-
-  // Create an array of conditions.
   for (const condition of optionalConditions) {
     conditionList.push(condition.AmendCondition.condition);
   }
 
-  // Join the conditions together with an escaped newline.
   return conditionList.join('\n\n');
 };
 
@@ -203,35 +172,18 @@ const createGeneralConditionsList = async (conditions: any): Promise<string> => 
  * @param {any} conditions The list of conditions associated with the licence.
  * @returns {string} Returns a formatted list of optional what you must do conditions.
  */
-const createWhatYouMustDoConditionsList = async (conditions: any): Promise<string> => {
-  // Get all optional conditions from the database.
-  const allOptionalConditions = await ConditionController.findAllOptional();
-
-  // Filter so we only have `What you must do` conditions.
-  const allOptionalWhatYouMustDoConditions = allOptionalConditions.filter((condition) => {
-    return condition.category === 'What you must do';
-  });
-
-  const optionalWhatMustBeDoneConditionIds = new Set();
-
-  // Add the condition IDs to a set.
-  for (const condition of allOptionalWhatYouMustDoConditions) {
-    optionalWhatMustBeDoneConditionIds.add(condition.id);
-  }
+const createWhatYouMustDoConditionsList = (conditions: any): string => {
+  const optionalWhatMustBeDoneConditionIds = new Set([4, 6, 7]);
 
   const conditionList = [];
 
-  // Filter the conditions to get the ones we want.
   const optionalConditions = conditions.filter((optional: any) => {
     return optionalWhatMustBeDoneConditionIds.has(optional.ConditionId);
   });
-
-  // Create an array of conditions.
   for (const condition of optionalConditions) {
     conditionList.push(condition.AmendCondition.condition);
   }
 
-  // Join the conditions together with an escaped newline.
   return conditionList.join('\n\n');
 };
 
@@ -241,35 +193,18 @@ const createWhatYouMustDoConditionsList = async (conditions: any): Promise<strin
  * @param {any} conditions The list of conditions associated with the licence.
  * @returns {string} Returns a formatted list of optional general conditions.
  */
-const createReportingConditionsList = async (conditions: any): Promise<string> => {
-  // Get all optional conditions from the database.
-  const allOptionalConditions = await ConditionController.findAllOptional();
-
-  // Filter so we only have `Recording and reporting requirements` conditions.
-  const allOptionalReportingConditions = allOptionalConditions.filter((condition) => {
-    return condition.category === 'Recording and reporting requirements';
-  });
-
-  const optionalReportingConditionIds = new Set();
-
-  // Add the condition IDs to a set.
-  for (const condition of allOptionalReportingConditions) {
-    optionalReportingConditionIds.add(condition.id);
-  }
+const createReportingConditionsList = (conditions: any): string => {
+  const optionalReportingConditionIds = new Set([19, 20, 21, 22, 23, 24, 25]);
 
   const conditionList = [];
 
-  // Filter the conditions to get the ones we want.
   const optionalConditions = conditions.filter((optional: any) => {
     return optionalReportingConditionIds.has(optional.ConditionId);
   });
-
-  // Create an array of conditions.
   for (const condition of optionalConditions) {
     conditionList.push(condition.AmendCondition.condition);
   }
 
-  // Join the conditions together with an escaped newline.
   return conditionList.join('\n\n');
 };
 
@@ -320,7 +255,7 @@ const sendAmendedEmail = async (emailAddress: string, emailDetails: any) => {
   }
 };
 
-const setAmendEmailPersonalisationFields = async (application: any, amendmentDetails: any): Promise<any> => {
+const setAmendEmailPersonalisationFields = (application: any, amendmentDetails: any) => {
   return {
     licenceNumber: application.id,
     siteAddress: MultiUseFunctions.createSummaryAddress(application.SiteAddress),
@@ -329,13 +264,17 @@ const setAmendEmailPersonalisationFields = async (application: any, amendmentDet
     licenceHolderName: application.LicenceHolder.name,
     licenceHolderAddress: MultiUseFunctions.createSummaryAddress(application.LicenceHolderAddress),
     permittedActivities: createPermittedActivitiesList(amendmentDetails.ASpecies), // Multiple amendments possible.
-    advisoryNotes: await createAdvisoriesList(amendmentDetails.AmendAdvisories),
-    whatYouMustDoConditionsList: await createWhatYouMustDoConditionsList(amendmentDetails.AmendConditions),
-    generalConditionsList: await createGeneralConditionsList(amendmentDetails.AmendConditions),
-    reportingConditionsList: await createReportingConditionsList(amendmentDetails.AmendConditions),
+    advisoryNotes: createAdvisoriesList(amendmentDetails.AmendAdvisories),
+    whatYouMustDoConditionsList: createWhatYouMustDoConditionsList(amendmentDetails.AmendConditions),
+    generalConditionsList: createGeneralConditionsList(amendmentDetails.AmendConditions),
+    reportingConditionsList: createReportingConditionsList(amendmentDetails.AmendConditions),
     statementReason: amendmentDetails.assessment,
     conservationStatus: createConservationStatus(amendmentDetails.ASpecies),
     hasConditions: amendmentDetails.AmendConditions ? 'yes' : 'no',
+    hasWhatYouMustDo: createWhatYouMustDoConditionsList(amendmentDetails.AmendConditions).length > 0 ? 'yes' : 'no',
+    hasRecording: createReportingConditionsList(amendmentDetails.AmendConditions).length > 0 ? 'yes' : 'no',
+    hasGeneral: createGeneralConditionsList(amendmentDetails.AmendConditions).length > 0 ? 'yes' : 'no',
+    hasAdvisoryNotes: createAdvisoriesList(amendmentDetails.AmendAdvisories).length > 0 ? 'yes' : 'no',
   };
 };
 
@@ -612,14 +551,7 @@ const AmendmentController = {
       amendmentDetails = (await AmendmentController.findOne(amendmentId)) as any;
     }
 
-    const emailDetails = await setAmendEmailPersonalisationFields(application, amendmentDetails);
-
-    // We need to check if we have any conditions or advisories so we can tell Notify what to show
-    // in the email it creates.
-    emailDetails.hasWhatYouMustDo = emailDetails.whatYouMustDoConditionsList.length > 0 ? 'yes' : 'no';
-    emailDetails.hasRecording = emailDetails.reportingConditionsList.length > 0 ? 'yes' : 'no';
-    emailDetails.hasGeneral = emailDetails.generalConditionsList.length > 0 ? 'yes' : 'no';
-    emailDetails.hasAdvisoryNotes = emailDetails.advisoryNotes.length > 0 ? 'yes' : 'no';
+    const emailDetails = setAmendEmailPersonalisationFields(application, amendmentDetails);
 
     // Send Notify email if we have a licence holder email address.
     if (incomingAmendment.licenceHolderEmailAddress) {
@@ -643,6 +575,29 @@ const AmendmentController = {
 
     // If all did not go well return undefined.
     return undefined;
+  },
+
+  /**
+   * Re send the emails from amending an application.
+   *
+   * @param {any} application The application object.
+   * @param {any} amendment The amendment object.
+   * @returns {any} Returns a 200, when the License emails have sent.
+   */
+  resendEmails: async (application: any, amendment: any) => {
+    // Set the email details personalisation.
+    const emailDetails = setAmendEmailPersonalisationFields(application, amendment);
+
+    // Try to send the email to the licence holder.
+    await sendAmendedEmail(application.LicenceHolder?.emailAddress, emailDetails);
+    // Check to see if this was an on behalf application.
+    if (application.LicenceApplicantId !== application.LicenceHolderId) {
+      // Try to send the email to the licence applicant.
+      await sendAmendedEmail(application.LicenceApplicant?.emailAddress, emailDetails);
+    }
+
+    // And send a copy to the licensing team too.
+    await sendAmendedEmail('issuedlicence@nature.scot', emailDetails);
   },
 };
 
