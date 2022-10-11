@@ -1609,6 +1609,40 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * POST resend amendment emails endpoint.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/amendment/{amendId}/resend`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the application ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Is the amendment ID a number?
+        const amendmentId = Number(request.params.amendId);
+        if (Number.isNaN(amendmentId)) {
+          return h.response({message: `Amendment ${existingId} not valid.`}).code(404);
+        }
+
+        // Call the amendment controller and ask it to resend the amendment email.
+        await Amendment.resendAmendmentEmail(existingId, amendmentId);
+
+        // Return a 200 response if the emails were sent successfully.
+        return h.response().code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * POST application additional species endpoint.
    */
   {
