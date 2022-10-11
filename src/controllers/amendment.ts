@@ -663,13 +663,13 @@ const AmendmentController = {
     emailDetails.hasAdvisoryNotes = emailDetails.advisoryNotes.length > 0 ? 'yes' : 'no';
 
     // Send Notify email if we have a licence holder email address.
-    if (application.licenceHolderEmailAddress) {
-      await sendAmendedEmail(application.licenceHolderEmailAddress, emailDetails);
+    if (application.LicenceHolder?.emailAddress) {
+      await sendAmendedEmail(application.LicenceHolder?.emailAddress, emailDetails);
     }
 
     // Send Notify email if we have a licence applicant email address.
-    if (application.licenceApplicantEmailAddress && application.LicenceHolderId !== application.LicenceApplicantId) {
-      await sendAmendedEmail(application.licenceApplicantEmailAddress, emailDetails);
+    if (application.LicenceApplicant?.emailAddress && application.LicenceHolderId !== application.LicenceApplicantId) {
+      await sendAmendedEmail(application.LicenceApplicant?.emailAddress, emailDetails);
     }
 
     // Send a copy of the email to the issued licence mailbox.
