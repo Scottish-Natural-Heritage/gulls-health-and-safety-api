@@ -644,6 +644,37 @@ const AmendmentController = {
     // If all did not go well return undefined.
     return undefined;
   },
+
+  resendAmendmentEmail: async (applicationId: number, amendmentId: number) => {
+    // We need the licence application details to create the amendment email.
+    const application = (await ApplicationController.findOne(applicationId)) as any;
+
+    // We need the amendment to create the amendment email.
+    const amendment = (await AmendmentController.findOne(amendmentId)) as any;
+
+    // Set the details of the email, to be passed to the Notify API.
+    const emailDetails = await setAmendEmailPersonalisationFields(application, amendment);
+
+    // We need to check if we have any conditions or advisories so we can tell Notify what to show
+    // in the email it creates.
+    emailDetails.hasWhatYouMustDo = emailDetails.whatYouMustDoConditionsList.length > 0 ? 'yes' : 'no';
+    emailDetails.hasRecording = emailDetails.reportingConditionsList.length > 0 ? 'yes' : 'no';
+    emailDetails.hasGeneral = emailDetails.generalConditionsList.length > 0 ? 'yes' : 'no';
+    emailDetails.hasAdvisoryNotes = emailDetails.advisoryNotes.length > 0 ? 'yes' : 'no';
+
+    // Send Notify email if we have a licence holder email address.
+    if (application.LicenceHolder?.emailAddress) {
+      await sendAmendedEmail(application.LicenceHolder?.emailAddress, emailDetails);
+    }
+
+    // Send Notify email if we have a licence applicant email address.
+    if (application.LicenceApplicant?.emailAddress && application.LicenceHolderId !== application.LicenceApplicantId) {
+      await sendAmendedEmail(application.LicenceApplicant?.emailAddress, emailDetails);
+    }
+
+    // Send a copy of the email to the issued licence mailbox.
+    await sendAmendedEmail('issuedlicence@nature.scot', emailDetails);
+  },
 };
 
 export {AmendmentController as default};
