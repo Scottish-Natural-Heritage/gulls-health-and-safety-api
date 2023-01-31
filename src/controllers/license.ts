@@ -25,6 +25,16 @@ interface LicenseInterface {
 }
 
 /**
+ * Replaces `\\n` in a string with single `\n`.
+ *
+ * @param {string} str The string to swap any occurrence of `\\n` for `\n`.
+ * @returns {string} Returns the modified string.
+ */
+const replaceDoubleSlashWithSingle = (str: string): string => {
+  return str.replace(/\\n/g, '\n');
+};
+
+/**
  * This function creates a personalisation object to be used by the notify API to create
  * the licence email.
  *
@@ -70,7 +80,7 @@ const setLicenceNotificationDetails = async (application: any, licence: any): Pr
     optionalReportingConditionsList: await createReportingOptionalConditionsList(application.License.LicenseConditions),
     defaultLicenceCoversConditionsList: await createDefaultConditionsList('What the licence covers'),
     defaultWhatYouMustDoConditionsList: await createDefaultConditionsList('What you must do'),
-    defaultReportingConditionsList: await createDefaultConditionsList('Recording and reporting'),
+    defaultReportingConditionsList: await createDefaultConditionsList('Recording and reporting requirements'),
     defaultGeneralConditionsList: await createDefaultConditionsList('General'),
     defaultAdvisoriesList: await createDefaultAdvisoriesList(),
     test1Details: application.ApplicationAssessment.testOneAssessment,
@@ -97,7 +107,7 @@ const createDefaultConditionsList = async (category: string): Promise<string> =>
   }
 
   // Return conditions as a single string of conditions, separated by newlines.
-  return conditions.join('\n');
+  return replaceDoubleSlashWithSingle(conditions.join('\n\n'));
 };
 
 const createDefaultAdvisoriesList = async (): Promise<string> => {
@@ -111,11 +121,11 @@ const createDefaultAdvisoriesList = async (): Promise<string> => {
   }
 
   // Return advisories as a single string of conditions, separated by newlines.
-  return advisories.join('\n');
+  return replaceDoubleSlashWithSingle(advisories.join('\n\n'));
 };
 
 /**
- * This function calls the Notify API and asks for an email to be send with the supplied details.
+ * This function calls the Notify API and asks for an email to be sent with the supplied details.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
@@ -123,10 +133,14 @@ const createDefaultAdvisoriesList = async (): Promise<string> => {
 const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('8d995630-dd7b-4bb9-9678-1ad921e70e22', emailAddress, {
-      personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
-    });
+    try {
+      await notifyClient.sendEmail('5535b0a4-19b2-45db-844f-5b99edda8657', emailAddress, {
+        personalisation: emailDetails,
+        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      });
+    } catch (error) {
+      console.log('ERROR: ' + error);
+    }
   }
 };
 
