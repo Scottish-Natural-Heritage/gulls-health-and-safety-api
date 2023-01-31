@@ -78,7 +78,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = {
     up: async (queryInterface, Sequelize) => {
       // Grab the condition as a object.
-      const condition1 = await queryInterface.sequelize.query('SELECT * FROM Conditions WHERE id = 18;', {
+      const condition1 = await queryInterface.sequelize.query('SELECT * FROM Conditions WHERE id = 11;', {
         type: Sequelize.QueryTypes.SELECT,
       });
 
@@ -135,7 +135,7 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       // Grab the condition as a object.
-      const condition1 = await queryInterface.sequelize.query('SELECT * FROM Conditions WHERE id = 18;', {
+      const condition1 = await queryInterface.sequelize.query('SELECT * FROM Conditions WHERE id = 11;', {
         type: Sequelize.QueryTypes.SELECT,
       });
 

@@ -18,7 +18,6 @@ if (process.env.NODE_ENV === 'production') {
         replacements: [updatedCondition2],
         type: Sequelize.QueryTypes.UPDATE,
       });
-
     },
 
     down: async (queryInterface, Sequelize) => {
@@ -37,8 +36,6 @@ if (process.env.NODE_ENV === 'production') {
         replacements: [revertedCondition1],
         type: Sequelize.QueryTypes.UPDATE,
       });
-
-
     },
   };
 } else {
@@ -59,8 +56,6 @@ if (process.env.NODE_ENV === 'production') {
         replacements: [updatedCondition2],
         type: Sequelize.QueryTypes.UPDATE,
       });
-
-
     },
 
     down: async (queryInterface, Sequelize) => {
@@ -79,8 +74,6 @@ if (process.env.NODE_ENV === 'production') {
         replacements: [revertedCondition1],
         type: Sequelize.QueryTypes.UPDATE,
       });
-
-
     },
   };
 }
