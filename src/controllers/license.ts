@@ -68,12 +68,50 @@ const setLicenceNotificationDetails = async (application: any, licence: any): Pr
     ),
     optionalGeneralConditionsList: await createGeneralOptionalConditionsList(application.License.LicenseConditions),
     optionalReportingConditionsList: await createReportingOptionalConditionsList(application.License.LicenseConditions),
+    defaultLicenceCoversConditionsList: await createDefaultConditionsList('What the licence covers'),
+    defaultWhatYouMustDoConditionsList: await createDefaultConditionsList('What you must do'),
+    defaultReportingConditionsList: await createDefaultConditionsList('Recording and reporting'),
+    defaultGeneralConditionsList: await createDefaultConditionsList('General'),
+    defaultAdvisoriesList: await createDefaultAdvisoriesList(),
     test1Details: application.ApplicationAssessment.testOneAssessment,
     test2Details: application.ApplicationAssessment.testTwoAssessment,
     test3Details: application.ApplicationAssessment.testThreeAssessment
       ? application.ApplicationAssessment.testThreeAssessment
       : '',
   };
+};
+
+const createDefaultConditionsList = async (category: string): Promise<string> => {
+  // Get all default conditions from the database.
+  const allDefaultConditions = await ConditionController.findAllDefault();
+
+  // Filter so we only have the desired category of default conditions.
+  const selectedDefaultConditions = allDefaultConditions.filter((condition) => {
+    return condition.category === category;
+  });
+
+  // Add each condition to an array.
+  const conditions = [];
+  for (const condition of selectedDefaultConditions) {
+    conditions.push(condition.condition);
+  }
+
+  // Return conditions as a single string of conditions, separated by newlines.
+  return conditions.join('\n');
+};
+
+const createDefaultAdvisoriesList = async (): Promise<string> => {
+  // Get all default advisories from the database.
+  const allDefaultAdvisories = await AdvisoryController.findAllDefault();
+
+  // Add each advisory to an array.
+  const advisories = [];
+  for (const advisory of allDefaultAdvisories) {
+    advisories.push(advisory.advisory);
+  }
+
+  // Return advisories as a single string of conditions, separated by newlines.
+  return advisories.join('\n');
 };
 
 /**
