@@ -4,7 +4,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = {
     up: async (queryInterface, Sequelize) => {
       const updatedCondition1 =
-        'You must employ non-licensable measures first. If these are unsuccessful, then you must use a hierarchical approach to licensed control: \n\n 1. clearance of nests, then; \n 2. destruction or replacement of eggs, then; \n 3. taking of chicks, then; \n 4. killing of chicks, then; \n 5. killing of adults \n\n  ...only where each activity is permitted under this licence.';
+        'You must employ non-licensable measures first. If these are unsuccessful, then you must use a hierarchical approach to licensed control: \\n\\n 1. clearance of nests, then; \\n 2. destruction or replacement of eggs, then; \\n 3. taking of chicks, then; \\n 4. killing of chicks, then; \\n 5. killing of adults \\n\\n  ...only where each activity is permitted under this licence.';
 
       await queryInterface.sequelize.query(`UPDATE gulls."Conditions" SET "condition" = ? WHERE "id" = 8;`, {
         replacements: [updatedCondition1],
@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       const updatedCondition2 =
-        'This licence only authorises where there is no other satisfactory course of action: \n\n - the species, activities and numbers listed on this licence \n - at the location specified \n - and during the period stated on this licence.';
+        'This licence only authorises where there is no other satisfactory course of action: \\n\\n - the species, activities and numbers listed on this licence \\n - at the location specified \\n - and during the period stated on this licence.';
 
       await queryInterface.sequelize.query(`UPDATE gulls."Conditions" SET "condition" = ? WHERE "id" = 1;`, {
         replacements: [updatedCondition2],
@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = {
     up: async (queryInterface, Sequelize) => {
       const updatedCondition1 =
-        'You must employ non-licensable measures first. If these are unsuccessful, then you must use a hierarchical approach to licensed control: \n\n 1. clearance of nests, then; \n 2. destruction or replacement of eggs, then; \n 3. taking of chicks, then; \n 4. killing of chicks, then; \n 5. killing of adults \n\n  ...only where each activity is permitted under this licence.';
+        'You must employ non-licensable measures first. If these are unsuccessful, then you must use a hierarchical approach to licensed control: \\n\\n 1. clearance of nests, then; \\n 2. destruction or replacement of eggs, then; \\n 3. taking of chicks, then; \\n 4. killing of chicks, then; \\n 5. killing of adults \\n\\n  ...only where each activity is permitted under this licence.';
 
       await queryInterface.sequelize.query(`UPDATE Conditions SET condition = ? WHERE id = 8;`, {
         replacements: [updatedCondition1],
@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       const updatedCondition2 =
-        'This licence only authorises where there is no other satisfactory course of action: \n\n - the species, activities and numbers listed on this licence \n - at the location specified \n - and during the period stated on this licence.';
+        'This licence only authorises where there is no other satisfactory course of action: \\n\\n - the species, activities and numbers listed on this licence \\n - at the location specified \\n - and during the period stated on this licence.';
 
       await queryInterface.sequelize.query(`UPDATE Conditions SET condition = ? WHERE id = 1;`, {
         replacements: [updatedCondition2],
@@ -60,7 +60,7 @@ if (process.env.NODE_ENV === 'production') {
 
     down: async (queryInterface, Sequelize) => {
       const revertedCondition2 =
-        'This licence only authorises where there is no other satisfactory course of action: \n\n - the species, activities and numbers listed on this licence \n - at the location specified \n - and during the period stated on this licence.';
+        'This licence only authorises where there is no other satisfactory course of action: \\n\\n - the species, activities and numbers listed on this licence \\n - at the location specified \\n - and during the period stated on this licence.';
 
       await queryInterface.sequelize.query(`UPDATE Conditions SET condition = ? WHERE id = 1;`, {
         replacements: [revertedCondition2],
@@ -68,7 +68,7 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       const revertedCondition1 =
-        'You must employ non-licensable measures first. If these are unsuccessful, then you must use a hierarchical approach to licensed control: \n\n 1. clearance of nests, then; \n 2. destruction or replacement of eggs, then; \n 3. taking of chicks, then; \n 4. killing of chicks, then; \n 5. killing of adults \n\n  ...only where each activity is permitted under this licence.';
+        'You must employ non-licensable measures first. If these are unsuccessful, then you must use a hierarchical approach to licensed control: \\n\\n 1. clearance of nests, then; \\n 2. destruction or replacement of eggs, then; \\n 3. taking of chicks, then; \\n 4. killing of chicks, then; \\n 5. killing of adults \\n\\n  ...only where each activity is permitted under this licence.';
 
       await queryInterface.sequelize.query(`UPDATE Conditions SET condition = ? WHERE id = 8;`, {
         replacements: [revertedCondition1],
