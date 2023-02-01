@@ -20,6 +20,9 @@ import JsonUtils from './json-utils';
 cron.schedule('0 6 * * *', async () => {
   console.log('Triggering cron job(s).');
 
+  // Get the date.
+  const todayDate = new Date();
+
   // Check for unconfirmed applications and sent out 14 day reminder emails.
   try {
     await axios.patch(`http://localhost:3017${config.pathPrefix}/reminder`, undefined, {
@@ -36,6 +39,15 @@ cron.schedule('0 6 * * *', async () => {
     await axios.delete(`http://localhost:3017${config.pathPrefix}/withdrawal`);
   } catch (error: unknown) {
     console.error(JsonUtils.unErrorJson(error));
+  }
+
+  // Check for expired licences with no returns on 1st March and 1st April.
+  if (todayDate.getDate() === 1 && (todayDate.getMonth() === 2 || todayDate.getMonth() === 3)) {
+    try {
+      await axios.patch(`http://localhost:3017${config.pathPrefix}/expired-no-return-reminder`);
+    } catch (error: unknown) {
+      console.error(JsonUtils.unErrorJson(error));
+    }
   }
 
   // Resend any licences issued before test 3 deployment. Commented out but left in
