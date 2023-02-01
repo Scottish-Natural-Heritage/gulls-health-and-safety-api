@@ -1723,6 +1723,39 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Send out a reminder email on expired licences with no returns, on
+   * the 1st of March and the 1st of April.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/expired-no-return-reminder`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Try to get any applications submitted before 20th May 2022.
+        const applications = await Scheduled.getLicences();
+
+        // Filter out any non-expired licences, or licences with returns.
+        const filteredLicences = applications.filter((application: any) => {
+          return (
+            application.License !== null &&
+            application.License.periodTo < new Date() &&
+            application.License.Returns !== null
+          );
+        });
+
+        const emailsSent = await Scheduled.sendExpiredNoReturnReminder(filteredLicences);
+
+        return h.response({message: `Sent ${emailsSent} expired licence with no return reminder emails.`}).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * POST new licence holder address.
    */
   {
