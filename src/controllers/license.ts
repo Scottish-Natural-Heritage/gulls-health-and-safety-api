@@ -133,14 +133,10 @@ const createDefaultAdvisoriesList = async (): Promise<string> => {
 const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    try {
-      await notifyClient.sendEmail('5535b0a4-19b2-45db-844f-5b99edda8657', emailAddress, {
-        personalisation: emailDetails,
-        emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
-      });
-    } catch (error) {
-      console.log('ERROR: ' + error);
-    }
+    await notifyClient.sendEmail('5535b0a4-19b2-45db-844f-5b99edda8657', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
   }
 };
 
