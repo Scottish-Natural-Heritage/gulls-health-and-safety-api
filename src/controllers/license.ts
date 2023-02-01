@@ -27,11 +27,11 @@ interface LicenseInterface {
 /**
  * Replaces `\\n` in a string with single `\n`.
  *
- * @param {string} str The string to swap any occurrence of `\\n` for `\n`.
- * @returns {string} Returns the modified string.
+ * @param {string} inputString The string to swap any occurrence of `\\n` for `\n`.
+ * @returns {string} Returns the modified string with any `\\n` replaced by `\n`.
  */
-const replaceDoubleSlashWithSingle = (str: string): string => {
-  return str.replace(/\\n/g, '\n');
+const replaceDoubleSlashWithSingle = (inputString: string): string => {
+  return inputString.replace(/\\n/g, '\n');
 };
 
 /**
