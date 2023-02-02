@@ -244,7 +244,14 @@ const ScheduledController = {
     });
   },
 
-  getLicences: async () => {
+  /**
+   * Gets all applications, including contact, licence and return details. To be used
+   * to send out reminder emails if no returns were submitted against an expired licence.
+   *
+   * @returns {Application[]} All applications, including contact, address, licence and returns
+   * data.
+   */
+  getExpiredLicencesNoReturns: async () => {
     return Application.findAll({
       include: [
         {
@@ -277,9 +284,20 @@ const ScheduledController = {
     });
   },
 
+  /**
+   * Sends out the emails to any licence holder and applicant if an issued licence has
+   * expired without any submitted return.
+   *
+   * @param {any} expiredLicences A collection of all licences that have expired without
+   * a submitted return.
+   * @returns {number} Returns the number of emails sent.
+   */
   sendExpiredNoReturnReminder: async (expiredLicences: any): Promise<number> => {
+    // A count of the number of emails sent.
     let sentCount = 0;
 
+    // Loop through the collection of expired licences and set up their email details.
+    // Then send the email.
     for (const expiredLicence of expiredLicences) {
       const holderEmailDetails = setLicenceExpiredNoReturnEmailDetails(
         expiredLicence.id,
@@ -287,9 +305,10 @@ const ScheduledController = {
         expiredLicence.SiteAddress,
       );
 
-      let applicantEmailDetails;
+      let applicantEmailDetails = undefined;
 
-      if (expiredLicence.LicenceHolder !== expiredLicence.LicenceApplicant) {
+      // If the licence holder and applicant are different set up email details for applicant too.
+      if (expiredLicence.LicenceHolder.id !== expiredLicence.LicenceApplicant.id) {
         applicantEmailDetails = setLicenceExpiredNoReturnEmailDetails(
           expiredLicence.id,
           expiredLicence.LicenceApplicant,

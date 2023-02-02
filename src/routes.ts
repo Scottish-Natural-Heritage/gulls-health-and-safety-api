@@ -1731,18 +1731,19 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/expired-no-return-reminder`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
-        // Try to get any applications submitted before 20th May 2022.
-        const applications = await Scheduled.getLicences();
+        // Fetch all applications to be filtered.
+        const applications = await Scheduled.getExpiredLicencesNoReturns();
 
-        // Filter out any non-expired licences, or licences with returns.
+        // Filter out any non-licences, non-expired licences, or licences with returns.
         const filteredLicences = applications.filter((application: any) => {
           return (
             application.License !== null &&
-            application.License.periodTo < new Date() &&
-            application.License.Returns !== null
+            application.License?.periodTo < new Date() &&
+            application.License?.Returns.length === 0
           );
         });
 
+        // Try to send out reminder emails.
         const emailsSent = await Scheduled.sendExpiredNoReturnReminder(filteredLicences);
 
         return h.response({message: `Sent ${emailsSent} expired licence with no return reminder emails.`}).code(200);

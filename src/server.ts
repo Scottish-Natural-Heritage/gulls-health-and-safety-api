@@ -41,7 +41,7 @@ cron.schedule('0 6 * * *', async () => {
     console.error(JsonUtils.unErrorJson(error));
   }
 
-  // Check for expired licences with no returns on 1st March and 1st April.
+  // Check for expired licences with no returns on 1st March and 1st April and send out reminder emails.
   if (todayDate.getDate() === 1 && (todayDate.getMonth() === 2 || todayDate.getMonth() === 3)) {
     try {
       await axios.post(`http://localhost:3017${config.pathPrefix}/expired-no-return-reminder`);
