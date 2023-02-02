@@ -50,6 +50,15 @@ cron.schedule('0 6 * * *', async () => {
     }
   }
 
+  // Check for expired licences with returns but no final return on 1st March and 1st April and send out reminder emails.
+  if (todayDate.getDate() === 1 && (todayDate.getMonth() === 2 || todayDate.getMonth() === 3)) {
+    try {
+      await axios.post(`http://localhost:3017${config.pathPrefix}/expired-no-final-return-reminder`);
+    } catch (error: unknown) {
+      console.error(JsonUtils.unErrorJson(error));
+    }
+  }
+
   // Resend any licences issued before test 3 deployment. Commented out but left in
   // as we may want to use this again.
   // try {
