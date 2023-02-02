@@ -245,13 +245,13 @@ const ScheduledController = {
   },
 
   /**
-   * Gets all applications, including contact, licence and return details. To be used
-   * to send out reminder emails if no returns were submitted against an expired licence.
+   * Gets all applications, including contact, address, licence and return details. To be used
+   * to send out reminder emails.
    *
    * @returns {Application[]} All applications, including contact, address, licence and returns
    * data.
    */
-  getExpiredLicencesNoReturns: async () => {
+  getApplications: async () => {
     return Application.findAll({
       include: [
         {
