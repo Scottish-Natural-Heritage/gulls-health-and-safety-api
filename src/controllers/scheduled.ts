@@ -305,7 +305,7 @@ const ScheduledController = {
         expiredLicence.SiteAddress,
       );
 
-      let applicantEmailDetails = undefined;
+      let applicantEmailDetails;
 
       // If the licence holder and applicant are different set up email details for applicant too.
       if (expiredLicence.LicenceHolder.id !== expiredLicence.LicenceApplicant.id) {
@@ -316,10 +316,12 @@ const ScheduledController = {
         );
       }
 
-      sendLicenceExpiredNoReturnEmail(holderEmailDetails, expiredLicence.LicenceHolder.emailAddress);
+      // eslint-disable-next-line no-await-in-loop
+      await sendLicenceExpiredNoReturnEmail(holderEmailDetails, expiredLicence.LicenceHolder.emailAddress);
       sentCount++;
       if (applicantEmailDetails) {
-        sendLicenceExpiredNoReturnEmail(holderEmailDetails, expiredLicence.LicenceHolder.emailAddress);
+        // eslint-disable-next-line no-await-in-loop
+        await sendLicenceExpiredNoReturnEmail(holderEmailDetails, expiredLicence.LicenceHolder.emailAddress);
         sentCount++;
       }
     }
