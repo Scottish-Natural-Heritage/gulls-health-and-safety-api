@@ -1755,8 +1755,9 @@ const routes: ServerRoute[] = [
         const filteredLicences = applications.filter((application: any) => {
           return (
             application.License !== null &&
-            application.License?.periodTo < new Date() &&
-            application.License?.Returns.length > 0
+            new Date(application.License?.periodTo).getFullYear() === new Date().getFullYear() &&
+            application.License.periodTo < new Date() &&
+            application.License?.Returns.length === 0
           );
         });
 
@@ -1789,7 +1790,8 @@ const routes: ServerRoute[] = [
         const filteredLicences = applications.filter((application: any) => {
           return (
             application.License !== null &&
-            application.License?.periodTo < new Date() &&
+            new Date(application.License?.periodTo).getFullYear() === new Date().getFullYear() &&
+            application.License.periodTo < new Date() &&
             application.License?.Returns.length > 0 &&
             !hasFinalReturn(application.License.Returns)
           );
@@ -1825,8 +1827,10 @@ const routes: ServerRoute[] = [
         const filteredLicences = applications.filter((application: any) => {
           return (
             application.License !== null &&
-            application.License?.periodTo < new Date() &&
-            application.License?.Returns.length > 0
+            application.Withdrawal === null &&
+            application.Revocation === null &&
+            new Date(application.License?.periodTo).getFullYear() === new Date().getFullYear() &&
+            application.License.periodTo > new Date()
           );
         });
 
