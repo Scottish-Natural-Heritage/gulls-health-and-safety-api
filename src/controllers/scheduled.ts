@@ -83,6 +83,41 @@ const sendLicenceExpiredNoReturnEmail = async (emailDetails: any, emailAddress: 
 };
 
 /**
+ * This function calls the Notify API and asks for a reminder email to be sent to
+ * any licence holder and applicant if the licence has expired and has no final return
+ * against it.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceExpiredNoFinalReturnEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('9390eb90-9ad4-4416-a4e2-42b6573358a1', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for a reminder email to be sent to
+ * any licence holder and applicant if the licence is due to expire.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceSoonExpiredEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('0130f081-9d83-40e4-b1de-880721578e57', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
  * This function returns an object containing the details required for the licence holder
  * fourteen day reminder email.
  *
@@ -298,11 +333,7 @@ const ScheduledController = {
     // Loop through the collection of licences and set up their email details.
     // Then send the email.
     for (const licence of licences) {
-      const holderEmailDetails = setReturnReminderEmailDetails(
-        licence.id,
-        licence.LicenceHolder,
-        licence.SiteAddress,
-      );
+      const holderEmailDetails = setReturnReminderEmailDetails(licence.id, licence.LicenceHolder, licence.SiteAddress);
 
       let applicantEmailDetails;
 
@@ -315,26 +346,38 @@ const ScheduledController = {
         );
       }
 
+      /* eslint-disable no-await-in-loop */
+
       // Check reminder type and send the correct template.
       if (reminderType === 'expiredNoReturn') {
-        // eslint-disable-next-line no-await-in-loop
         await sendLicenceExpiredNoReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
         sentCount++;
         if (applicantEmailDetails) {
-          // eslint-disable-next-line no-await-in-loop
           await sendLicenceExpiredNoReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
           sentCount++;
         }
       }
 
       if (reminderType === 'expiredNoFinalReturn') {
-
+        await sendLicenceExpiredNoFinalReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+        sentCount++;
+        if (applicantEmailDetails) {
+          await sendLicenceExpiredNoFinalReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+          sentCount++;
+        }
       }
 
       if (reminderType === 'dueToExpire') {
-
+        await sendLicenceSoonExpiredEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+        sentCount++;
+        if (applicantEmailDetails) {
+          await sendLicenceSoonExpiredEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+          sentCount++;
+        }
       }
     }
+
+    /* eslint-enable no-await-in-loop */
 
     return sentCount;
   },
