@@ -1748,6 +1748,10 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/expired-no-return-reminder`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
+        // We need to know the date and year.
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
         // Fetch all applications to be filtered.
         const applications = await Scheduled.getApplications();
 
@@ -1755,8 +1759,8 @@ const routes: ServerRoute[] = [
         const filteredLicences = applications.filter((application: any) => {
           return (
             application.License !== null &&
-            new Date(application.License?.periodTo).getFullYear() === new Date().getFullYear() &&
-            application.License.periodTo < new Date() &&
+            new Date(application.License?.periodTo).getFullYear() === currentYear &&
+            application.License.periodTo < currentDate &&
             application.License?.Returns.length === 0
           );
         });
@@ -1783,6 +1787,10 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/expired-no-final-return-reminder`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
+        // We need to know the date and year.
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
         // Fetch all applications to be filtered.
         const applications = await Scheduled.getApplications();
 
@@ -1790,8 +1798,8 @@ const routes: ServerRoute[] = [
         const filteredLicences = applications.filter((application: any) => {
           return (
             application.License !== null &&
-            new Date(application.License?.periodTo).getFullYear() === new Date().getFullYear() &&
-            application.License.periodTo < new Date() &&
+            new Date(application.License?.periodTo).getFullYear() === currentYear &&
+            application.License.periodTo < currentDate &&
             application.License?.Returns.length > 0 &&
             !hasFinalReturn(application.License.Returns)
           );
@@ -1815,11 +1823,15 @@ const routes: ServerRoute[] = [
   /**
    * Send out a reminder email on valid licences that are due to expire.
    */
-   {
+  {
     method: 'post',
     path: `${config.pathPrefix}/soon-to-expire-return-reminder`,
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
+        // We need to know the date and year.
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
         // Fetch all applications to be filtered.
         const applications = await Scheduled.getApplications();
 
@@ -1829,17 +1841,15 @@ const routes: ServerRoute[] = [
             application.License !== null &&
             application.Withdrawal === null &&
             application.Revocation === null &&
-            new Date(application.License?.periodTo).getFullYear() === new Date().getFullYear() &&
-            application.License.periodTo > new Date()
+            new Date(application.License?.periodTo).getFullYear() === currentYear &&
+            application.License.periodTo > currentDate
           );
         });
 
         // Try to send out reminder emails.
         const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'dueToExpire');
 
-        return h
-          .response({message: `Sent ${emailsSent} expired licence with no final return reminder emails.`})
-          .code(200);
+        return h.response({message: `Sent ${emailsSent} soon to expire licence return reminder emails.`}).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

@@ -280,11 +280,11 @@ const ScheduledController = {
   },
 
   /**
-   * Gets all applications, including contact, address, licence and return details. To be used
-   * to send out reminder emails.
+   * Gets all applications, including contact, address, licence, withdrawal, revocation
+   * and return details. To be used to send out reminder emails.
    *
-   * @returns {Application[]} All applications, including contact, address, licence and returns
-   * data.
+   * @returns {Application[]} All applications, including contact, address, withdrawal, revocation,
+   * licence and returns data.
    */
   getApplications: async () => {
     return Application.findAll({
