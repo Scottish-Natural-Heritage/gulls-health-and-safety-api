@@ -162,7 +162,7 @@ const set21DayWithdrawEmailDetails = (
   };
 };
 
-const setLicenceExpiredNoReturnEmailDetails = (id: number, contact: any, siteAddress: any) => {
+const setReturnReminderEmailDetails = (id: number, contact: any, siteAddress: any) => {
   return {
     id,
     name: contact.name,
@@ -285,44 +285,54 @@ const ScheduledController = {
   },
 
   /**
-   * Sends out the emails to any licence holder and applicant if an issued licence has
-   * expired without any submitted return.
+   * Sends out the reminder emails if a licence has expired with no returns, no final return
+   * or is valid but due to expire.
    *
-   * @param {any} expiredLicences A collection of all licences that have expired without
-   * a submitted return.
+   * @param {any} licences A collection of all licences to be sent a reminder.
    * @returns {number} Returns the number of emails sent.
    */
-  sendExpiredNoReturnReminder: async (expiredLicences: any): Promise<number> => {
+  sendReturnReminder: async (licences: any, reminderType: string): Promise<number> => {
     // A count of the number of emails sent.
     let sentCount = 0;
 
-    // Loop through the collection of expired licences and set up their email details.
+    // Loop through the collection of licences and set up their email details.
     // Then send the email.
-    for (const expiredLicence of expiredLicences) {
-      const holderEmailDetails = setLicenceExpiredNoReturnEmailDetails(
-        expiredLicence.id,
-        expiredLicence.LicenceHolder,
-        expiredLicence.SiteAddress,
+    for (const licence of licences) {
+      const holderEmailDetails = setReturnReminderEmailDetails(
+        licence.id,
+        licence.LicenceHolder,
+        licence.SiteAddress,
       );
 
       let applicantEmailDetails;
 
       // If the licence holder and applicant are different set up email details for applicant too.
-      if (expiredLicence.LicenceHolder.id !== expiredLicence.LicenceApplicant.id) {
-        applicantEmailDetails = setLicenceExpiredNoReturnEmailDetails(
-          expiredLicence.id,
-          expiredLicence.LicenceApplicant,
-          expiredLicence.SiteAddress,
+      if (licence.LicenceHolder.id !== licence.LicenceApplicant.id) {
+        applicantEmailDetails = setReturnReminderEmailDetails(
+          licence.id,
+          licence.LicenceApplicant,
+          licence.SiteAddress,
         );
       }
 
-      // eslint-disable-next-line no-await-in-loop
-      await sendLicenceExpiredNoReturnEmail(holderEmailDetails, expiredLicence.LicenceHolder.emailAddress);
-      sentCount++;
-      if (applicantEmailDetails) {
+      // Check reminder type and send the correct template.
+      if (reminderType === 'expiredNoReturn') {
         // eslint-disable-next-line no-await-in-loop
-        await sendLicenceExpiredNoReturnEmail(holderEmailDetails, expiredLicence.LicenceHolder.emailAddress);
+        await sendLicenceExpiredNoReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
         sentCount++;
+        if (applicantEmailDetails) {
+          // eslint-disable-next-line no-await-in-loop
+          await sendLicenceExpiredNoReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+          sentCount++;
+        }
+      }
+
+      if (reminderType === 'expiredNoFinalReturn') {
+
+      }
+
+      if (reminderType === 'dueToExpire') {
+
       }
     }
 

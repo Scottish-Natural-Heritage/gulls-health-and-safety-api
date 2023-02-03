@@ -1761,7 +1761,7 @@ const routes: ServerRoute[] = [
         });
 
         // Try to send out reminder emails.
-        const emailsSent = await Scheduled.sendExpiredNoReturnReminder(filteredLicences);
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'expiredNoReturn');
 
         return h.response({message: `Sent ${emailsSent} expired licence with no return reminder emails.`}).code(200);
       } catch (error: unknown) {
@@ -1796,7 +1796,42 @@ const routes: ServerRoute[] = [
         });
 
         // Try to send out reminder emails.
-        const emailsSent = await Scheduled.sendExpiredNoFinalReturnReminder(filteredLicences);
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'expiredNoFinalReturn');
+
+        return h
+          .response({message: `Sent ${emailsSent} expired licence with no final return reminder emails.`})
+          .code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Send out a reminder email on valid licences that are due to expire.
+   */
+   {
+    method: 'post',
+    path: `${config.pathPrefix}/soon-to-expire-return-reminder`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Fetch all applications to be filtered.
+        const applications = await Scheduled.getApplications();
+
+        // Filter out any expired, .
+        const filteredLicences = applications.filter((application: any) => {
+          return (
+            application.License !== null &&
+            application.License?.periodTo < new Date() &&
+            application.License?.Returns.length > 0
+          );
+        });
+
+        // Try to send out reminder emails.
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'dueToExpire');
 
         return h
           .response({message: `Sent ${emailsSent} expired licence with no final return reminder emails.`})
