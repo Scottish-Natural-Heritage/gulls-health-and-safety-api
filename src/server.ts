@@ -59,7 +59,7 @@ cron.schedule('0 6 * * *', async () => {
     }
   }
 
-  // Check for valid licences that are due to expire.
+  // Check for valid licences that are due to expire, on the 15th of January.
   if (todayDate.getDate() === 15 && todayDate.getMonth() === 0) {
     try {
       await axios.post(`http://localhost:3017${config.pathPrefix}/soon-to-expire-return-reminder`);

@@ -22,7 +22,7 @@ import jwk from './config/jwk.js';
  * Checks if an array of returns contains a final return.
  *
  * @param {any} returns The array of returns to check.
- * @returns Returns `true` if a final return is found, else
+ * @returns {boolean} Returns `true` if a final return is found, else
  * returns `false`.
  */
 const hasFinalReturn = (returns: any): boolean => {
@@ -1835,7 +1835,7 @@ const routes: ServerRoute[] = [
         // Fetch all applications to be filtered.
         const applications = await Scheduled.getApplications();
 
-        // Filter out any expired, .
+        // Filter out any expired, withdrawn, revoked or previous years' licences.
         const filteredLicences = applications.filter((application: any) => {
           return (
             application.License !== null &&
