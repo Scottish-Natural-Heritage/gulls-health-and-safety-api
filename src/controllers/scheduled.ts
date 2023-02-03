@@ -12,7 +12,7 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Contact, Address, License, Revocation, Returns} = database;
+const {Application, Contact, Address, License, Revocation, Returns, Withdrawal} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -314,6 +314,14 @@ const ScheduledController = {
               as: 'Returns',
             },
           ],
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
         },
       ],
     });
