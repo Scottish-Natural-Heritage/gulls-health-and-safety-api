@@ -59,6 +59,15 @@ cron.schedule('0 6 * * *', async () => {
     }
   }
 
+  // Check for valid licences that are due to expire.
+  if (todayDate.getDate() === 15 && todayDate.getMonth() === 0) {
+    try {
+      await axios.post(`http://localhost:3017${config.pathPrefix}/soon-to-expire-return-reminder`);
+    } catch (error: unknown) {
+      console.error(JsonUtils.unErrorJson(error));
+    }
+  }
+
   // Resend any licences issued before test 3 deployment. Commented out but left in
   // as we may want to use this again.
   // try {
