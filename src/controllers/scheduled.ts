@@ -65,9 +65,10 @@ const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
 };
 
 /**
+ * /**
  * This function calls the Notify API and asks for a reminder email to be sent to
- * any licence holder and applicant if the licence has expired and has no return
- * against it.
+ * the specified email address informing the recipient that the licence has expired
+ * and has no return of any type against it.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
@@ -83,9 +84,10 @@ const sendLicenceExpiredNoReturnEmail = async (emailDetails: any, emailAddress: 
 };
 
 /**
+ * /**
  * This function calls the Notify API and asks for a reminder email to be sent to
- * any licence holder and applicant if the licence has expired and has no final return
- * against it.
+ * the specified email address informing the recipient that the licence has expired
+ * and has no final return against it.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
@@ -101,8 +103,10 @@ const sendLicenceExpiredNoFinalReturnEmail = async (emailDetails: any, emailAddr
 };
 
 /**
+ * /**
  * This function calls the Notify API and asks for a reminder email to be sent to
- * any licence holder and applicant if the licence is due to expire.
+ * the specified email address informing the recipient that the licence will shortly
+ * expire.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
  * @param {any} emailAddress The email address to send the email to.
