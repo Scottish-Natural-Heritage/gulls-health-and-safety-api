@@ -4,8 +4,6 @@ import jwk from '../config/jwk.js';
 import database from '../models/index.js';
 import config from '../config/app';
 import MultiUseFunctions from '../multi-use-functions';
-import LicenceController from './license';
-import {ApplicationInterface} from './application.js';
 import {
   FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID,
   FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID,
@@ -15,6 +13,8 @@ import {
   LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,
   LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
 } from '../notify-template-ids';
+import LicenceController from './license';
+import {ApplicationInterface} from './application.js';
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -74,7 +74,6 @@ const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
 };
 
 /**
- * /**
  * This function calls the Notify API and asks for a reminder email to be sent to
  * the specified email address informing the recipient that the licence has expired
  * and has no return of any type against it.
@@ -93,7 +92,6 @@ const sendLicenceExpiredNoReturnEmail = async (emailDetails: any, emailAddress: 
 };
 
 /**
- * /**
  * This function calls the Notify API and asks for a reminder email to be sent to
  * the specified email address informing the recipient that the licence has expired
  * and has no final return against it.
@@ -112,7 +110,6 @@ const sendLicenceExpiredNoFinalReturnEmail = async (emailDetails: any, emailAddr
 };
 
 /**
- * /**
  * This function calls the Notify API and asks for a reminder email to be sent to
  * the specified email address informing the recipient that the licence will shortly
  * expire.
@@ -345,6 +342,8 @@ const ScheduledController = {
    * or is valid but due to expire.
    *
    * @param {any} licences A collection of all licences to be sent a reminder.
+   * @param {string} reminderType The type of reminder, either `expiredNoReturn`, `expiredNoFinalReturn`
+   * or `dueToExpire`, depending on which email is to be sent.
    * @returns {number} Returns the number of emails sent.
    */
   sendReturnReminder: async (licences: any, reminderType: string): Promise<number> => {
