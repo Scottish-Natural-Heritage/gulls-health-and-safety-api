@@ -6,6 +6,15 @@ import config from '../config/app';
 import MultiUseFunctions from '../multi-use-functions';
 import LicenceController from './license';
 import {ApplicationInterface} from './application.js';
+import {
+  FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID,
+  FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID,
+  TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID,
+  EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID,
+  EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID,
+  LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,
+  LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+} from '../notify-template-ids';
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
@@ -24,9 +33,9 @@ const {Application, Contact, Address, License, Revocation, Returns, Withdrawal} 
 const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('328d9fa5-b7be-443b-85f5-1b2c80f94022', emailAddress, {
+    await notifyClient.sendEmail(FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -41,9 +50,9 @@ const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) 
 const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('52c8aa89-7fec-41c2-bb02-646ed61470d3', emailAddress, {
+    await notifyClient.sendEmail(FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -57,9 +66,9 @@ const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: an
 const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa', emailAddress, {
+    await notifyClient.sendEmail(TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -76,9 +85,9 @@ const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
 const sendLicenceExpiredNoReturnEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('5cfc510d-e4cd-4acc-8610-f9a430669384', emailAddress, {
+    await notifyClient.sendEmail(EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -95,9 +104,9 @@ const sendLicenceExpiredNoReturnEmail = async (emailDetails: any, emailAddress: 
 const sendLicenceExpiredNoFinalReturnEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('9390eb90-9ad4-4416-a4e2-42b6573358a1', emailAddress, {
+    await notifyClient.sendEmail(EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -114,9 +123,9 @@ const sendLicenceExpiredNoFinalReturnEmail = async (emailDetails: any, emailAddr
 const sendLicenceSoonExpiredEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('0130f081-9d83-40e4-b1de-880721578e57', emailAddress, {
+    await notifyClient.sendEmail(LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
