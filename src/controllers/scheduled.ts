@@ -361,7 +361,7 @@ const ScheduledController = {
         await sendLicenceExpiredNoReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
         sentCount++;
         if (applicantEmailDetails) {
-          await sendLicenceExpiredNoReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+          await sendLicenceExpiredNoReturnEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
           sentCount++;
         }
       }
@@ -370,7 +370,7 @@ const ScheduledController = {
         await sendLicenceExpiredNoFinalReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
         sentCount++;
         if (applicantEmailDetails) {
-          await sendLicenceExpiredNoFinalReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+          await sendLicenceExpiredNoFinalReturnEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
           sentCount++;
         }
       }
@@ -379,7 +379,7 @@ const ScheduledController = {
         await sendLicenceSoonExpiredEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
         sentCount++;
         if (applicantEmailDetails) {
-          await sendLicenceSoonExpiredEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+          await sendLicenceSoonExpiredEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
           sentCount++;
         }
       }
