@@ -9,6 +9,7 @@ interface AppConfig {
   underTest: boolean;
   notifyApiKey: string | null;
   hostPrefix: string;
+  gullsApiPort: number;
 }
 
 const config: AppConfig = {
@@ -22,6 +23,7 @@ const config: AppConfig = {
   underTest: Boolean(process.env.UNDER_TEST),
   notifyApiKey: process.env.GULLS_NOTIFY_API_KEY ?? null,
   hostPrefix: process.env.GULLS_HOST_PREFIX ?? 'http://localhost:3016',
+  gullsApiPort: 3017,
 };
 
 export default config;

@@ -4,6 +4,15 @@ import jwk from '../config/jwk.js';
 import database from '../models/index.js';
 import config from '../config/app';
 import MultiUseFunctions from '../multi-use-functions';
+import {
+  FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID,
+  FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID,
+  TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID,
+  EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID,
+  EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID,
+  LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,
+  LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+} from '../notify-template-ids';
 import LicenceController from './license';
 import {ApplicationInterface} from './application.js';
 
@@ -12,7 +21,7 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Contact, Address, License, Revocation} = database;
+const {Application, Contact, Address, License, Revocation, Returns, Withdrawal} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -24,9 +33,9 @@ const {Application, Contact, Address, License, Revocation} = database;
 const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('328d9fa5-b7be-443b-85f5-1b2c80f94022', emailAddress, {
+    await notifyClient.sendEmail(FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -41,9 +50,9 @@ const sendReminderMagicLinkEmail = async (emailDetails: any, emailAddress: any) 
 const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('52c8aa89-7fec-41c2-bb02-646ed61470d3', emailAddress, {
+    await notifyClient.sendEmail(FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -57,9 +66,63 @@ const sendReminderEmailForApplicant = async (emailDetails: any, emailAddress: an
 const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
-    await notifyClient.sendEmail('d2dfaf64-49fb-4383-9713-33aa55898afa', emailAddress, {
+    await notifyClient.sendEmail(TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
-      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for a reminder email to be sent to
+ * the specified email address informing the recipient that the licence has expired
+ * and has no return of any type against it.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceExpiredNoReturnEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail(EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID, emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for a reminder email to be sent to
+ * the specified email address informing the recipient that the licence has expired
+ * and has no final return against it.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceExpiredNoFinalReturnEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail(EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID, emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for a reminder email to be sent to
+ * the specified email address informing the recipient that the licence will shortly
+ * expire.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendLicenceSoonExpiredEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail(LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID, emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
   }
 };
@@ -144,6 +207,14 @@ const set21DayWithdrawEmailDetails = (
   };
 };
 
+const setReturnReminderEmailDetails = (id: number, contact: any, siteAddress: any) => {
+  return {
+    id,
+    name: contact.name,
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
+  };
+};
+
 const ScheduledController = {
   getUnconfirmed: async () => {
     return Application.findAll({
@@ -216,6 +287,119 @@ const ScheduledController = {
         },
       ],
     });
+  },
+
+  /**
+   * Gets all applications, including contact, address, licence, withdrawal, revocation
+   * and return details. To be used to send out reminder emails.
+   *
+   * @returns {Application[]} All applications, including contact, address, withdrawal, revocation,
+   * licence and returns data.
+   */
+  getApplications: async () => {
+    return Application.findAll({
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddress',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+        {
+          model: License,
+          as: 'License',
+          include: [
+            {
+              model: Returns,
+              as: 'Returns',
+            },
+          ],
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+      ],
+    });
+  },
+
+  /**
+   * Sends out the reminder emails if a licence has expired with no returns, no final return
+   * or is valid but due to expire.
+   *
+   * @param {any} licences A collection of all licences to be sent a reminder.
+   * @param {string} reminderType The type of reminder, either `expiredNoReturn`, `expiredNoFinalReturn`
+   * or `dueToExpire`, depending on which email is to be sent.
+   * @returns {number} Returns the number of emails sent.
+   */
+  sendReturnReminder: async (licences: any, reminderType: string): Promise<number> => {
+    // A count of the number of emails sent.
+    let sentCount = 0;
+
+    // Loop through the collection of licences and set up their email details.
+    // Then send the email.
+    for (const licence of licences) {
+      const holderEmailDetails = setReturnReminderEmailDetails(licence.id, licence.LicenceHolder, licence.SiteAddress);
+
+      let applicantEmailDetails;
+
+      // If the licence holder and applicant are different set up email details for applicant too.
+      if (licence.LicenceHolder.id !== licence.LicenceApplicant.id) {
+        applicantEmailDetails = setReturnReminderEmailDetails(
+          licence.id,
+          licence.LicenceApplicant,
+          licence.SiteAddress,
+        );
+      }
+
+      /* eslint-disable no-await-in-loop */
+
+      // Check reminder type and send the correct template.
+      if (reminderType === 'expiredNoReturn') {
+        await sendLicenceExpiredNoReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+        sentCount++;
+        if (applicantEmailDetails) {
+          await sendLicenceExpiredNoReturnEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
+          sentCount++;
+        }
+      }
+
+      if (reminderType === 'expiredNoFinalReturn') {
+        await sendLicenceExpiredNoFinalReturnEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+        sentCount++;
+        if (applicantEmailDetails) {
+          await sendLicenceExpiredNoFinalReturnEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
+          sentCount++;
+        }
+      }
+
+      if (reminderType === 'dueToExpire') {
+        await sendLicenceSoonExpiredEmail(holderEmailDetails, licence.LicenceHolder.emailAddress);
+        sentCount++;
+        if (applicantEmailDetails) {
+          await sendLicenceSoonExpiredEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
+          sentCount++;
+        }
+      }
+    }
+
+    /* eslint-enable no-await-in-loop */
+
+    return sentCount;
   },
 
   checkUnconfirmedAndSendReminder: async (unconfirmed: any, confirmBaseUrl: any) => {
