@@ -42,7 +42,7 @@ cron.schedule('0 6 * * *', async () => {
   }
 
   // Check for expired licences with no returns on 1st March and 1st April and send out reminder emails.
-  if (todayDate.getDate() === 1 && (todayDate.getMonth() === 2 || todayDate.getMonth() === 3)) {
+  if (todayDate.getDate() === 14 && (todayDate.getMonth() === 1 || todayDate.getMonth() === 3)) {
     try {
       await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/expired-no-return-reminder`);
     } catch (error: unknown) {
@@ -51,7 +51,7 @@ cron.schedule('0 6 * * *', async () => {
   }
 
   // Check for expired licences with returns but no final return on 1st March and 1st April and send out reminder emails.
-  if (todayDate.getDate() === 1 && (todayDate.getMonth() === 2 || todayDate.getMonth() === 3)) {
+  if (todayDate.getDate() === 14 && (todayDate.getMonth() === 1 || todayDate.getMonth() === 3)) {
     try {
       await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/expired-no-final-return-reminder`);
     } catch (error: unknown) {
@@ -60,7 +60,7 @@ cron.schedule('0 6 * * *', async () => {
   }
 
   // Check for valid licences that are due to expire, on the 15th of January.
-  if (todayDate.getDate() === 15 && todayDate.getMonth() === 0) {
+  if (todayDate.getDate() === 14 && todayDate.getMonth() === 1) {
     try {
       await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/soon-to-expire-return-reminder`);
     } catch (error: unknown) {
