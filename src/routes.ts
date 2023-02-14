@@ -19,6 +19,23 @@ import JsonUtils from './json-utils';
 import jwk from './config/jwk.js';
 
 /**
+ * Checks if an array of returns contains a final return.
+ *
+ * @param {any} returns The array of returns to check.
+ * @returns {boolean} Returns `true` if a final return is found, else
+ * returns `false`.
+ */
+const hasFinalReturn = (returns: any): boolean => {
+  for (const currentReturn of returns) {
+    if (currentReturn.isFinalReturn) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
  * An array of all the routes and controllers in the app.
  */
 const routes: ServerRoute[] = [
@@ -1713,6 +1730,126 @@ const routes: ServerRoute[] = [
         const resentLicences = await Scheduled.resendLicenceEmails(filteredLicences);
 
         return h.response({message: `Resent ${resentLicences} licences.`}).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Send out a reminder email on expired licences with no returns, on
+   * the 1st of March and the 1st of April.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/expired-no-return-reminder`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // We need to know the date and year.
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
+        // Fetch all applications to be filtered.
+        const applications = await Scheduled.getApplications();
+
+        // Filter out any non-licences, non-expired licences, or licences with returns.
+        const filteredLicences = applications.filter((application: any) => {
+          return (
+            application.License !== null &&
+            new Date(application.License?.periodTo).getFullYear() === currentYear &&
+            application.License.periodTo < currentDate &&
+            application.License?.Returns.length === 0
+          );
+        });
+
+        // Try to send out reminder emails.
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'expiredNoReturn');
+
+        return h.response({message: `Sent ${emailsSent} expired licence with no return reminder emails.`}).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Send out a reminder email on expired licences with returns but no
+   * final return, on the 1st of March and the 1st of April.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/expired-no-final-return-reminder`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // We need to know the date and year.
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
+        // Fetch all applications to be filtered.
+        const applications = await Scheduled.getApplications();
+
+        // Filter out any non-licences, non-expired licences, or licences with final returns.
+        const filteredLicences = applications.filter((application: any) => {
+          return (
+            application.License !== null &&
+            new Date(application.License?.periodTo).getFullYear() === currentYear &&
+            application.License.periodTo < currentDate &&
+            application.License?.Returns.length > 0 &&
+            !hasFinalReturn(application.License.Returns)
+          );
+        });
+
+        // Try to send out reminder emails.
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'expiredNoFinalReturn');
+
+        return h
+          .response({message: `Sent ${emailsSent} expired licence with no final return reminder emails.`})
+          .code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Send out a reminder email on valid licences that are due to expire.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/soon-to-expire-return-reminder`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // We need to know the date and year.
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
+        // Fetch all applications to be filtered.
+        const applications = await Scheduled.getApplications();
+
+        // Filter out any expired, withdrawn, revoked or previous years' licences.
+        const filteredLicences = applications.filter((application: any) => {
+          return (
+            application.License !== null &&
+            application.Withdrawal === null &&
+            application.Revocation === null &&
+            new Date(application.License?.periodTo).getFullYear() === currentYear &&
+            application.License.periodTo > currentDate
+          );
+        });
+
+        // Try to send out reminder emails.
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'dueToExpire');
+
+        return h.response({message: `Sent ${emailsSent} soon to expire licence return reminder emails.`}).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

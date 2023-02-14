@@ -20,9 +20,12 @@ import JsonUtils from './json-utils';
 cron.schedule('0 6 * * *', async () => {
   console.log('Triggering cron job(s).');
 
+  // Get the date.
+  const todayDate = new Date();
+
   // Check for unconfirmed applications and sent out 14 day reminder emails.
   try {
-    await axios.patch(`http://localhost:3017${config.pathPrefix}/reminder`, undefined, {
+    await axios.patch(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/reminder`, undefined, {
       params: {
         onBehalfApprovePath: '/gulls-health-and-safety/on-behalf-approve?token=',
       },
@@ -33,15 +36,42 @@ cron.schedule('0 6 * * *', async () => {
 
   // Check for unconfirmed after 21 days applications and send out withdrawn emails.
   try {
-    await axios.delete(`http://localhost:3017${config.pathPrefix}/withdrawal`);
+    await axios.delete(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/withdrawal`);
   } catch (error: unknown) {
     console.error(JsonUtils.unErrorJson(error));
+  }
+
+  // Check for expired licences with no returns on 1st March and 1st April and send out reminder emails.
+  if (todayDate.getDate() === 1 && (todayDate.getMonth() === 2 || todayDate.getMonth() === 3)) {
+    try {
+      await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/expired-no-return-reminder`);
+    } catch (error: unknown) {
+      console.error(JsonUtils.unErrorJson(error));
+    }
+  }
+
+  // Check for expired licences with returns but no final return on 1st March and 1st April and send out reminder emails.
+  if (todayDate.getDate() === 1 && (todayDate.getMonth() === 2 || todayDate.getMonth() === 3)) {
+    try {
+      await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/expired-no-final-return-reminder`);
+    } catch (error: unknown) {
+      console.error(JsonUtils.unErrorJson(error));
+    }
+  }
+
+  // Check for valid licences that are due to expire, on the 15th of January.
+  if (todayDate.getDate() === 15 && todayDate.getMonth() === 0) {
+    try {
+      await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/soon-to-expire-return-reminder`);
+    } catch (error: unknown) {
+      console.error(JsonUtils.unErrorJson(error));
+    }
   }
 
   // Resend any licences issued before test 3 deployment. Commented out but left in
   // as we may want to use this again.
   // try {
-  //   await axios.post(`http://localhost:3017${config.pathPrefix}/resend-licences`);
+  //   await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/resend-licences`);
   // } catch (error: unknown) {
   //   console.error(JsonUtils.unErrorJson(error));
   // }
