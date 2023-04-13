@@ -131,6 +131,38 @@ const sendReturnLoginMagicLinkEmail = async (emailDetails: any, emailAddress: an
 };
 
 /**
+ * This function calls the Notify API and asks for an email to be sent with the supplied details.
+ *
+ * @param {any} emailDetails
+ * @param {any} emailAddress
+ */
+const sendWithdrawalEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('9866806b-ccd6-4b72-8e34-776076900546', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+const setWithdrawalEmailDetails = (
+  id: number,
+  licenceHolderContact: any,
+  onBehalfContact: any,
+  siteAddress: any,
+  withdrawalReason: string,
+) => {
+  return {
+    lhName: licenceHolderContact.name,
+    onBehalfName: onBehalfContact.name,
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
+    withdrawalReason,
+    id,
+  };
+};
+
+/**
  * This function returns an object containing the details required for the licence holder and the
  * licence applicant confirmation emails.
  *
@@ -1014,7 +1046,24 @@ const ApplicationController = {
       // Start the transaction.
       await database.sequelize.transaction(async (t: transaction) => {
         // Check the application/license exists.
-        const application = await Application.findByPk(id, {transaction: t, rejectOnEmpty: true});
+        const application: any = await Application.findByPk(id, {
+          transaction: t,
+          rejectOnEmpty: true,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+          ],
+        });
         // Find the species record.
         const species = await Species.findByPk(application.SpeciesId, {transaction: t, rejectOnEmpty: true});
         // Find the permitted species record.
@@ -1149,9 +1198,28 @@ const ApplicationController = {
         // Delete any assessment Measure attached to the application/license.
         await AssessmentMeasure.destroy({where: {ApplicationId: id}, force: true, transaction: t});
 
+
+        // Construct and send the withdrawal email.
+        const emailDetails = setWithdrawalEmailDetails(
+          application.id,
+          application.LicenseHolder,
+          application.LicenseApplicant,
+          application.SiteAddress,
+          cleanObject.reason,
+        );
+
+        console.log("email details");
+        console.log(emailDetails);
+
+        await sendWithdrawalEmail(emailDetails, application.LicenceHolder.emailAddress);
+
         // If everything worked then return true.
         return true;
       });
+
+      // If we were able to delete, then send the withdrawal email.
+      // add code here
+
       // Everything worked so return true to the calling code.
       return true;
     } catch {
