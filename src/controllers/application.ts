@@ -1064,6 +1064,17 @@ const ApplicationController = {
             },
           ],
         });
+
+        // Construct and send the withdrawal email.
+        // We have to do it here because the application is deleted after this.
+        const emailDetails = setWithdrawalEmailDetails(
+          application.id,
+          application.LicenceHolder,
+          application.LicenceApplicant,
+          application.SiteAddress,
+          cleanObject.reason,
+        );
+
         // Find the species record.
         const species = await Species.findByPk(application.SpeciesId, {transaction: t, rejectOnEmpty: true});
         // Find the permitted species record.
@@ -1198,19 +1209,7 @@ const ApplicationController = {
         // Delete any assessment Measure attached to the application/license.
         await AssessmentMeasure.destroy({where: {ApplicationId: id}, force: true, transaction: t});
 
-
-        // Construct and send the withdrawal email.
-        const emailDetails = setWithdrawalEmailDetails(
-          application.id,
-          application.LicenseHolder,
-          application.LicenseApplicant,
-          application.SiteAddress,
-          cleanObject.reason,
-        );
-
-        console.log("email details");
-        console.log(emailDetails);
-
+        // Send the withdrawal email.
         await sendWithdrawalEmail(emailDetails, application.LicenceHolder.emailAddress);
 
         // If everything worked then return true.
