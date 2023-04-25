@@ -1216,9 +1216,6 @@ const ApplicationController = {
         return true;
       });
 
-      // If we were able to delete, then send the withdrawal email.
-      // add code here
-
       // Everything worked so return true to the calling code.
       return true;
     } catch {
