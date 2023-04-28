@@ -131,7 +131,7 @@ const sendLicenceSoonExpiredEmail = async (emailDetails: any, emailAddress: any)
 /**
  * This function calls the Notify API and asks for a reminder email to be sent to
  * the specified email address to remind current gull health and safety licence holders
- * and applicants that are permitted to clear nests and eggs their licence activity 
+ * and applicants that are permitted to clear nests and eggs their licence activity
  * and site visit return is due.
  *
  * @param {any} emailDetails The details to use in the email to be sent.
@@ -234,7 +234,6 @@ const setReturnReminderEmailDetails = (id: number, contact: any, siteAddress: an
     siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
   };
 };
-
 
 const ScheduledController = {
   getUnconfirmed: async () => {
@@ -421,7 +420,10 @@ const ScheduledController = {
         await sendMonthlyReturnsReminderForOverdueReturns(holderEmailDetails, licence.LicenceHolder.emailAddress);
         sentCount++;
         if (applicantEmailDetails) {
-          await sendMonthlyReturnsReminderForOverdueReturns(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
+          await sendMonthlyReturnsReminderForOverdueReturns(
+            applicantEmailDetails,
+            licence.LicenceApplicant.emailAddress,
+          );
           sentCount++;
         }
       }

@@ -41,7 +41,7 @@ const LICENSING_REPLY_TO_NOTIFY_EMAIL_ID = '4b49467e-2a35-4713-9d92-809c55bf1cdd
  * but are yet to have a Return submitted. These keep being emailed on the first of the month
  * until a return is submitted, then not sent again.
  */
-const FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS = 'febe0531-36a7-442d-9560-0b8b9c0817fe'
+const FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS = 'febe0531-36a7-442d-9560-0b8b9c0817fe';
 
 export {
   FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID,
