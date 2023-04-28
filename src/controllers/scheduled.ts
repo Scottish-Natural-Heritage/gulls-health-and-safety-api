@@ -12,6 +12,7 @@ import {
   EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID,
   LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,
   LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+  FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS,
 } from '../notify-template-ids';
 import LicenceController from './license';
 import {ApplicationInterface} from './application.js';
@@ -128,6 +129,25 @@ const sendLicenceSoonExpiredEmail = async (emailDetails: any, emailAddress: any)
 };
 
 /**
+ * This function calls the Notify API and asks for a reminder email to be sent to
+ * the specified email address to remind current gull health and safety licence holders
+ * and applicants that are permitted to clear nests and eggs their licence activity 
+ * and site visit return is due.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendMonthlyReturnsReminderForOverdueReturns = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail(FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS, emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+    });
+  }
+};
+
+/**
  * This function returns an object containing the details required for the licence holder
  * fourteen day reminder email.
  *
@@ -214,6 +234,7 @@ const setReturnReminderEmailDetails = (id: number, contact: any, siteAddress: an
     siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
   };
 };
+
 
 const ScheduledController = {
   getUnconfirmed: async () => {
@@ -392,6 +413,15 @@ const ScheduledController = {
         sentCount++;
         if (applicantEmailDetails) {
           await sendLicenceSoonExpiredEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
+          sentCount++;
+        }
+      }
+
+      if (reminderType === 'threeWeeksInNoReturn') {
+        await sendMonthlyReturnsReminderForOverdueReturns(holderEmailDetails, licence.LicenceHolder.emailAddress);
+        sentCount++;
+        if (applicantEmailDetails) {
+          await sendMonthlyReturnsReminderForOverdueReturns(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
           sentCount++;
         }
       }
