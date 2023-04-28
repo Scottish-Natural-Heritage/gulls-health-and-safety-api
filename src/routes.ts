@@ -1793,27 +1793,40 @@ const routes: ServerRoute[] = [
         // Fetch all applications to be filtered.
         const applications = await Scheduled.getApplications();
 
+        const checkForActivitiesLoop = (species: any): boolean => {
+          for (const animal of species) {
+            if (animal.PActivity.eggDestruction === true || animal.PActivity?.removeNests === true) {
+              return true;
+            }
+          }
+
+          return false;
+        };
+
         // Filter out any non-licences, non-expired licences, or licences with returns.
         const filteredLicences = applications.filter((application: any) => {
           return (
-            // checks valid licence
+            // Checks valid licence
             application.License !== null &&
-            // checks active licence
+            // Checks active licence
             application.License.periodTo > currentDate &&
-            // checks it was created more than 3 weeks ago
+            // Checks it was created more than 3 weeks ago
             new Date(application.createdAt) <= todayDateMinusTwentyOneDays &&
-            // no returns
+            // No returns
             application.License?.Returns.length === 0 &&
             // Permitted activities must include: remove nests or egg destruction (column names in db).
-            application.PActivity?.eggDestruction === true || application.PActivity?.removeNests === true
+            checkForActivitiesLoop(application.PSpecies)
           );
         });
-        console.log(filteredLicences)
 
         // Try to send out reminder emails.
         const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'threeWeeksInNoReturn');
 
-        return h.response({message: `Sent ${emailsSent} return reminder to licences which are least 3 weeks old and have not yet submitted a return.`}).code(200);
+        return h
+          .response({
+            message: `Sent ${emailsSent} return reminder to licences which are least 3 weeks old and have not yet submitted a return.`,
+          })
+          .code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
