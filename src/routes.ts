@@ -1789,10 +1789,12 @@ const routes: ServerRoute[] = [
         // We need to know the date.
         const currentDate = new Date();
 
+
         const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
 
         // Fetch all applications to be filtered.
         const applications = await Scheduled.findAllApplicantsNoReturnCurrentSeason();
+
         // Filter out any non-licences, non-expired licences, or licences with returns.
         const filteredLicences = applications.filter((application: any) => {
           return (
