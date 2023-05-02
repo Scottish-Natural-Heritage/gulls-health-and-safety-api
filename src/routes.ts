@@ -1787,38 +1787,29 @@ const routes: ServerRoute[] = [
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // We need to know the date.
-        const currentDate = new Date();
+        const currentDate =  new Date();
+
         const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
 
         // Fetch all applications to be filtered.
-        const applications = await Scheduled.getApplications();
-
-        const checkForActivitiesLoop = (species: any): boolean => {
-          for (const animal of species) {
-            if (animal.PActivity.eggDestruction === true || animal.PActivity?.removeNests === true) {
-              return true;
-            }
-          }
-
-          return false;
-        };
-
+        const applications = await Scheduled.findAllApplicantsNoReturnCurrentSeason();
         // Filter out any non-licences, non-expired licences, or licences with returns.
         const filteredLicences = applications.filter((application: any) => {
           return (
             // Checks valid licence
             application.License !== null &&
             // Checks active licence
-            application.License.periodTo > currentDate &&
+            application.License?.periodTo > currentDate &&
             // Checks it was created more than 3 weeks ago
             new Date(application.createdAt) <= todayDateMinusTwentyOneDays &&
-            // No returns
+            // // No returns
             application.License?.Returns.length === 0 &&
-            // Permitted activities must include: remove nests or egg destruction (column names in db).
-            checkForActivitiesLoop(application.PSpecies)
+            // No revoked or withdrawn licenses
+            application.Revocation === null && 
+            application.Withdrawal === null
           );
         });
-
+        
         // Try to send out reminder emails.
         const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'threeWeeksInNoReturn');
 

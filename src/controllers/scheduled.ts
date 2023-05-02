@@ -22,7 +22,7 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Contact, Address, License, Revocation, Returns, Withdrawal} = database;
+const {Application, Contact, Address, License, Revocation, Returns, Withdrawal, PActivity, PSpecies} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -259,6 +259,100 @@ const ScheduledController = {
       ],
     });
   },
+
+
+   /**
+   * This function returns all applications which have a permitted activity to either remove nests or destroy eggs.
+   *
+   * @returns {any} Returns an array of applications.
+   */
+
+   findAllApplicantsNoReturnCurrentSeason:async () => {
+    return Application.findAll({
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'LicenceHolderAddress',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+            include: [
+              {
+                model: Returns,
+                as: 'Returns',
+              },
+            ],
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+          model: PSpecies,
+          as: 'PSpecies',
+          include: [
+            {
+              model: PActivity,
+              as: 'PHerringGull',
+              where: {
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+              },
+              required: true
+            },
+            {
+              model: PActivity,
+              as: 'PBlackHeadedGull',
+              where: {
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+              },
+              required: true
+            },
+            {
+              model: PActivity,
+              as: 'PCommonGull',
+              where: {
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+              },
+              required: true
+            },
+            {
+              model: PActivity,
+              as: 'PGreatBlackBackedGull',
+              where: {
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+              },
+              required: true
+          },
+          {
+            model: PActivity,
+            as: 'PLesserBlackBackedGull',
+            where: {
+              [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+            },
+            required: true
+          },
+        ],
+        }],
+      })
+    },
+    
 
   getUnconfirmedReminded: async () => {
     return Application.findAll({
