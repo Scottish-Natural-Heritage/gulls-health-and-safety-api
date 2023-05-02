@@ -1787,7 +1787,7 @@ const routes: ServerRoute[] = [
     handler: async (request: Request, h: ResponseToolkit) => {
       try {
         // We need to know the date.
-        const currentDate =  new Date();
+        const currentDate = new Date();
 
         const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
 
@@ -1805,11 +1805,11 @@ const routes: ServerRoute[] = [
             // // No returns
             application.License?.Returns.length === 0 &&
             // No revoked or withdrawn licenses
-            application.Revocation === null && 
+            application.Revocation === null &&
             application.Withdrawal === null
           );
         });
-        
+
         // Try to send out reminder emails.
         const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'threeWeeksInNoReturn');
 

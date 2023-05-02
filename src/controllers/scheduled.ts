@@ -260,51 +260,50 @@ const ScheduledController = {
     });
   },
 
-
-   /**
+  /**
    * This function returns all applications which have a permitted activity to either remove nests or destroy eggs.
    *
    * @returns {any} Returns an array of applications.
    */
 
-   findAllApplicantsNoReturnCurrentSeason:async () => {
+  findAllApplicantsNoReturnCurrentSeason: async () => {
     return Application.findAll({
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'LicenceHolderAddress',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-            include: [
-              {
-                model: Returns,
-                as: 'Returns',
-              },
-            ],
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddress',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+        {
+          model: License,
+          as: 'License',
+          include: [
+            {
+              model: Returns,
+              as: 'Returns',
+            },
+          ],
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+        {
           model: PSpecies,
           as: 'PSpecies',
           include: [
@@ -312,47 +311,47 @@ const ScheduledController = {
               model: PActivity,
               as: 'PHerringGull',
               where: {
-                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}],
               },
-              required: true
+              required: true,
             },
             {
               model: PActivity,
               as: 'PBlackHeadedGull',
               where: {
-                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}],
               },
-              required: true
+              required: true,
             },
             {
               model: PActivity,
               as: 'PCommonGull',
               where: {
-                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}],
               },
-              required: true
+              required: true,
             },
             {
               model: PActivity,
               as: 'PGreatBlackBackedGull',
               where: {
-                [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}],
               },
-              required: true
-          },
-          {
-            model: PActivity,
-            as: 'PLesserBlackBackedGull',
-            where: {
-              [Op.or]: [{eggDestruction: true}, {removeNests: true}]
+              required: true,
             },
-            required: true
-          },
-        ],
-        }],
-      })
-    },
-    
+            {
+              model: PActivity,
+              as: 'PLesserBlackBackedGull',
+              where: {
+                [Op.or]: [{eggDestruction: true}, {removeNests: true}],
+              },
+              required: true,
+            },
+          ],
+        },
+      ],
+    });
+  },
 
   getUnconfirmedReminded: async () => {
     return Application.findAll({
