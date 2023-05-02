@@ -1789,7 +1789,7 @@ const routes: ServerRoute[] = [
         // We need to know the date.
         const currentDate = new Date();
 
-
+        // Todays date minus 21 days.
         const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
 
         // Fetch all applications to be filtered.
