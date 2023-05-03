@@ -1213,7 +1213,7 @@ const ApplicationController = {
         await sendWithdrawalEmail(emailDetails, application.LicenceHolder.emailAddress);
 
         // Send the withdrawal email to the on behalf applicant.
-        if(application.LicenceApplicant && application.LicenceApplicant.emailAddress) {
+        if (application?.LicenceApplicant?.emailAddress) {
           await sendWithdrawalEmail(emailDetails, application.LicenceApplicant.emailAddress);
         }
 
