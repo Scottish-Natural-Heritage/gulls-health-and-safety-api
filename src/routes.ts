@@ -1779,6 +1779,57 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Send out a reminder email to active licenses older than 3 weeks which have not sent a return.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/return-reminder-current-season`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // We need to know the date.
+        const currentDate = new Date();
+
+        // Today's date minus 21 days.
+        const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
+
+        // Fetch all applications to be filtered.
+        const applications = await Scheduled.findAllApplicantsNoReturnCurrentSeason();
+
+        // Filter out any non-licences, non-expired licences, or licences with returns.
+        const filteredLicences = applications.filter((application: any) => {
+          return (
+            // Checks valid licence
+            application.License !== null &&
+            // Checks active licence
+            application.License?.periodTo > currentDate &&
+            // Checks it was created more than 3 weeks ago
+            new Date(application.createdAt) <= todayDateMinusTwentyOneDays &&
+            // // No returns
+            application.License?.Returns.length === 0 &&
+            // No revoked or withdrawn licenses
+            application.Revocation === null &&
+            application.Withdrawal === null
+          );
+        });
+
+        // Try to send out reminder emails.
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'threeWeeksInNoReturn');
+
+        return h
+          .response({
+            message: `Sent ${emailsSent} return reminder to licences which are least 3 weeks old and have not yet submitted a return.`,
+          })
+          .code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * Send out a reminder email on expired licences with returns but no
    * final return, on the 1st of March and the 1st of April.
    */

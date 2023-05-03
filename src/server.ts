@@ -59,6 +59,15 @@ cron.schedule('0 6 * * *', async () => {
     }
   }
 
+  // Check for licences at least 3 weeks old without a return and send out a reminder on the 1st of every month.
+  if (todayDate.getDate() === 3) {
+    try {
+      await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/return-reminder-current-season`);
+    } catch (error: unknown) {
+      console.error(JsonUtils.unErrorJson(error));
+    }
+  }
+
   // Check for valid licences that are due to expire, on the 15th of January.
   if (todayDate.getDate() === 15 && todayDate.getMonth() === 0) {
     try {
