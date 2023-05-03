@@ -1209,8 +1209,13 @@ const ApplicationController = {
         // Delete any assessment Measure attached to the application/license.
         await AssessmentMeasure.destroy({where: {ApplicationId: id}, force: true, transaction: t});
 
-        // Send the withdrawal email.
+        // Send the withdrawal email to the license holder.
         await sendWithdrawalEmail(emailDetails, application.LicenceHolder.emailAddress);
+
+        // Send the withdrawal email to the on behalf applicant.
+        if (application?.LicenceApplicant?.emailAddress) {
+          await sendWithdrawalEmail(emailDetails, application.LicenceApplicant.emailAddress);
+        }
 
         // If everything worked then return true.
         return true;
