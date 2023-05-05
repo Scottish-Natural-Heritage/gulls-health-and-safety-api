@@ -35,6 +35,36 @@ const hasFinalReturn = (returns: any): boolean => {
   return false;
 };
 
+
+/** 
+ * Checks if an array of returns contains a truthy PActivity of eggDestruction or removeNests.
+ * @param {any} returns The array of returns to check.
+ * @returns {boolean} Returns `true` if a final return is found, else
+ * returns `false`.
+ */
+const checkForValidActivities = (species: any): boolean => {
+  if((species?.PBlackHeadedGull?.eggDestruction) || (species?.PBlackHeadedGull?.removeNests)){
+    return true
+  }
+  if((species?.PHerringGull?.eggDestruction) || (species?.PHerringGull?.removeNests) ){
+    return true
+  }
+  if(species?.PCommonGull?.eggDestruction || species?.PCommonGull?.removeNests){
+    return true
+  }
+  if(species?.PGreatBlackBackedGull?.eggDestruction || species?.PGreatBlackBackedGull?.removeNests){
+    return true
+  }
+  if(species?.PLesserBlackBackedGull?.eggDestruction || species?.PLesserBlackBackedGull?.removeNests){
+    return true
+  }
+  else {
+    return false
+  }
+
+};
+
+
 /**
  * An array of all the routes and controllers in the app.
  */
@@ -1804,11 +1834,13 @@ const routes: ServerRoute[] = [
             application.License?.periodTo > currentDate &&
             // Checks it was created more than 3 weeks ago
             // new Date(application.License?.periodFrom) <= todayDateMinusTwentyOneDays &&
-            // // No returns
+            // No returns
             application.License?.Returns.length === 0 &&
             // No revoked or withdrawn licenses
             application.Revocation === null &&
-            application.Withdrawal === null
+            application.Withdrawal === null &&
+            // Checks valid PActivity criteria of eggDestruction or removeNests
+            checkForValidActivities(application?.PSpecies)
           );
         });
 
