@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import {Op, Sequelize} from 'sequelize';
+import {Op} from 'sequelize';
 import jwk from '../config/jwk.js';
 import database from '../models/index.js';
 import config from '../config/app';
@@ -22,7 +22,7 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies} = database;
+const {Application, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -302,25 +302,35 @@ const ScheduledController = {
         {
           model: Withdrawal,
           as: 'Withdrawal',
-        },
+        },     
         {
           model: PSpecies,
           as: 'PSpecies',
           required: true,
-          where: Sequelize.literal('Application."SpeciesId" = PSpecies.id'),
+          include: [
+            {
+              model: PActivity,
+              as: 'PHerringGull',
+            },
+            {
+              model: PActivity,
+              as: 'PBlackHeadedGull',
+            },
+            {
+              model: PActivity,
+              as: 'PCommonGull',
+            },
+            {
+              model: PActivity,
+              as: 'PGreatBlackBackedGull',
+            },
+            {
+              model: PActivity,
+              as: 'PLesserBlackBackedGull',
+            },
+          ],
         },
-      ],
-      where: Sequelize.literal(`
-      EXISTS (
-        SELECT * FROM "PActivities" p2
-        WHERE (PSpecies."HerringGullId" = p2.id
-          OR PSpecies."BlackHeadedGullId" = p2.id
-          OR PSpecies."CommonGullId" = p2.id
-          OR PSpecies."GreatBlackBackedGullId" = p2.id
-          OR PSpecies."LesserBlackBackedGullId" = p2.id
-        ) AND (p2."eggDestruction" is true OR p2."removeNests" is true) 
-      )
-    `),
+      ]
     });
   },
 
