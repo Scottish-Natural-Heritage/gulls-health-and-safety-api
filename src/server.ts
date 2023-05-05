@@ -88,18 +88,17 @@ cron.schedule('0 6 * * *', async () => {
   console.log('Ending cron job(s).');
 });
 
-
 // Cron scheduled tasks, set to trigger at 6am each day.
 cron.schedule('30 10 * * *', async () => {
   console.log('Triggering test cron job(s).');
-   // Check for licences at least 3 weeks old without a return and send out a reminder on the 1st of every month.
-    try {
-      await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/return-reminder-current-season`);
-    } catch (error: unknown) {
-      console.error(JsonUtils.unErrorJson(error));
-    }
-  
-    console.log('Ending test cron job(s).');
+  // Check for licences at least 3 weeks old without a return and send out a reminder on the 1st of every month.
+  try {
+    await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/return-reminder-current-season`);
+  } catch (error: unknown) {
+    console.error(JsonUtils.unErrorJson(error));
+  }
+
+  console.log('Ending test cron job(s).');
 });
 
 // Start up our micro-app.
