@@ -1790,7 +1790,7 @@ const routes: ServerRoute[] = [
         const currentDate = new Date();
 
         // Today's date minus 21 days.
-        const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
+        // const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
 
         // Fetch all applications to be filtered.
         const applications = await Scheduled.findAllApplicantsNoReturnCurrentSeason();
@@ -1803,7 +1803,7 @@ const routes: ServerRoute[] = [
             // Checks active licence
             application.License?.periodTo > currentDate &&
             // Checks it was created more than 3 weeks ago
-            new Date(application.createdAt) <= todayDateMinusTwentyOneDays &&
+            // new Date(application.License?.periodFrom) <= todayDateMinusTwentyOneDays &&
             // // No returns
             application.License?.Returns.length === 0 &&
             // No revoked or withdrawn licenses
