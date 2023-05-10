@@ -302,7 +302,7 @@ const ScheduledController = {
         {
           model: Withdrawal,
           as: 'Withdrawal',
-        },     
+        },
         {
           model: PSpecies,
           as: 'PSpecies',
@@ -330,7 +330,7 @@ const ScheduledController = {
             },
           ],
         },
-      ]
+      ],
     });
   },
 
