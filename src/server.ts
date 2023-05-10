@@ -89,7 +89,7 @@ cron.schedule('0 6 * * *', async () => {
 });
 
 // Cron scheduled tasks, set to trigger at 6am each day.
-cron.schedule('30 6 * * *', async () => {
+cron.schedule('00 12 * * *', async () => {
   console.log('Triggering test cron job(s).');
   // Check for licences at least 3 weeks old without a return and send out a reminder on the 1st of every month.
   try {
