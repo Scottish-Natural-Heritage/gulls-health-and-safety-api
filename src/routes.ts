@@ -1836,7 +1836,7 @@ const routes: ServerRoute[] = [
             // Checks it was created more than 3 weeks ago
             // new Date(application.License?.periodFrom) <= todayDateMinusTwentyOneDays &&
             // No returns
-            application.License?.Returns.length === 0 &&
+            application.License?.Returns === null &&
             // No revoked or withdrawn licenses
             application.Revocation === null &&
             application.Withdrawal === null &&
