@@ -1821,7 +1821,7 @@ const routes: ServerRoute[] = [
         const currentDate = new Date();
 
         // Today's date minus 21 days.
-        // const todayDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
+        const currentDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
 
         // Fetch all applications to be filtered.
         const applications = await Scheduled.findAllApplicantsNoReturnCurrentSeason();
@@ -1834,12 +1834,11 @@ const routes: ServerRoute[] = [
             // Checks active licence
             application.License?.periodTo > currentDate &&
             // Checks it was created more than 3 weeks ago
-            // new Date(application.License?.periodFrom) <= todayDateMinusTwentyOneDays &&
+            new Date(application.License?.periodFrom) <= currentDateMinusTwentyOneDays &&
             // No returns
-            application.License?.Returns === null &&
+            application.License?.Returns.length === 0 &&
             // No revoked or withdrawn licenses
             application.Revocation === null &&
-            application.Withdrawal === null &&
             // Checks valid PActivity criteria of eggDestruction or removeNests
             checkForValidActivities(application?.PSpecies)
           );
