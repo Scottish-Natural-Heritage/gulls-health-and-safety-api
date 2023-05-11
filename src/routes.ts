@@ -1821,9 +1821,8 @@ const routes: ServerRoute[] = [
         const currentDate = new Date();
 
         // Today's date minus 21 days.
-        let currentDateMinusTwentyOneDays = currentDate
-        currentDateMinusTwentyOneDays.setDate(currentDate.getDate()-21);
-      
+        const currentDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
+
         // Fetch all applications to be filtered.
         const applications = await Scheduled.findAllApplicantsNoReturnCurrentSeason();
 
