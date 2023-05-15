@@ -12,6 +12,7 @@ import {
   EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID,
   LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,
   LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+  FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS,
 } from '../notify-template-ids';
 import LicenceController from './license';
 import {ApplicationInterface} from './application.js';
@@ -21,7 +22,7 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Contact, Address, License, Revocation, Returns, Withdrawal} = database;
+const {Application, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -121,6 +122,25 @@ const sendLicenceSoonExpiredEmail = async (emailDetails: any, emailAddress: any)
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     await notifyClient.sendEmail(LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID, emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for a reminder email to be sent to
+ * the specified email address to remind current gull health and safety licence holders
+ * and applicants that are permitted to clear nests and eggs their licence activity
+ * and site visit return is due.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendMonthlyReturnsReminderForOverdueReturns = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail(FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS, emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
@@ -235,6 +255,80 @@ const ScheduledController = {
         {
           model: Address,
           as: 'SiteAddress',
+        },
+      ],
+    });
+  },
+
+  /**
+   * This function returns all applications which have a permitted activity to either remove nests or destroy eggs.
+   *
+   * @returns {any} Returns an array of applications.
+   */
+
+  findAllApplicantsNoReturnCurrentSeason: async () => {
+    return Application.findAll({
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'LicenceHolderAddress',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+        {
+          model: License,
+          as: 'License',
+          include: [
+            {
+              model: Returns,
+              as: 'Returns',
+            },
+          ],
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+        {
+          model: PSpecies,
+          as: 'PSpecies',
+          required: true,
+          include: [
+            {
+              model: PActivity,
+              as: 'PHerringGull',
+            },
+            {
+              model: PActivity,
+              as: 'PBlackHeadedGull',
+            },
+            {
+              model: PActivity,
+              as: 'PCommonGull',
+            },
+            {
+              model: PActivity,
+              as: 'PGreatBlackBackedGull',
+            },
+            {
+              model: PActivity,
+              as: 'PLesserBlackBackedGull',
+            },
+          ],
         },
       ],
     });
@@ -392,6 +486,18 @@ const ScheduledController = {
         sentCount++;
         if (applicantEmailDetails) {
           await sendLicenceSoonExpiredEmail(applicantEmailDetails, licence.LicenceApplicant.emailAddress);
+          sentCount++;
+        }
+      }
+
+      if (reminderType === 'threeWeeksInNoReturn') {
+        await sendMonthlyReturnsReminderForOverdueReturns(holderEmailDetails, licence.LicenceHolder.emailAddress);
+        sentCount++;
+        if (applicantEmailDetails) {
+          await sendMonthlyReturnsReminderForOverdueReturns(
+            applicantEmailDetails,
+            licence.LicenceApplicant.emailAddress,
+          );
           sentCount++;
         }
       }

@@ -36,6 +36,13 @@ const LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID = '0130f081-9d83-40e4-b1de-8807215
  */
 const LICENSING_REPLY_TO_NOTIFY_EMAIL_ID = '4b49467e-2a35-4713-9d92-809c55bf1cdd';
 
+/**
+ * The ID of the email that is sent for licenses that have been valid for at least 3 weeks
+ * but are yet to have a Return submitted. These keep being emailed on the first of the month
+ * until a return is submitted, then not sent again.
+ */
+const FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS = 'febe0531-36a7-442d-9560-0b8b9c0817fe';
+
 export {
   FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID,
   FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID,
@@ -44,4 +51,5 @@ export {
   EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID,
   LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,
   LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+  FIRST_OF_MONTH_REMINDER_FOR_LICENCES_WITH_OVERDUE_RETURNS,
 };

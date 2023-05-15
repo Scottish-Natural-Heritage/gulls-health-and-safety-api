@@ -36,6 +36,37 @@ const hasFinalReturn = (returns: any): boolean => {
 };
 
 /**
+ * Checks if an array of returns contains a truthy PActivity of eggDestruction or removeNests.
+ *
+ * @param {any} species The array of species to check.
+ * @returns {boolean} Returns `true` if a final return is found, else
+ * returns `false`.
+ */
+const checkForValidActivities = (species: any): boolean => {
+  if (species?.PBlackHeadedGull?.eggDestruction || species?.PBlackHeadedGull?.removeNests) {
+    return true;
+  }
+
+  if (species?.PHerringGull?.eggDestruction || species?.PHerringGull?.removeNests) {
+    return true;
+  }
+
+  if (species?.PCommonGull?.eggDestruction || species?.PCommonGull?.removeNests) {
+    return true;
+  }
+
+  if (species?.PGreatBlackBackedGull?.eggDestruction || species?.PGreatBlackBackedGull?.removeNests) {
+    return true;
+  }
+
+  if (species?.PLesserBlackBackedGull?.eggDestruction || species?.PLesserBlackBackedGull?.removeNests) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
  * An array of all the routes and controllers in the app.
  */
 const routes: ServerRoute[] = [
@@ -1769,6 +1800,58 @@ const routes: ServerRoute[] = [
         const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'expiredNoReturn');
 
         return h.response({message: `Sent ${emailsSent} expired licence with no return reminder emails.`}).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Send out a reminder email to active licenses older than 3 weeks which have not sent a return.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/return-reminder-current-season`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // We need to know the date.
+        const currentDate = new Date();
+
+        // Today's date minus 21 days.
+        const currentDateMinusTwentyOneDays: Date = new Date(new Date().setDate(new Date().getDate() - 21));
+
+        // Fetch all applications to be filtered.
+        const applications = await Scheduled.findAllApplicantsNoReturnCurrentSeason();
+
+        // Filter out any non-licences, non-expired licences, or licences with returns.
+        const filteredLicences = applications.filter((application: any) => {
+          return (
+            // Checks valid licence
+            application.License !== null &&
+            // Checks active licence
+            application.License?.periodTo > currentDate &&
+            // Checks it was created more than 3 weeks ago
+            new Date(application.License?.periodFrom) <= currentDateMinusTwentyOneDays &&
+            // No returns
+            application.License?.Returns.length === 0 &&
+            // No revoked or withdrawn licenses
+            application.Revocation === null &&
+            // Checks valid PActivity criteria of eggDestruction or removeNests
+            checkForValidActivities(application?.PSpecies)
+          );
+        });
+
+        // Try to send out reminder emails.
+        const emailsSent = await Scheduled.sendReturnReminder(filteredLicences, 'threeWeeksInNoReturn');
+
+        return h
+          .response({
+            message: `Sent ${emailsSent} return reminder to licences which are least 3 weeks old and have not yet submitted a return.`,
+          })
+          .code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
