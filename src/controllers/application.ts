@@ -4,6 +4,7 @@ import database from '../models/index.js';
 import config from '../config/app';
 import jwk from '../config/jwk.js';
 import MultiUseFunctions from '../multi-use-functions';
+import {Op} from 'sequelize';
 
 const {
   Application,
@@ -528,6 +529,198 @@ const ApplicationController = {
         },
       ],
     });
+  },
+
+  /**
+   * This function returns all applications, including the licence holder and applicant details,
+   * and the site address details.
+   * @param {number} limit
+   * @param {number} offset
+   * @returns {any} Returns an array of applications with the contact and site address details included.
+   */
+  findAllPaginatedSummary: async (limit: number, offset: number) => {
+    return Application.findAll({
+      paranoid: false,
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+        {
+          model: License,
+          as: 'License',
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
+        },
+      ],
+      limit: limit,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+  },
+  /**
+   * This function returns all applications, including the licence holder and applicant details,
+   * and the site address details.
+   * @param {number} limit
+   * @param {number} offset
+   * @param {string} searchTerm
+   * @returns {any} Returns an array of applications with the contact and site address details included.
+   */
+  findAllPaginatedSummaryWithFilter: async (limit: number, offset: number, searchTerm: string) => {
+    return Application.findAll({
+      paranoid: false,
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+        {
+          model: License,
+          as: 'License',
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
+        },
+      ],
+      where: {
+        [Op.or]: [
+          {
+            '$LicenceHolder.name$': {
+              [Op.like]: `%${searchTerm.toLowerCase()}`,
+            },
+          },
+          {
+            '$LicenceApplicant.name$': {
+              [Op.like]: `%${searchTerm.toLowerCase()}`,
+            },
+          },
+          {
+            '$SiteAddress.postcode$': {
+              [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+            },
+          },
+          {
+            id: {
+              [Op.like]: searchTerm,
+            },
+          },
+        ],
+      },
+      limit: limit,
+      offset: offset,
+      order: [['createdAt', 'DESC']],
+    });
+  },
+
+  /**
+   * This function returns the application count where search term is applicable.
+   * @param {number} limit
+   * @param {number} offset
+   * @param {string} searchTerm
+   * @returns {any} Returns an array of applications with the contact and site address details included.
+   */
+  getTotalNumberOfApplicationsFiltered: async (searchTerm: string) => {
+    return Application.count({
+      paranoid: false,
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
+        },
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
+        },
+        {
+          model: Address,
+          as: 'SiteAddress',
+        },
+        {
+          model: License,
+          as: 'License',
+        },
+        {
+          model: Revocation,
+          as: 'Revocation',
+        },
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
+        },
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
+        },
+      ],
+      where: {
+        [Op.or]: [
+          {
+            '$LicenceHolder.name$': {
+              [Op.like]: `%${searchTerm.toLowerCase()}`,
+            },
+          },
+          {
+            '$LicenceApplicant.name$': {
+              [Op.like]: `%${searchTerm.toLowerCase()}`,
+            },
+          },
+          {
+            '$SiteAddress.postcode$': {
+              [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+            },
+          },
+          {
+            id: {
+              [Op.like]: searchTerm,
+            },
+          },
+        ],
+      },
+    });
+  },
+
+  /**
+   * This function returns the count of the number of applications in the database.
+   *
+   * @returns {any} Returns the total number of applications in the database.
+   */
+  getTotalNumberOfApplications: async () => {
+    return Application.count({paranoid: false});
   },
 
   /**

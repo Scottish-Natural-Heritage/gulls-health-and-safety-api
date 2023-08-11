@@ -264,23 +264,79 @@ const routes: ServerRoute[] = [
     },
   },
 
+  // /**
+  //  * GET all (summarized) applications endpoint.
+  //  */
+  // {
+  //   method: 'get',
+  //   path: `${config.pathPrefix}/applications`,
+  //   handler: async (request: Request, h: ResponseToolkit) => {
+  //     try {
+  //       const applications = await Application.findAllSummary();
+
+  //       // Did we get any applications?
+  //       if (applications === undefined || applications === null) {
+  //         return h.response({message: `No applications found.`}).code(404);
+  //       }
+
+  //       // If we get here we have something to return, so return it.
+  //       return h.response(applications).code(200);
+  //     } catch (error: unknown) {
+  //       // Log any error.
+  //       request.logger.error(JsonUtils.unErrorJson(error));
+  //       // Something bad happened? Return 500 and the error.
+  //       return h.response({error}).code(500);
+  //     }
+  //   },
+  // },
+
   /**
-   * GET all (summarized) applications endpoint.
+   * GET all paginated (summarized) applications endpoint.
    */
   {
     method: 'get',
     path: `${config.pathPrefix}/applications`,
     handler: async (request: Request, h: ResponseToolkit) => {
+      const page = parseInt(request.query.page as string) || 1;
+      const searchTerm = request.query.search || null;
+      const itemsPerPage = 20;
+
+      const startIndex = (page - 1) * itemsPerPage;
+
+      console.log(searchTerm);
+
       try {
-        const applications = await Application.findAllSummary();
+        const applications =
+          searchTerm != null
+            ? await Application.findAllPaginatedSummaryWithFilter(itemsPerPage, startIndex, searchTerm)
+            : await Application.findAllPaginatedSummary(itemsPerPage, startIndex);
+
+        const numberOfApplications =
+          searchTerm != null
+            ? await Application.getTotalNumberOfApplicationsFiltered(searchTerm)
+            : await Application.getTotalNumberOfApplications();
+
+        console.log(numberOfApplications);
+
+        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
+
+        const responseData = {
+          applications: applications,
+          numberOfPages: numberOfPages,
+        };
 
         // Did we get any applications?
-        if (applications === undefined || applications === null) {
+        if (
+          applications === undefined ||
+          applications === null ||
+          numberOfApplications === undefined ||
+          numberOfApplications === null
+        ) {
           return h.response({message: `No applications found.`}).code(404);
         }
 
         // If we get here we have something to return, so return it.
-        return h.response(applications).code(200);
+        return h.response(responseData).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
