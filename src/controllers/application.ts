@@ -643,7 +643,7 @@ const ApplicationController = {
       },
       limit,
       offset,
-      order: [['createdAt', 'DESC']],
+      order: [['createdAt', 'ASC']],
     });
   },
 
