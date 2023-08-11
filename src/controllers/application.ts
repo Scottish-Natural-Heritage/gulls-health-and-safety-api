@@ -1,10 +1,10 @@
 import * as jwt from 'jsonwebtoken';
 import transaction from 'sequelize/types/lib/transaction';
+import {Op} from 'sequelize';
 import database from '../models/index.js';
 import config from '../config/app';
 import jwk from '../config/jwk.js';
 import MultiUseFunctions from '../multi-use-functions';
-import {Op} from 'sequelize';
 
 const {
   Application,
@@ -534,8 +534,8 @@ const ApplicationController = {
   /**
    * This function returns all applications, including the licence holder and applicant details,
    * and the site address details.
-   * @param {number} limit
-   * @param {number} offset
+   * @param {number} limit Limit of how many applications will be returned
+   * @param {number} offset Offset value which will be the first index of application to be returned.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
   findAllPaginatedSummary: async (limit: number, offset: number) => {
@@ -571,17 +571,17 @@ const ApplicationController = {
           as: 'ApplicationAssessment',
         },
       ],
-      limit: limit,
-      offset: offset,
+      limit,
+      offset,
       order: [['createdAt', 'ASC']],
     });
   },
   /**
    * This function returns all applications, including the licence holder and applicant details,
    * and the site address details.
-   * @param {number} limit
-   * @param {number} offset
-   * @param {string} searchTerm
+   * @param {number} limit Limit of how many applications will be returned
+   * @param {number} offset Offset value which will be the first index of application to be returned.
+   * @param {string} searchTerm Filter value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
   findAllPaginatedSummaryWithFilter: async (limit: number, offset: number, searchTerm: string) => {
@@ -641,17 +641,15 @@ const ApplicationController = {
           },
         ],
       },
-      limit: limit,
-      offset: offset,
+      limit,
+      offset,
       order: [['createdAt', 'DESC']],
     });
   },
 
   /**
    * This function returns the application count where search term is applicable.
-   * @param {number} limit
-   * @param {number} offset
-   * @param {string} searchTerm
+   * @param {string} searchTerm Filter value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
   getTotalNumberOfApplicationsFiltered: async (searchTerm: string) => {

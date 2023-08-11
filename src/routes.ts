@@ -297,8 +297,8 @@ const routes: ServerRoute[] = [
     method: 'get',
     path: `${config.pathPrefix}/applications`,
     handler: async (request: Request, h: ResponseToolkit) => {
-      const page = parseInt(request.query.page as string) || 1;
-      const searchTerm = request.query.search || null;
+      const page = Number.parseInt(request.query.page as string, 10) || 1;
+      const searchTerm = request.query.search || undefined;
       const itemsPerPage = 20;
 
       const startIndex = (page - 1) * itemsPerPage;
@@ -307,22 +307,22 @@ const routes: ServerRoute[] = [
 
       try {
         const applications =
-          searchTerm != null
-            ? await Application.findAllPaginatedSummaryWithFilter(itemsPerPage, startIndex, searchTerm)
-            : await Application.findAllPaginatedSummary(itemsPerPage, startIndex);
+          searchTerm === undefined
+            ? await Application.findAllPaginatedSummary(itemsPerPage, startIndex)
+            : await Application.findAllPaginatedSummaryWithFilter(itemsPerPage, startIndex, searchTerm);
 
         const numberOfApplications =
-          searchTerm != null
-            ? await Application.getTotalNumberOfApplicationsFiltered(searchTerm)
-            : await Application.getTotalNumberOfApplications();
+          searchTerm === undefined
+            ? await Application.getTotalNumberOfApplications()
+            : await Application.getTotalNumberOfApplicationsFiltered(searchTerm);
 
         console.log(numberOfApplications);
 
         const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
 
         const responseData = {
-          applications: applications,
-          numberOfPages: numberOfPages,
+          applications,
+          numberOfPages,
         };
 
         // Did we get any applications?
