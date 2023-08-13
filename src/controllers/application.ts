@@ -536,9 +536,72 @@ const ApplicationController = {
    * and the site address details.
    * @param {number} limit Limit of how many applications will be returned
    * @param {number} offset Offset value which will be the first index of application to be returned.
+   * @param {string | undefined} searchTerm Filter value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
-  findAllPaginatedSummary: async (limit: number, offset: number) => {
+  findAllPaginatedSummary: async (limit: number, offset: number, searchTerm: string | undefined) => {
+    if (searchTerm !== undefined) {
+      return Application.findAll({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.or]: [
+            {
+              '$LicenceHolder.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$LicenceApplicant.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$SiteAddress.postcode$': {
+                [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+              },
+            },
+            {
+              id: {
+                [Op.like]: searchTerm,
+              },
+            },
+          ],
+        },
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+      });
+    }
     return Application.findAll({
       paranoid: false,
       include: [
@@ -573,18 +636,438 @@ const ApplicationController = {
       ],
       limit,
       offset,
-      order: [['createdAt', 'ASC']],
+      order: [['createdAt', 'DESC']],
     });
   },
+
   /**
    * This function returns all applications, including the licence holder and applicant details,
    * and the site address details.
    * @param {number} limit Limit of how many applications will be returned
    * @param {number} offset Offset value which will be the first index of application to be returned.
-   * @param {string} searchTerm Filter value from URL query.
+   * @param {string | undefined} searchTerm Filter value from URL query.
+   * @param {string} status Status value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
-  findAllPaginatedSummaryWithFilter: async (limit: number, offset: number, searchTerm: string) => {
+  findAllPaginatedSummaryWithStatusFilter: async (
+    limit: number,
+    offset: number,
+    searchTerm: string | undefined,
+    status: string,
+  ) => {
+    // Unassigned
+    if (status === 'unassigned') {
+      if (searchTerm !== undefined) {
+        return Application.findAll({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                },
+              },
+              {
+                id: {
+                  [Op.like]: searchTerm,
+                },
+              },
+            ],
+            [Op.and]: [
+              {$confirmedByLicenseHolder$: {[Op.not]: null}},
+              {$staffNumber$: {[Op.is]: null}},
+              {'$License.ApplicationId$': {[Op.is]: null}},
+            ],
+          },
+          limit,
+          offset,
+          order: [['createdAt', 'ASC']],
+        });
+      }
+      return Application.findAll({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.and]: [
+            {$confirmedByLicenseHolder$: {[Op.not]: null}},
+            {$staffNumber$: {[Op.is]: null}},
+            {'$License.ApplicationId$': {[Op.is]: null}},
+          ],
+        },
+        limit,
+        offset,
+        order: [['createdAt', 'ASC']],
+      });
+    }
+    // In progress
+    if (status === 'inProgress') {
+      if (searchTerm !== undefined) {
+        return Application.findAll({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                },
+              },
+              {
+                id: {
+                  [Op.like]: searchTerm,
+                },
+              },
+            ],
+            [Op.and]: [
+              {$confirmedByLicenseHolder$: {[Op.not]: null}},
+              {$staffNumber$: {[Op.not]: null}},
+              {'$License.ApplicationId$': {[Op.not]: null}},
+            ],
+          },
+          limit,
+          offset,
+          order: [['createdAt', 'ASC']],
+        });
+      }
+      return Application.findAll({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.and]: [
+            {$confirmedByLicenseHolder$: {[Op.not]: null}},
+            {$staffNumber$: {[Op.not]: null}},
+            {'$License.ApplicationId$': {[Op.not]: null}},
+          ],
+        },
+        limit,
+        offset,
+        order: [['createdAt', 'ASC']],
+      });
+    }
+    // Awaiting LH approval
+    if (status === 'awaitingApproval') {
+      if (searchTerm !== undefined) {
+        return Application.findAll({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                },
+              },
+              {
+                id: {
+                  [Op.like]: searchTerm,
+                },
+              },
+            ],
+            [Op.and]: [{$confirmedByLicenseHolder$: {[Op.is]: null}}],
+          },
+          limit,
+          offset,
+          order: [['createdAt', 'ASC']],
+        });
+      }
+      return Application.findAll({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          $confirmedByLicenseHolder$: {[Op.is]: null},
+        },
+        limit,
+        offset,
+        order: [['createdAt', 'ASC']],
+      });
+    }
+    return {};
+  },
+
+  /**
+   * This function returns all applications, including the licence holder and applicant details,
+   * and the site address details.
+   * @param {number} limit Limit of how many applications will be returned
+   * @param {number} offset Offset value which will be the first index of application to be returned.
+   * @param {string | undefined} searchTerm Filter value from URL query.
+   * @param {string} lhId Licence holder id value from URL query.
+   * @returns {any} Returns an array of applications with the contact and site address details included.
+   */
+  findAllPaginatedSummaryForLhIdWithFilter: async (
+    limit: number,
+    offset: number,
+    searchTerm: string | undefined,
+    lhId: string,
+  ) => {
+    // Awaiting LH approval
+    if (searchTerm !== undefined) {
+      return Application.findAll({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.or]: [
+            {
+              '$LicenceHolder.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$LicenceApplicant.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$SiteAddress.postcode$': {
+                [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+              },
+            },
+            {
+              id: {
+                [Op.like]: searchTerm,
+              },
+            },
+          ],
+          [Op.and]: [{$staffNumber$: {[Op.like]: lhId}}],
+        },
+        limit,
+        offset,
+        order: [['createdAt', 'ASC']],
+      });
+    }
     return Application.findAll({
       paranoid: false,
       include: [
@@ -618,28 +1101,7 @@ const ApplicationController = {
         },
       ],
       where: {
-        [Op.or]: [
-          {
-            '$LicenceHolder.name$': {
-              [Op.like]: `%${searchTerm.toLowerCase()}`,
-            },
-          },
-          {
-            '$LicenceApplicant.name$': {
-              [Op.like]: `%${searchTerm.toLowerCase()}`,
-            },
-          },
-          {
-            '$SiteAddress.postcode$': {
-              [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
-            },
-          },
-          {
-            id: {
-              [Op.like]: searchTerm,
-            },
-          },
-        ],
+        $staffNumber$: {[Op.like]: lhId},
       },
       limit,
       offset,
@@ -649,76 +1111,428 @@ const ApplicationController = {
 
   /**
    * This function returns the application count where search term is applicable.
-   * @param {string} searchTerm Filter value from URL query.
+   * @param {string | undefined} searchTerm Filter value from URL query.
+   * @param {string} status Status value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
-  getTotalNumberOfApplicationsFiltered: async (searchTerm: string) => {
-    return Application.count({
-      paranoid: false,
-      include: [
-        {
-          model: Contact,
-          as: 'LicenceHolder',
-        },
-        {
-          model: Contact,
-          as: 'LicenceApplicant',
-        },
-        {
-          model: Address,
-          as: 'SiteAddress',
-        },
-        {
-          model: License,
-          as: 'License',
-        },
-        {
-          model: Revocation,
-          as: 'Revocation',
-        },
-        {
-          model: Withdrawal,
-          as: 'Withdrawal',
-        },
-        {
-          model: Assessment,
-          as: 'ApplicationAssessment',
-        },
-      ],
-      where: {
-        [Op.or]: [
-          {
-            '$LicenceHolder.name$': {
-              [Op.like]: `%${searchTerm.toLowerCase()}`,
+  getTotalNumberOfApplicationsWithStatusAndFilter: async (searchTerm: string | undefined, status: string) => {
+    // Unassigned
+    if (status === 'unassigned') {
+      if (searchTerm !== undefined) {
+        return Application.count({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
             },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                },
+              },
+              {
+                id: {
+                  [Op.like]: searchTerm,
+                },
+              },
+            ],
+            [Op.and]: [
+              {$confirmedByLicenseHolder$: {[Op.not]: null}},
+              {$staffNumber$: {[Op.is]: null}},
+              {'$License.ApplicationId$': {[Op.is]: null}},
+            ],
+          },
+        });
+      }
+      return Application.count({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
           },
           {
-            '$LicenceApplicant.name$': {
-              [Op.like]: `%${searchTerm.toLowerCase()}`,
-            },
+            model: Contact,
+            as: 'LicenceApplicant',
           },
           {
-            '$SiteAddress.postcode$': {
-              [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
-            },
+            model: Address,
+            as: 'SiteAddress',
           },
           {
-            id: {
-              [Op.like]: searchTerm,
-            },
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
           },
         ],
-      },
-    });
+        where: {
+          [Op.and]: [
+            {$confirmedByLicenseHolder$: {[Op.not]: null}},
+            {$staffNumber$: {[Op.is]: null}},
+            {'$License.ApplicationId$': {[Op.is]: null}},
+          ],
+        },
+      });
+    }
+    // In progress
+    if (status === 'inProgress') {
+      if (searchTerm !== undefined) {
+        return Application.count({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                },
+              },
+              {
+                id: {
+                  [Op.like]: searchTerm,
+                },
+              },
+            ],
+            [Op.and]: [
+              {$confirmedByLicenseHolder$: {[Op.not]: null}},
+              {$staffNumber$: {[Op.not]: null}},
+              {'$License.ApplicationId$': {[Op.not]: null}},
+            ],
+          },
+        });
+      }
+      return Application.count({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.and]: [
+            {$confirmedByLicenseHolder$: {[Op.not]: null}},
+            {$staffNumber$: {[Op.not]: null}},
+            {'$License.ApplicationId$': {[Op.not]: null}},
+          ],
+        },
+      });
+    }
+    // Awaiting LH approval
+    if (status === 'awaitingApproval') {
+      if (searchTerm !== undefined) {
+        return Application.count({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            $confirmedByLicenseHolder$: {[Op.is]: null},
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                },
+              },
+              {
+                id: {
+                  [Op.like]: searchTerm,
+                },
+              },
+            ],
+          },
+        });
+      }
+      return Application.count({paranoid: false, where: {$confirmedByLicenseHolder$: {[Op.is]: null}}});
+    }
+    return 0;
   },
 
   /**
-   * This function returns the count of the number of applications in the database.
-   *
-   * @returns {any} Returns the total number of applications in the database.
+   * This function returns the application count where search term is applicable.
+   * @param {string} searchTerm Filter value from URL query.
+   * @returns {any} Returns an array of applications with the contact and site address details included.
    */
-  getTotalNumberOfApplications: async () => {
+  getTotalNumberOfApplications: async (searchTerm: string | undefined) => {
+    if (searchTerm !== undefined) {
+      return Application.count({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.or]: [
+            {
+              '$LicenceHolder.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$LicenceApplicant.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$SiteAddress.postcode$': {
+                [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+              },
+            },
+            {
+              id: {
+                [Op.like]: searchTerm,
+              },
+            },
+          ],
+        },
+      });
+    }
     return Application.count({paranoid: false});
+  },
+
+  /**
+   * This function returns the application count where search term is applicable.
+   * @param {string} searchTerm Filter value from URL query.
+   * @param {string} lhId Licence holder id value from URL query.
+   * @returns {any} Returns an array of applications with the contact and site address details included.
+   */
+  getTotalNumberOfApplicationsBelongingToLicenceHolder: async (searchTerm: string | undefined, lhId: string) => {
+    if (searchTerm !== undefined) {
+      return Application.count({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.or]: [
+            {
+              '$LicenceHolder.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$LicenceApplicant.name$': {
+                [Op.like]: `%${searchTerm.toLowerCase()}`,
+              },
+            },
+            {
+              '$SiteAddress.postcode$': {
+                [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+              },
+            },
+            {
+              id: {
+                [Op.like]: searchTerm,
+              },
+            },
+          ],
+          [Op.and]: [{$staffNumber$: {[Op.like]: lhId}}],
+        },
+      });
+    }
+    return Application.count({paranoid: false, where: {$staffNumber$: {[Op.like]: lhId}}});
   },
 
   /**

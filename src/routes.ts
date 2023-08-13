@@ -264,34 +264,8 @@ const routes: ServerRoute[] = [
     },
   },
 
-  // /**
-  //  * GET all (summarized) applications endpoint.
-  //  */
-  // {
-  //   method: 'get',
-  //   path: `${config.pathPrefix}/applications`,
-  //   handler: async (request: Request, h: ResponseToolkit) => {
-  //     try {
-  //       const applications = await Application.findAllSummary();
-
-  //       // Did we get any applications?
-  //       if (applications === undefined || applications === null) {
-  //         return h.response({message: `No applications found.`}).code(404);
-  //       }
-
-  //       // If we get here we have something to return, so return it.
-  //       return h.response(applications).code(200);
-  //     } catch (error: unknown) {
-  //       // Log any error.
-  //       request.logger.error(JsonUtils.unErrorJson(error));
-  //       // Something bad happened? Return 500 and the error.
-  //       return h.response({error}).code(500);
-  //     }
-  //   },
-  // },
-
   /**
-   * GET all paginated (summarized) applications endpoint.
+   * GET all paginated (summarized) applications endpoint and with an optional search term applied.
    */
   {
     method: 'get',
@@ -299,24 +273,132 @@ const routes: ServerRoute[] = [
     handler: async (request: Request, h: ResponseToolkit) => {
       const page = Number.parseInt(request.query.page as string, 10) || 1;
       const searchTerm = request.query.search || undefined;
-      const itemsPerPage = 20;
 
+      const itemsPerPage = 20;
       const startIndex = (page - 1) * itemsPerPage;
 
-      console.log(searchTerm);
+      try {
+        const applications = await Application.findAllPaginatedSummary(itemsPerPage, startIndex, searchTerm);
+
+        const numberOfApplications = await Application.getTotalNumberOfApplications(searchTerm);
+
+        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
+
+        const responseData = {
+          applications,
+          numberOfPages,
+        };
+
+        // Did we get any applications?
+        if (
+          applications === undefined ||
+          applications === null ||
+          numberOfApplications === undefined ||
+          numberOfApplications === null
+        ) {
+          return h.response({message: `No applications found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(responseData).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * GET all paginated (summarized) applications endpoint with a status filter and optional search term applied.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/applications/status`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      const page = Number.parseInt(request.query.page as string, 10) || 1;
+      const searchTerm = request.query.search || undefined;
+      const status = request.query.status;
+
+      const itemsPerPage = 20;
+      const startIndex = (page - 1) * itemsPerPage;
 
       try {
-        const applications =
-          searchTerm === undefined
-            ? await Application.findAllPaginatedSummary(itemsPerPage, startIndex)
-            : await Application.findAllPaginatedSummaryWithFilter(itemsPerPage, startIndex, searchTerm);
+        const applications = await Application.findAllPaginatedSummaryWithStatusFilter(
+          itemsPerPage,
+          startIndex,
+          searchTerm,
+          status,
+        );
 
-        const numberOfApplications =
-          searchTerm === undefined
-            ? await Application.getTotalNumberOfApplications()
-            : await Application.getTotalNumberOfApplicationsFiltered(searchTerm);
+        const numberOfApplications = await Application.getTotalNumberOfApplicationsWithStatusAndFilter(
+          searchTerm,
+          status,
+        );
 
-        console.log(numberOfApplications);
+        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
+
+        const responseData = {
+          applications,
+          numberOfPages,
+        };
+
+        // Did we get any applications?
+        if (
+          applications === undefined ||
+          applications === null ||
+          numberOfApplications === undefined ||
+          numberOfApplications === null
+        ) {
+          return h.response({message: `No applications found.`}).code(404);
+        }
+
+        // If we get here we have something to return, so return it.
+        return h.response(responseData).code(200);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * GET all paginated (summarized) applications endpoint that are assigned to LH and optional search term applied.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/{licenceHolderId}/applications`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      const page = Number.parseInt(request.query.page as string, 10) || 1;
+      const searchTerm = request.query.search || undefined;
+
+      const itemsPerPage = 20;
+      const startIndex = (page - 1) * itemsPerPage;
+
+      try {
+        // Is the licenceHolderId a number?
+        const existingLicenceHolderId = Number(request.params.licenceHolderId);
+        if (Number.isNaN(existingLicenceHolderId)) {
+          return h
+            .response({message: `The provided licence holder id, ${existingLicenceHolderId}, is not valid.`})
+            .code(404);
+        }
+        const stringifiedLicenceHolderId = existingLicenceHolderId.toString();
+
+        const applications = await Application.findAllPaginatedSummaryForLhIdWithFilter(
+          itemsPerPage,
+          startIndex,
+          searchTerm,
+          stringifiedLicenceHolderId,
+        );
+
+        const numberOfApplications = await Application.getTotalNumberOfApplicationsBelongingToLicenceHolder(
+          searchTerm,
+          stringifiedLicenceHolderId,
+        );
 
         const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
 
