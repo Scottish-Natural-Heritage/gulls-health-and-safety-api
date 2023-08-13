@@ -274,7 +274,7 @@ const routes: ServerRoute[] = [
       const page = Number.parseInt(request.query.page as string, 10) || 1;
       const searchTerm = request.query.search || undefined;
 
-      const itemsPerPage = 20;
+      const itemsPerPage = 100;
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
@@ -320,7 +320,7 @@ const routes: ServerRoute[] = [
       const page = Number.parseInt(request.query.page as string, 10) || 1;
       const [searchTerm, status] = [request.query.search || undefined, request.query.status];
 
-      const itemsPerPage = 20;
+      const itemsPerPage = 100;
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
@@ -374,7 +374,7 @@ const routes: ServerRoute[] = [
       const page = Number.parseInt(request.query.page as string, 10) || 1;
       const searchTerm = request.query.search || undefined;
 
-      const itemsPerPage = 20;
+      const itemsPerPage = 100;
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
