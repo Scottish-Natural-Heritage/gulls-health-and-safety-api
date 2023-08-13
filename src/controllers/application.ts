@@ -134,8 +134,8 @@ const sendReturnLoginMagicLinkEmail = async (emailDetails: any, emailAddress: an
 /**
  * This function calls the Notify API and asks for an email to be sent with the supplied details.
  *
- * @param {any} emailDetails
- * @param {any} emailAddress
+ * @param {any} emailDetails Email details.
+ * @param {any} emailAddress Email address.
  */
 const sendWithdrawalEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
@@ -534,7 +534,8 @@ const ApplicationController = {
   /**
    * This function returns all applications, including the licence holder and applicant details,
    * and the site address details.
-   * @param {number} limit Limit of how many applications will be returned
+   *
+   * @param {number} limit Limit of how many applications will be returned.
    * @param {number} offset Offset value which will be the first index of application to be returned.
    * @param {string | undefined} searchTerm Filter value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
@@ -602,6 +603,7 @@ const ApplicationController = {
         order: [['createdAt', 'DESC']],
       });
     }
+
     return Application.findAll({
       paranoid: false,
       include: [
@@ -643,7 +645,8 @@ const ApplicationController = {
   /**
    * This function returns all applications, including the licence holder and applicant details,
    * and the site address details.
-   * @param {number} limit Limit of how many applications will be returned
+   *
+   * @param {number} limit Limit of how many applications will be returned.
    * @param {number} offset Offset value which will be the first index of application to be returned.
    * @param {string | undefined} searchTerm Filter value from URL query.
    * @param {string} status Status value from URL query.
@@ -724,6 +727,7 @@ const ApplicationController = {
           order: [['createdAt', 'ASC']],
         });
       }
+
       return Application.findAll({
         paranoid: false,
         include: [
@@ -768,6 +772,7 @@ const ApplicationController = {
         order: [['createdAt', 'ASC']],
       });
     }
+
     // In progress
     if (status === 'inProgress') {
       if (searchTerm !== undefined) {
@@ -837,6 +842,7 @@ const ApplicationController = {
           order: [['createdAt', 'ASC']],
         });
       }
+
       return Application.findAll({
         paranoid: false,
         include: [
@@ -881,6 +887,7 @@ const ApplicationController = {
         order: [['createdAt', 'ASC']],
       });
     }
+
     // Awaiting LH approval
     if (status === 'awaitingApproval') {
       if (searchTerm !== undefined) {
@@ -946,6 +953,7 @@ const ApplicationController = {
           order: [['createdAt', 'ASC']],
         });
       }
+
       return Application.findAll({
         paranoid: false,
         include: [
@@ -986,13 +994,15 @@ const ApplicationController = {
         order: [['createdAt', 'ASC']],
       });
     }
+
     return {};
   },
 
   /**
    * This function returns all applications, including the licence holder and applicant details,
    * and the site address details.
-   * @param {number} limit Limit of how many applications will be returned
+   *
+   * @param {number} limit Limit of how many applications will be returned.
    * @param {number} offset Offset value which will be the first index of application to be returned.
    * @param {string | undefined} searchTerm Filter value from URL query.
    * @param {string} lhId Licence holder id value from URL query.
@@ -1068,6 +1078,7 @@ const ApplicationController = {
         order: [['createdAt', 'ASC']],
       });
     }
+
     return Application.findAll({
       paranoid: false,
       include: [
@@ -1111,6 +1122,7 @@ const ApplicationController = {
 
   /**
    * This function returns the application count where search term is applicable.
+   *
    * @param {string | undefined} searchTerm Filter value from URL query.
    * @param {string} status Status value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
@@ -1182,6 +1194,7 @@ const ApplicationController = {
           },
         });
       }
+
       return Application.count({
         paranoid: false,
         include: [
@@ -1223,6 +1236,7 @@ const ApplicationController = {
         },
       });
     }
+
     // In progress
     if (status === 'inProgress') {
       if (searchTerm !== undefined) {
@@ -1289,6 +1303,7 @@ const ApplicationController = {
           },
         });
       }
+
       return Application.count({
         paranoid: false,
         include: [
@@ -1330,6 +1345,7 @@ const ApplicationController = {
         },
       });
     }
+
     // Awaiting LH approval
     if (status === 'awaitingApproval') {
       if (searchTerm !== undefined) {
@@ -1392,13 +1408,16 @@ const ApplicationController = {
           },
         });
       }
+
       return Application.count({paranoid: false, where: {$confirmedByLicenseHolder$: {[Op.is]: null}}});
     }
+
     return 0;
   },
 
   /**
    * This function returns the application count where search term is applicable.
+   *
    * @param {string} searchTerm Filter value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
@@ -1462,11 +1481,13 @@ const ApplicationController = {
         },
       });
     }
+
     return Application.count({paranoid: false});
   },
 
   /**
    * This function returns the application count where search term is applicable.
+   *
    * @param {string} searchTerm Filter value from URL query.
    * @param {string} lhId Licence holder id value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
@@ -1532,6 +1553,7 @@ const ApplicationController = {
         },
       });
     }
+
     return Application.count({paranoid: false, where: {$staffNumber$: {[Op.like]: lhId}}});
   },
 

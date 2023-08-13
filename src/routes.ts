@@ -318,8 +318,7 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/applications/status`,
     handler: async (request: Request, h: ResponseToolkit) => {
       const page = Number.parseInt(request.query.page as string, 10) || 1;
-      const searchTerm = request.query.search || undefined;
-      const status = request.query.status;
+      const [searchTerm, status] = [request.query.search || undefined, request.query.status];
 
       const itemsPerPage = 20;
       const startIndex = (page - 1) * itemsPerPage;
@@ -386,6 +385,7 @@ const routes: ServerRoute[] = [
             .response({message: `The provided licence holder id, ${existingLicenceHolderId}, is not valid.`})
             .code(404);
         }
+
         const stringifiedLicenceHolderId = existingLicenceHolderId.toString();
 
         const applications = await Application.findAllPaginatedSummaryForLhIdWithFilter(
