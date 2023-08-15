@@ -67,6 +67,11 @@ const checkForValidActivities = (species: any): boolean => {
 };
 
 /**
+ * The number of items to display per page on the Gulls Staff search screen.
+ */
+const itemsPerPage = 100;
+
+/**
  * An array of all the routes and controllers in the app.
  */
 const routes: ServerRoute[] = [
@@ -274,7 +279,6 @@ const routes: ServerRoute[] = [
       const page = Number.parseInt(request.query.page as string, 10) || 1;
       const searchTerm = request.query.search || undefined;
 
-      const itemsPerPage = 100;
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
@@ -320,7 +324,6 @@ const routes: ServerRoute[] = [
       const page = Number.parseInt(request.query.page as string, 10) || 1;
       const [searchTerm, status] = [request.query.search || undefined, request.query.status];
 
-      const itemsPerPage = 100;
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
@@ -374,7 +377,6 @@ const routes: ServerRoute[] = [
       const page = Number.parseInt(request.query.page as string, 10) || 1;
       const searchTerm = request.query.search || undefined;
 
-      const itemsPerPage = 100;
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
