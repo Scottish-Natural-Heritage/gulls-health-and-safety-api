@@ -602,7 +602,7 @@ const ApplicationController = {
                 },
               },
               {
-                id: Number.parseInt(searchTerm.toString(), 10) ?? '',
+                id: Number.parseInt(searchTerm, 10),
               },
             ],
           },
