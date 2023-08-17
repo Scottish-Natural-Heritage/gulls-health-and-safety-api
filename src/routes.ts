@@ -69,7 +69,7 @@ const checkForValidActivities = (species: any): boolean => {
 /**
  * The number of items to display per page on the Gulls Staff search screen.
  */
-const itemsPerPage = 20;
+const itemsPerPage = 2;
 
 /**
  * An array of all the routes and controllers in the app.

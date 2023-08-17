@@ -588,22 +588,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -691,22 +691,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -806,22 +806,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -921,22 +921,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -1028,22 +1028,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -1147,22 +1147,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -1212,22 +1212,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -1321,22 +1321,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -1431,22 +1431,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
@@ -1496,22 +1496,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}`,
+                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
               {
                 id: {
-                  [Op.like]: searchTerm,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
             ],
