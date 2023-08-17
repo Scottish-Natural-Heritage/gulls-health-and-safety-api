@@ -602,9 +602,7 @@ const ApplicationController = {
                 },
               },
               {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
+                id:  parseInt(searchTerm.toString(), 10),
               },
             ],
           },
