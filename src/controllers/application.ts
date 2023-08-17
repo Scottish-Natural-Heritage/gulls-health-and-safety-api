@@ -596,14 +596,14 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm}%`,
                 },
               },
-              // {
-              //   '$SiteAddress.postcode$': {
-              //     [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
-              //   },
-              // },
-              // {
-              //   id: Number.parseInt(searchTerm, 10),
-              // },
+              {
+                '$SiteAddress.postcode$': {
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                },
+              },
+              {
+                id: Number.parseInt(searchTerm, 10),
+              },
             ],
           },
           limit,
@@ -1159,9 +1159,7 @@ const ApplicationController = {
                 },
               },
               {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
+                id: Number.parseInt(searchTerm, 10),
               },
             ],
           },
