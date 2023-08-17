@@ -588,22 +588,22 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
-              {
-                '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
-                },
-              },
-              {
-                id: Number.parseInt(searchTerm, 10),
-              },
+              // {
+              //   '$SiteAddress.postcode$': {
+              //     [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+              //   },
+              // },
+              // {
+              //   id: Number.parseInt(searchTerm, 10),
+              // },
             ],
           },
           limit,
