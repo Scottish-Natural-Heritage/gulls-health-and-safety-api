@@ -988,6 +988,7 @@ const ApplicationController = {
         order: [['createdAt', 'ASC']],
       });
     }
+
     // LO Applications
     if (status === 'myApplications') {
       if (searchTerm !== undefined) {
@@ -1171,6 +1172,7 @@ const ApplicationController = {
 
       return Application.count({paranoid: false});
     }
+
     // Unassigned
     if (status === 'unassigned') {
       if (searchTerm !== undefined) {
@@ -1454,6 +1456,7 @@ const ApplicationController = {
 
       return Application.count({paranoid: false, where: {$confirmedByLicenseHolder$: {[Op.is]: null}}});
     }
+
     // Awaiting LH approval
     if (status === 'myApplications') {
       if (searchTerm !== undefined) {
