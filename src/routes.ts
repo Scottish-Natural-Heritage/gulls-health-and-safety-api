@@ -69,7 +69,7 @@ const checkForValidActivities = (species: any): boolean => {
 /**
  * The number of items to display per page on the Gulls Staff search screen.
  */
-const itemsPerPage = 100;
+const itemsPerPage = 20;
 
 /**
  * An array of all the routes and controllers in the app.
@@ -277,136 +277,37 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/applications`,
     handler: async (request: Request, h: ResponseToolkit) => {
       const page = Number.parseInt(request.query.page as string, 10) || 1;
-      const searchTerm = request.query.search || undefined;
+      const [searchTerm, status, licenceOfficerId] = [
+        request.query.search || undefined,
+        request.query.status,
+        request.query.licenceOfficerId,
+      ];
 
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
-        const applications = await Application.findAllPaginatedSummary(itemsPerPage, startIndex, searchTerm);
-
-        const numberOfApplications = await Application.getTotalNumberOfApplications(searchTerm);
-
-        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
-
-        const responseData = {
-          applications,
-          numberOfPages,
-        };
-
-        // Did we get any applications?
-        if (
-          applications === undefined ||
-          applications === null ||
-          numberOfApplications === undefined ||
-          numberOfApplications === null
-        ) {
-          return h.response({message: `No applications found.`}).code(404);
-        }
-
-        // If we get here we have something to return, so return it.
-        return h.response(responseData).code(200);
-      } catch (error: unknown) {
-        // Log any error.
-        request.logger.error(JsonUtils.unErrorJson(error));
-        // Something bad happened? Return 500 and the error.
-        return h.response({error}).code(500);
-      }
-    },
-  },
-
-  /**
-   * GET all paginated (summarized) applications endpoint with a status filter and optional search term applied.
-   */
-  {
-    method: 'get',
-    path: `${config.pathPrefix}/applications/status`,
-    handler: async (request: Request, h: ResponseToolkit) => {
-      const page = Number.parseInt(request.query.page as string, 10) || 1;
-      const [searchTerm, status] = [request.query.search || undefined, request.query.status];
-
-      const startIndex = (page - 1) * itemsPerPage;
-
-      try {
-        const applications = await Application.findAllPaginatedSummaryWithStatusFilter(
+        const applications = await Application.findAllPaginatedSummary(
           itemsPerPage,
           startIndex,
           searchTerm,
           status,
+          licenceOfficerId,
         );
 
-        const numberOfApplications = await Application.getTotalNumberOfApplicationsWithStatusAndFilter(
+        const numberOfApplications = await Application.getTotalNumberOfApplications(
           searchTerm,
           status,
+          licenceOfficerId,
         );
 
         const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
 
-        const responseData = {
-          applications,
-          numberOfPages,
-        };
-
-        // Did we get any applications?
-        if (
-          applications === undefined ||
-          applications === null ||
-          numberOfApplications === undefined ||
-          numberOfApplications === null
-        ) {
-          return h.response({message: `No applications found.`}).code(404);
-        }
-
-        // If we get here we have something to return, so return it.
-        return h.response(responseData).code(200);
-      } catch (error: unknown) {
-        // Log any error.
-        request.logger.error(JsonUtils.unErrorJson(error));
-        // Something bad happened? Return 500 and the error.
-        return h.response({error}).code(500);
-      }
-    },
-  },
-
-  /**
-   * GET all paginated (summarized) applications endpoint that are assigned to LH and optional search term applied.
-   */
-  {
-    method: 'get',
-    path: `${config.pathPrefix}/{licenceHolderId}/applications`,
-    handler: async (request: Request, h: ResponseToolkit) => {
-      const page = Number.parseInt(request.query.page as string, 10) || 1;
-      const searchTerm = request.query.search || undefined;
-
-      const startIndex = (page - 1) * itemsPerPage;
-
-      try {
-        // Is the licenceHolderId a number?
-        const existingLicenceHolderId = Number(request.params.licenceHolderId);
-        if (Number.isNaN(existingLicenceHolderId)) {
-          return h
-            .response({message: `The provided licence holder id, ${existingLicenceHolderId}, is not valid.`})
-            .code(404);
-        }
-
-        const stringifiedLicenceHolderId = existingLicenceHolderId.toString();
-
-        const applications = await Application.findAllPaginatedSummaryForLhIdWithFilter(
-          itemsPerPage,
-          startIndex,
-          searchTerm,
-          stringifiedLicenceHolderId,
-        );
-
-        const numberOfApplications = await Application.getTotalNumberOfApplicationsBelongingToLicenceHolder(
-          searchTerm,
-          stringifiedLicenceHolderId,
-        );
-
-        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
+        const numberOfResults = numberOfApplications;
 
         const responseData = {
           applications,
           numberOfPages,
+          numberOfResults,
         };
 
         // Did we get any applications?
