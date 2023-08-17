@@ -588,17 +588,17 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm}%`,
+                  [Op.like]: `${searchTerm}`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm}%`,
+                  [Op.like]: `${searchTerm}`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `${searchTerm.toUpperCase().replace(/\s/g, '')}`,
                 },
               },
               {
@@ -1145,17 +1145,17 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
+                  [Op.substring]: `${searchTerm}`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `%${searchTerm.toLowerCase()}%`,
+                  [Op.like]: `${searchTerm}`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `${searchTerm.toUpperCase().replace(/\s/g, '')}`,
                 },
               },
               {
