@@ -552,6 +552,8 @@ const ApplicationController = {
     // All
     if (status === 'all') {
       if (searchTerm !== undefined) {
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : {id: Number.parseInt(searchTerm, 10)};
+
         return Application.findAll({
           paranoid: false,
           include: [
@@ -601,11 +603,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              Number.isNaN(Number.parseInt(searchTerm, 10))
-                ? {}
-                : {
-                    id: Number.parseInt(searchTerm, 10),
-                  },
+              idSearch,
             ],
           },
           limit,
@@ -1111,6 +1109,7 @@ const ApplicationController = {
     // All
     if (status === 'all') {
       if (searchTerm !== undefined) {
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : {id: Number.parseInt(searchTerm, 10)};
         return Application.count({
           paranoid: false,
           include: [
@@ -1160,11 +1159,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              Number.isNaN(Number.parseInt(searchTerm, 10))
-                ? {}
-                : {
-                    id: Number.parseInt(searchTerm, 10),
-                  },
+              idSearch,
             ],
           },
         });
