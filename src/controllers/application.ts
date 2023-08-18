@@ -588,22 +588,24 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.like]: `${searchTerm}`,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `${searchTerm}`,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: Number.parseInt(searchTerm, 10),
-              },
+              Number.isNaN(Number.parseInt(searchTerm, 10))
+                ? {}
+                : {
+                    id: Number.parseInt(searchTerm, 10),
+                  },
             ],
           },
           limit,
@@ -1145,22 +1147,24 @@ const ApplicationController = {
             [Op.or]: [
               {
                 '$LicenceHolder.name$': {
-                  [Op.substring]: `${searchTerm}`,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
               {
                 '$LicenceApplicant.name$': {
-                  [Op.like]: `${searchTerm}`,
+                  [Op.like]: `%${searchTerm}%`,
                 },
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `${searchTerm.toUpperCase().replace(/\s/g, '')}`,
+                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: Number.parseInt(searchTerm, 10),
-              },
+              Number.isNaN(Number.parseInt(searchTerm, 10))
+                ? {}
+                : {
+                    id: Number.parseInt(searchTerm, 10),
+                  },
             ],
           },
         });
