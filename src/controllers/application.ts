@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import transaction from 'sequelize/types/lib/transaction';
-import {Op} from 'sequelize';
+import {Op, Sequelize} from 'sequelize';
 import database from '../models/index.js';
 import config from '../config/app';
 import jwk from '../config/jwk.js';
@@ -552,7 +552,10 @@ const ApplicationController = {
     // All
     if (status === 'all') {
       if (searchTerm !== undefined) {
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : {id: Number.parseInt(searchTerm, 10)};
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
         return Application.findAll({
           paranoid: false,
@@ -653,6 +656,11 @@ const ApplicationController = {
     // Unassigned
     if (status === 'unassigned') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.findAll({
           paranoid: false,
           include: [
@@ -702,11 +710,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
-              },
+              idSearch,
             ],
             [Op.and]: [
               {$confirmedByLicenseHolder$: {[Op.not]: null}},
@@ -768,6 +772,11 @@ const ApplicationController = {
     // In progress
     if (status === 'inProgress') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.findAll({
           paranoid: false,
           include: [
@@ -817,11 +826,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
-              },
+              idSearch,
             ],
             [Op.and]: [
               {$confirmedByLicenseHolder$: {[Op.not]: null}},
@@ -883,6 +888,11 @@ const ApplicationController = {
     // Awaiting LH approval
     if (status === 'awaitingApproval') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.findAll({
           paranoid: false,
           include: [
@@ -932,11 +942,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
-              },
+              idSearch,
             ],
             [Op.and]: [{$confirmedByLicenseHolder$: {[Op.is]: null}}],
           },
@@ -1109,7 +1115,11 @@ const ApplicationController = {
     // All
     if (status === 'all') {
       if (searchTerm !== undefined) {
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : {id: Number.parseInt(searchTerm, 10)};
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.count({
           paranoid: false,
           include: [
@@ -1171,6 +1181,11 @@ const ApplicationController = {
     // Unassigned
     if (status === 'unassigned') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.count({
           paranoid: false,
           include: [
@@ -1220,11 +1235,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
-              },
+              idSearch,
             ],
             [Op.and]: [
               {$confirmedByLicenseHolder$: {[Op.not]: null}},
@@ -1280,6 +1291,11 @@ const ApplicationController = {
     // In progress
     if (status === 'inProgress') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.count({
           paranoid: false,
           include: [
@@ -1329,11 +1345,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
-              },
+              idSearch,
             ],
             [Op.and]: [
               {$confirmedByLicenseHolder$: {[Op.not]: null}},
@@ -1389,6 +1401,11 @@ const ApplicationController = {
     // Awaiting LH approval
     if (status === 'awaitingApproval') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.count({
           paranoid: false,
           include: [
@@ -1439,11 +1456,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
-              },
+              idSearch,
             ],
           },
         });
@@ -1455,6 +1468,11 @@ const ApplicationController = {
     // Awaiting LH approval
     if (status === 'myApplications') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.count({
           paranoid: false,
           include: [
@@ -1504,11 +1522,7 @@ const ApplicationController = {
                   [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
                 },
               },
-              {
-                id: {
-                  [Op.like]: `%${searchTerm}%`,
-                },
-              },
+              idSearch,
             ],
             [Op.and]: [{$staffNumber$: {[Op.like]: licenceOfficerId}}],
           },
