@@ -1053,7 +1053,7 @@ const ApplicationController = {
                   [likeQuery]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
-              idSearch
+              idSearch,
             ],
             $staffNumber$: {
               [likeQuery]: licenceOfficerId,
