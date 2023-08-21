@@ -553,8 +553,9 @@ const ApplicationController = {
     if (status === 'all') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
+
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
         return Application.findAll({
@@ -603,7 +604,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
