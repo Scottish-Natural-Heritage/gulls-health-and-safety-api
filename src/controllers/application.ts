@@ -658,7 +658,7 @@ const ApplicationController = {
     if (status === 'unassigned') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -708,7 +708,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
@@ -774,7 +774,7 @@ const ApplicationController = {
     if (status === 'inProgress') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -824,7 +824,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
@@ -890,7 +890,7 @@ const ApplicationController = {
     if (status === 'awaitingApproval') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -940,7 +940,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
@@ -1043,7 +1043,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               {
@@ -1117,7 +1117,7 @@ const ApplicationController = {
     if (status === 'all') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -1167,7 +1167,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
@@ -1183,7 +1183,7 @@ const ApplicationController = {
     if (status === 'unassigned') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -1233,7 +1233,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
@@ -1293,7 +1293,7 @@ const ApplicationController = {
     if (status === 'inProgress') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -1343,7 +1343,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
@@ -1403,7 +1403,7 @@ const ApplicationController = {
     if (status === 'awaitingApproval') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -1454,7 +1454,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
@@ -1470,7 +1470,7 @@ const ApplicationController = {
     if (status === 'myApplications') {
       if (searchTerm !== undefined) {
         const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm.trim()}%'`),
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
         };
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
@@ -1520,7 +1520,7 @@ const ApplicationController = {
               },
               {
                 '$SiteAddress.postcode$': {
-                  [Op.like]: `%${searchTerm.toUpperCase().replace(/\s/g, '')}%`,
+                  [Op.like]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
               idSearch,
