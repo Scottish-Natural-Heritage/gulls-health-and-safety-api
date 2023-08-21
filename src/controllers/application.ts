@@ -1054,7 +1054,7 @@ const ApplicationController = {
                 },
               },
             ],
-            [Op.and]: [{$staffNumber$: {[likeQuery]: licenceOfficerId}}],
+            $staffNumber$: licenceOfficerId,
           },
           limit,
           offset,
@@ -1095,7 +1095,7 @@ const ApplicationController = {
           },
         ],
         where: {
-          $staffNumber$: {[likeQuery]: licenceOfficerId},
+          $staffNumber$: licenceOfficerId,
         },
         limit,
         offset,
@@ -1528,12 +1528,12 @@ const ApplicationController = {
               },
               idSearch,
             ],
-            [Op.and]: [{$staffNumber$: {[likeQuery]: licenceOfficerId}}],
+            $staffNumber$: licenceOfficerId,
           },
         });
       }
 
-      return Application.count({paranoid: false, where: {$staffNumber$: {[likeQuery]: licenceOfficerId}}});
+      return Application.count({paranoid: false, where: {$staffNumber$: licenceOfficerId}});
     }
 
     return 0;
