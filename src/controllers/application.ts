@@ -999,6 +999,11 @@ const ApplicationController = {
     // LO Applications
     if (status === 'myApplications') {
       if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
         return Application.findAll({
           paranoid: false,
           include: [
@@ -1048,13 +1053,11 @@ const ApplicationController = {
                   [likeQuery]: `%${searchTerm.toUpperCase()}%`,
                 },
               },
-              {
-                id: {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
+              idSearch
             ],
-            $staffNumber$: licenceOfficerId,
+            $staffNumber$: {
+              [likeQuery]: licenceOfficerId,
+            },
           },
           limit,
           offset,
@@ -1095,7 +1098,9 @@ const ApplicationController = {
           },
         ],
         where: {
-          $staffNumber$: licenceOfficerId,
+          $staffNumber$: {
+            [likeQuery]: licenceOfficerId,
+          },
         },
         limit,
         offset,
@@ -1469,7 +1474,7 @@ const ApplicationController = {
       return Application.count({paranoid: false, where: {$confirmedByLicenseHolder$: {[Op.is]: null}}});
     }
 
-    // Awaiting LH approval
+    // Lo Applications
     if (status === 'myApplications') {
       if (searchTerm !== undefined) {
         const literalQuery = {
@@ -1528,12 +1533,21 @@ const ApplicationController = {
               },
               idSearch,
             ],
-            $staffNumber$: licenceOfficerId,
+            $staffNumber$: {
+              [likeQuery]: licenceOfficerId,
+            },
           },
         });
       }
 
-      return Application.count({paranoid: false, where: {$staffNumber$: licenceOfficerId}});
+      return Application.count({
+        paranoid: false,
+        where: {
+          $staffNumber$: {
+            [likeQuery]: licenceOfficerId,
+          },
+        },
+      });
     }
 
     return 0;
