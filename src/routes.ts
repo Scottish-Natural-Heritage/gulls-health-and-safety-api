@@ -304,16 +304,13 @@ const routes: ServerRoute[] = [
 
         const numberOfResults = numberOfApplications;
 
-        const resultsIndexRange = {
-          firstIndex: startIndex + 1,
-          lastIndex: startIndex + itemsPerPage,
-        };
+        const firstIndex = startIndex + 1;
 
         const responseData = {
           applications,
           numberOfPages,
           numberOfResults,
-          resultsIndexRange,
+          firstIndex,
         };
 
         // Did we get any applications?
