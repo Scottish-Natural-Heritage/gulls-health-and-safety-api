@@ -549,6 +549,7 @@ const ApplicationController = {
     status: string,
     licenceOfficerId: string,
   ) => {
+    // Uses the Op.iLike operator if a Postgress database. This allows for case insensitive searching.
     const likeQuery = config.databaseHost === 'localhost' ? Op.like : Op.iLike;
 
     // All
@@ -1120,6 +1121,7 @@ const ApplicationController = {
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
   getTotalNumberOfApplications: async (searchTerm: string | undefined, status: string, licenceOfficerId: string) => {
+    // Uses the Op.iLike operator if a Postgress database. This allows for case insensitive searching.
     const likeQuery = config.databaseHost === 'localhost' ? Op.like : Op.iLike;
     // All
     if (status === 'all') {
