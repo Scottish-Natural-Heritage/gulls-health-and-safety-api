@@ -546,7 +546,7 @@ const ApplicationController = {
     limit: number,
     offset: number,
     searchTerm: string | undefined,
-    status: string,
+    status: string | undefined,
     licenceOfficerId: string,
   ) => {
     // Checks if using a local database. This allows for case insensitive searching.
@@ -1109,6 +1109,111 @@ const ApplicationController = {
       });
     }
 
+    // All if status is undefined.
+    if (status === undefined) {
+      if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
+        };
+
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
+        return Application.findAll({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [likeQuery]: `%${searchTerm}%`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [likeQuery]: `%${searchTerm}%`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [likeQuery]: `%${searchTerm}%`,
+                },
+              },
+              idSearch,
+            ],
+          },
+          limit,
+          offset,
+          order: [['createdAt', 'DESC']],
+        });
+      }
+
+      return Application.findAll({
+        paranoid: false,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
+          },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+      });
+    }
+
     return {};
   },
 
@@ -1120,7 +1225,11 @@ const ApplicationController = {
    * @param {string} licenceOfficerId Licence Officer ID value from URL query.
    * @returns {any} Returns an array of applications with the contact and site address details included.
    */
-  getTotalNumberOfApplications: async (searchTerm: string | undefined, status: string, licenceOfficerId: string) => {
+  getTotalNumberOfApplications: async (
+    searchTerm: string | undefined,
+    status: string | undefined,
+    licenceOfficerId: string,
+  ) => {
     // Checks if using a local database. This allows for case insensitive searching.
     const likeQuery = config.databaseHost === 'localhost' ? Op.like : Op.iLike;
     // All
@@ -1550,6 +1659,72 @@ const ApplicationController = {
           },
         },
       });
+    }
+
+    // All if status is undefined
+    if (status === undefined) {
+      if (searchTerm !== undefined) {
+        const literalQuery = {
+          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
+        };
+        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
+        return Application.count({
+          paranoid: false,
+          include: [
+            {
+              model: Contact,
+              as: 'LicenceHolder',
+            },
+            {
+              model: Contact,
+              as: 'LicenceApplicant',
+            },
+            {
+              model: Address,
+              as: 'SiteAddress',
+            },
+            {
+              model: License,
+              as: 'License',
+            },
+            {
+              model: Revocation,
+              as: 'Revocation',
+            },
+            {
+              model: Withdrawal,
+              as: 'Withdrawal',
+            },
+            {
+              model: Assessment,
+              as: 'ApplicationAssessment',
+            },
+          ],
+          where: {
+            [Op.or]: [
+              {
+                '$LicenceHolder.name$': {
+                  [likeQuery]: `%${searchTerm}%`,
+                },
+              },
+              {
+                '$LicenceApplicant.name$': {
+                  [likeQuery]: `%${searchTerm}%`,
+                },
+              },
+              {
+                '$SiteAddress.postcode$': {
+                  [likeQuery]: `%${searchTerm}%`,
+                },
+              },
+              idSearch,
+            ],
+          },
+        });
+      }
+
+      return Application.count({paranoid: false});
     }
 
     return 0;
