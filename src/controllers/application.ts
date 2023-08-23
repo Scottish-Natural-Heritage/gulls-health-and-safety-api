@@ -1477,6 +1477,7 @@ const ApplicationController = {
               {$confirmedByLicenseHolder$: {[Op.not]: null}},
               {$staffNumber$: {[Op.not]: null}},
               {'$License.ApplicationId$': {[Op.is]: null}},
+              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
             ],
           },
         });
@@ -1519,6 +1520,7 @@ const ApplicationController = {
             {$confirmedByLicenseHolder$: {[Op.not]: null}},
             {$staffNumber$: {[Op.not]: null}},
             {'$License.ApplicationId$': {[Op.is]: null}},
+            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
           ],
         },
       });
