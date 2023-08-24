@@ -835,7 +835,7 @@ const ApplicationController = {
               idSearch,
             ],
             [Op.and]: [
-              {$confirmedByLicenseHolder$: {[Op.not]: null}},
+              {$confirmedByLicenseHolder$: true},
               {$staffNumber$: {[Op.not]: null}},
               {'$License.ApplicationId$': {[Op.is]: null}},
               {'$ApplicationAssessment.decision$': {[Op.not]: false}},
@@ -881,7 +881,7 @@ const ApplicationController = {
         ],
         where: {
           [Op.and]: [
-            {$confirmedByLicenseHolder$: {[Op.not]: null}},
+            {$confirmedByLicenseHolder$: true},
             {$staffNumber$: {[Op.not]: null}},
             {'$License.ApplicationId$': {[Op.is]: null}},
             {'$ApplicationAssessment.decision$': {[Op.not]: false}},
@@ -1010,7 +1010,7 @@ const ApplicationController = {
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
         return Application.findAll({
-          paranoid: false,
+          paranoid: true,
           include: [
             {
               model: Contact,
@@ -1060,9 +1060,16 @@ const ApplicationController = {
               },
               idSearch,
             ],
-            $staffNumber$: {
-              [likeQuery]: licenceOfficerId,
-            },
+            [Op.and]: [
+              {$confirmedByLicenseHolder$: true},
+              {
+                $staffNumber$: {
+                  [likeQuery]: licenceOfficerId,
+                },
+              },
+              {'$License.ApplicationId$': {[Op.is]: null}},
+              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
+            ],
           },
           limit,
           offset,
@@ -1071,7 +1078,7 @@ const ApplicationController = {
       }
 
       return Application.findAll({
-        paranoid: false,
+        paranoid: true,
         include: [
           {
             model: Contact,
@@ -1103,9 +1110,16 @@ const ApplicationController = {
           },
         ],
         where: {
-          $staffNumber$: {
-            [likeQuery]: licenceOfficerId,
-          },
+          [Op.and]: [
+            {$confirmedByLicenseHolder$: true},
+            {
+              $staffNumber$: {
+                [likeQuery]: licenceOfficerId,
+              },
+            },
+            {'$License.ApplicationId$': {[Op.is]: null}},
+            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
+          ],
         },
         limit,
         offset,
@@ -1474,7 +1488,7 @@ const ApplicationController = {
               idSearch,
             ],
             [Op.and]: [
-              {$confirmedByLicenseHolder$: {[Op.not]: null}},
+              {$confirmedByLicenseHolder$: true},
               {$staffNumber$: {[Op.not]: null}},
               {'$License.ApplicationId$': {[Op.is]: null}},
               {'$ApplicationAssessment.decision$': {[Op.not]: false}},
@@ -1517,7 +1531,7 @@ const ApplicationController = {
         ],
         where: {
           [Op.and]: [
-            {$confirmedByLicenseHolder$: {[Op.not]: null}},
+            {$confirmedByLicenseHolder$: true},
             {$staffNumber$: {[Op.not]: null}},
             {'$License.ApplicationId$': {[Op.is]: null}},
             {'$ApplicationAssessment.decision$': {[Op.not]: false}},
@@ -1602,7 +1616,7 @@ const ApplicationController = {
         const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
 
         return Application.count({
-          paranoid: false,
+          paranoid: true,
           include: [
             {
               model: Contact,
@@ -1652,19 +1666,63 @@ const ApplicationController = {
               },
               idSearch,
             ],
-            $staffNumber$: {
-              [likeQuery]: licenceOfficerId,
-            },
+            [Op.and]: [
+              {$confirmedByLicenseHolder$: true},
+              {
+                $staffNumber$: {
+                  [likeQuery]: licenceOfficerId,
+                },
+              },
+              {'$License.ApplicationId$': {[Op.is]: null}},
+              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
+            ],
           },
         });
       }
 
       return Application.count({
-        paranoid: false,
-        where: {
-          $staffNumber$: {
-            [likeQuery]: licenceOfficerId,
+        paranoid: true,
+        include: [
+          {
+            model: Contact,
+            as: 'LicenceHolder',
           },
+          {
+            model: Contact,
+            as: 'LicenceApplicant',
+          },
+          {
+            model: Address,
+            as: 'SiteAddress',
+          },
+          {
+            model: License,
+            as: 'License',
+          },
+          {
+            model: Revocation,
+            as: 'Revocation',
+          },
+          {
+            model: Withdrawal,
+            as: 'Withdrawal',
+          },
+          {
+            model: Assessment,
+            as: 'ApplicationAssessment',
+          },
+        ],
+        where: {
+          [Op.and]: [
+            {$confirmedByLicenseHolder$: true},
+            {
+              $staffNumber$: {
+                [likeQuery]: licenceOfficerId,
+              },
+            },
+            {'$License.ApplicationId$': {[Op.is]: null}},
+            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
+          ],
         },
       });
     }
