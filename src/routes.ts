@@ -67,6 +67,11 @@ const checkForValidActivities = (species: any): boolean => {
 };
 
 /**
+ * The number of items to display per page on the Gulls Staff search screen.
+ */
+const itemsPerPage = 100;
+
+/**
  * An array of all the routes and controllers in the app.
  */
 const routes: ServerRoute[] = [
@@ -265,22 +270,61 @@ const routes: ServerRoute[] = [
   },
 
   /**
-   * GET all (summarized) applications endpoint.
+   * GET all paginated (summarized) applications endpoint and with an optional search term applied.
    */
   {
     method: 'get',
     path: `${config.pathPrefix}/applications`,
     handler: async (request: Request, h: ResponseToolkit) => {
+      const page = Number.parseInt(request.query.page as string, 10) || 1;
+      const [searchTerm, status, licenceOfficerId] = [
+        request.query.search || undefined,
+        request.query.status,
+        request.query.licenceOfficerId,
+      ];
+
+      const startIndex = (page - 1) * itemsPerPage;
+
       try {
-        const applications = await Application.findAllSummary();
+        const applications = await Application.findAllPaginatedSummary(
+          itemsPerPage,
+          startIndex,
+          searchTerm,
+          status,
+          licenceOfficerId,
+        );
+
+        const numberOfApplications = await Application.getTotalNumberOfApplications(
+          searchTerm,
+          status,
+          licenceOfficerId,
+        );
+
+        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
+
+        const numberOfResults = numberOfApplications;
+
+        const firstIndex = startIndex + 1;
+
+        const responseData = {
+          applications,
+          numberOfPages,
+          numberOfResults,
+          firstIndex,
+        };
 
         // Did we get any applications?
-        if (applications === undefined || applications === null) {
+        if (
+          applications === undefined ||
+          applications === null ||
+          numberOfApplications === undefined ||
+          numberOfApplications === null
+        ) {
           return h.response({message: `No applications found.`}).code(404);
         }
 
         // If we get here we have something to return, so return it.
-        return h.response(applications).code(200);
+        return h.response(responseData).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
