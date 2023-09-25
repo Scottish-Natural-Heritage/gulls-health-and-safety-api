@@ -1,4 +1,4 @@
-import transaction from 'sequelize/types/lib/transaction';
+import transaction from 'sequelize/types/transaction';
 import database from '../models/index.js';
 import {AdvisoryInterface} from '../models/advisory.js';
 import {ConditionInterface} from '../models/condition.js';
@@ -555,7 +555,7 @@ const AmendmentController = {
       }
 
       // Set the species foreign keys in the DB.
-      const newASpecies = await ASpecies.create(aSpeciesIds, {transaction: t});
+      const newASpecies = await ASpecies.create(aSpeciesIds as any, {transaction: t});
 
       // Set the new species ID of the amendment.
       incomingAmendment.SpeciesId = newASpecies.id;

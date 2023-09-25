@@ -1,4 +1,4 @@
-import transaction from 'sequelize/types/lib/transaction';
+import transaction from 'sequelize/types/transaction';
 import database from '../models/index.js';
 
 const {Condition} = database;
