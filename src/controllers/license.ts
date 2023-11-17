@@ -1,4 +1,4 @@
-import transaction from 'sequelize/types/lib/transaction';
+import transaction from 'sequelize/types/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
 import {AdvisoryInterface} from '../models/advisory.js';

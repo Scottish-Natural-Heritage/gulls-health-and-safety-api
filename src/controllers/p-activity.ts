@@ -1,5 +1,5 @@
 import {PActivityInterface} from 'models/p-activity.js';
-import transaction from 'sequelize/types/lib/transaction';
+import transaction from 'sequelize/types/transaction';
 import database from '../models/index.js';
 
 const {PActivity} = database;
