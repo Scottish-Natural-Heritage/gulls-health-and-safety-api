@@ -1,5 +1,5 @@
 import {AssessmentInterface} from 'models/assessment.js';
-import transaction from 'sequelize/types/lib/transaction';
+import transaction from 'sequelize/types/transaction';
 import database from '../models/index.js';
 
 const {Assessment, AssessmentMeasure} = database;
@@ -33,7 +33,7 @@ const AssessmentController = {
     const updateOrCreateAssessment = await database.sequelize.transaction(async (t: transaction) => {
       // It will look at the database to find a record with a primary key that matches the applicationId param.
       // If it finds one then it will update the data otherwise it will create a new record.
-      const item = await Assessment.upsert(assessment, {returning: true, transaction: t});
+      const item = await Assessment.upsert(assessment as any, {returning: true, transaction: t});
       // If we have additionalMeasures then we need to create a new record if not we carry on.
       if (additionalMeasures) {
         additionalMeasures.ApplicationId = applicationId;

@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import transaction from 'sequelize/types/lib/transaction';
+import transaction from 'sequelize/types/transaction';
 import {Op, Sequelize} from 'sequelize';
 import database from '../models/index.js';
 import config from '../config/app';
@@ -1913,8 +1913,8 @@ const ApplicationController = {
       }
 
       // Set the species foreign keys in the DB.
-      const newSpecies = await Species.create(speciesIds, {transaction: t});
-      const newPSpecies = await PSpecies.create(pSpeciesIds, {transaction: t});
+      const newSpecies = await Species.create(speciesIds as any, {transaction: t});
+      const newPSpecies = await PSpecies.create(pSpeciesIds as any, {transaction: t});
       // Set the application's foreign keys.
       incomingApplication.LicenceHolderId = newLicenceHolderContact.id;
       incomingApplication.LicenceApplicantId = newOnBehalfContact ? newOnBehalfContact.id : newLicenceHolderContact.id;

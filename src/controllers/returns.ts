@@ -1,4 +1,4 @@
-import transaction from 'sequelize/types/lib/transaction';
+import transaction from 'sequelize/types/transaction';
 import database from '../models/index.js';
 import config from '../config/app';
 import MultiUseFunctions from '../multi-use-functions';
@@ -446,7 +446,7 @@ const ReturnsController = {
 
       if (cleanedReturn.isReportingReturn) {
         // Set the return's species foreign keys in the DB.
-        const newReturnSpecies = await RSpecies.create(speciesIds, {transaction: t});
+        const newReturnSpecies = await RSpecies.create(speciesIds as any, {transaction: t});
 
         // Set the return's species foreign key.
         cleanedReturn.SpeciesId = newReturnSpecies.id;

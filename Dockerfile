@@ -2,8 +2,8 @@
 # Builder Stage
 ################################################################################
 
-# We're deploying to the 16-alpine image, so do our building on it too.
-FROM node:16-alpine as builder
+# We're deploying to the 20-alpine image, so do our building on it too.
+FROM node:20-alpine as builder
 
 # By default, we want to do everything in a non-privileged user, so go to their
 # home dir and drop to their account.
@@ -28,8 +28,8 @@ RUN npm prune --production
 # Deployable Image
 ################################################################################
 
-# We built on the 16-alpine image, so we need to deploy on it too.
-FROM node:16-alpine
+# We built on the 20-alpine image, so we need to deploy on it too.
+FROM node:20-alpine
 
 # Drop back to the non-privileged user for run-time.
 WORKDIR /home/node
