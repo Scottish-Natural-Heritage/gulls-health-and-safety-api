@@ -18,7 +18,7 @@ module.exports = {
         tableName: 'Measures',
       },
       'measuresIntendDetail',
-      Sequelize.STRING,
+      Sequelize.TEXT,
     );
   },
   down: async (queryInterface) => {
