@@ -437,8 +437,10 @@ const cleanMeasure = (body: any): any => {
       : body.measuresIntendToTry.disturbanceByDogs
       ? 'Intend'
       : 'No',
+    ppe: body.measuresTried.ppe ? 'Tried' : body.measuresIntendToTry.ppe ? 'Intend' : 'No',
     measuresTriedDetail: body.measuresTriedMoreDetail ? body.measuresTriedMoreDetail.trim() : undefined,
     measuresWillNotTryDetail: body.measuresIntendNotToTry ? body.measuresIntendNotToTry.trim() : undefined,
+    measuresIntendDetail: body.measuresIntendDetail ? body.measuresIntendDetail.trim() : undefined,
   };
 };
 
