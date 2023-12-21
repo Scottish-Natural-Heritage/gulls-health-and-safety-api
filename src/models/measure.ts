@@ -19,6 +19,8 @@ const MeasureModel = (sequelize: Sequelize) => {
     public disturbanceByDogs!: string;
     public measuresTriedDetail!: string;
     public measuresWillNotTryDetail!: string;
+    public measuresIntendDetail!: string;
+    public ppe!: string;
   }
 
   Measure.init(
@@ -54,6 +56,12 @@ const MeasureModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
       },
       measuresWillNotTryDetail: {
+        type: DataTypes.STRING,
+      },
+      measuresIntendDetail: {
+        type: DataTypes.TEXT,
+      },
+      ppe: {
         type: DataTypes.STRING,
       },
     },
