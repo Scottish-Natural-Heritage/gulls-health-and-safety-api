@@ -1,10 +1,10 @@
 import * as jwt from 'jsonwebtoken';
-import transaction from 'sequelize/types/transaction';
 import {Op, Sequelize} from 'sequelize';
 import database from '../models/index.js';
 import config from '../config/app';
 import jwk from '../config/jwk.js';
 import MultiUseFunctions from '../multi-use-functions';
+import transaction from 'sequelize/types/lib/transaction.js';
 
 const {
   Application,

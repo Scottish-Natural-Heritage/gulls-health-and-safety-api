@@ -8,6 +8,7 @@ import {
   FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID,
   FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID,
   TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID,
+  REFUSAL_NOTIFY_TEMPLATE_ID,
   EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID,
   EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID,
   LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,
@@ -68,6 +69,22 @@ const sendWithdrawEmail = async (emailDetails: any, emailAddress: any) => {
   if (config.notifyApiKey) {
     const notifyClient = new NotifyClient(config.notifyApiKey);
     await notifyClient.sendEmail(TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID, emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
+    });
+  }
+};
+
+/**
+ * This function calls the Notify API and asks for a refusal email to be sent.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendRefusalEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail(REFUSAL_NOTIFY_TEMPLATE_ID, emailAddress, {
       personalisation: emailDetails,
       emailReplyToId: LICENSING_REPLY_TO_NOTIFY_EMAIL_ID,
     });
@@ -212,6 +229,22 @@ const set14DayReminderEmailDetailsForApplicant = async (
 };
 
 const set21DayWithdrawEmailDetails = (
+  id: number,
+  applicationDate: string,
+  licenceHolderContact: any,
+  onBehalfContact: any,
+  siteAddress: any,
+) => {
+  return {
+    lhName: licenceHolderContact.name,
+    onBehalfName: onBehalfContact.name,
+    applicationDate: MultiUseFunctions.createShortDisplayDate(new Date(applicationDate)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
+    id,
+  };
+};
+
+const setRefusalEmailDetails = (
   id: number,
   applicationDate: string,
   licenceHolderContact: any,
@@ -593,6 +626,36 @@ const ScheduledController = {
     }
     /* eslint-enable no-await-in-loop */
 
+    return sentCount;
+  },
+
+  /**
+   * Sends out notification emails if a licence has been refused.
+   *
+   * @param {any} licences A collection of all licences to be sent a reminder.
+   * @returns {number} Returns the number of emails sent.
+   */
+   sendRefusalNotification: async (licences: any): Promise<number> => {
+    // A count of the number of emails sent.
+    let sentCount = 0;
+
+    // Loop through the collection of licences and set up their email details.
+    // Then send the email.
+    for (const licence of licences) {
+      const emailDetails = setRefusalEmailDetails(
+        licence.id,
+        licence.createdAt,
+        licence.LicenceHolder,
+        licence.LicenceApplicant,
+        licence.SiteAddress);
+
+      // Send the withdraw emails, the awaits needs to be part of the loop.
+      /* eslint-disable no-await-in-loop */
+      await sendRefusalEmail(emailDetails, licence.LicenceHolder.emailAddress);
+      await sendRefusalEmail(emailDetails, licence.LicenceApplicant.emailAddress);
+    }
+
+    /* eslint-enable no-await-in-loop */
     return sentCount;
   },
 };
