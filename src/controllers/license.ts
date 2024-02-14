@@ -1,3 +1,4 @@
+import transaction from 'sequelize/types/lib/transaction.js';
 import database from '../models/index.js';
 import config from '../config/app';
 import {AdvisoryInterface} from '../models/advisory.js';
@@ -6,7 +7,6 @@ import MultiUseFunctions from '../multi-use-functions';
 import AdvisoryController from './advisory';
 import ConditionController from './condition';
 import Application from './application';
-import transaction from 'sequelize/types/lib/transaction.js';
 
 const {License, LicenseCondition, LicenseAdvisory, Advisory, Condition} = database;
 
@@ -71,12 +71,8 @@ const setLicenceNotificationDetails = async (application: any, licence: any): Pr
     measuresToContinue,
     additionalMeasuresIntended,
     decisionDetails: application.ApplicationAssessment.refusalReason,
-    decisionPass: application.ApplicationAssessment.decision
-      ? decisionPass
-      : '',
-    decisionFail: application.ApplicationAssessment.decision === false
-      ? decisionFail
-      : '',
+    decisionPass: application.ApplicationAssessment.decision ? decisionPass : '',
+    decisionFail: application.ApplicationAssessment.decision === false ? decisionFail : '',
     displayContinue: measuresToContinue !== '',
     displayAdditionalIntended: additionalMeasuresIntended !== '',
     appliedForSpecies: createAppliedFor(application.Species),
@@ -148,7 +144,6 @@ const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any
     });
   }
 };
-
 
 /**
  * This function returns a slightly prettier and more accurate string of ranges.
@@ -864,30 +859,30 @@ const LicenseController = {
     await sendLicenceNotificationEmail(emailDetails, 'issuedlicence@nature.scot');
   },
 
-    /**
+  /**
    * Send the emails from a refusal of a licence.
    *
    * @param {any} applicationId The application that the license was based on.
    * @returns {any} Returns a 200, when the License emails have sent.
    */
-     seRefusedEmails: async (applicationId: any) => {
-      // Get the application details.
-      const applicationDetails: any = await Application.findOne(applicationId);
+  seRefusedEmails: async (applicationId: any) => {
+    // Get the application details.
+    const applicationDetails: any = await Application.findOne(applicationId);
 
-      // Set the email details personalisation.
-      const emailDetails = await setLicenceNotificationDetails(applicationDetails, applicationDetails.License);
+    // Set the email details personalisation.
+    const emailDetails = await setLicenceNotificationDetails(applicationDetails, applicationDetails.License);
 
-      // Try to send the email to the licence holder.
-      await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
-      // Check to see if this was an on behalf application.
-      if (applicationDetails.LicenceApplicantId !== applicationDetails.LicenceHolderId) {
-        // Try to send the email to the licence applicant.
-        await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceApplicant?.emailAddress);
-      }
+    // Try to send the email to the licence holder.
+    await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
+    // Check to see if this was an on behalf application.
+    if (applicationDetails.LicenceApplicantId !== applicationDetails.LicenceHolderId) {
+      // Try to send the email to the licence applicant.
+      await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceApplicant?.emailAddress);
+    }
 
-      // And send a copy to the licensing team too.
-      await sendLicenceNotificationEmail(emailDetails, 'issuedlicence@nature.scot');
-    },
+    // And send a copy to the licensing team too.
+    await sendLicenceNotificationEmail(emailDetails, 'issuedlicence@nature.scot');
+  },
 };
 
 export {LicenseController as default};

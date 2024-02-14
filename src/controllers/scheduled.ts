@@ -635,9 +635,9 @@ const ScheduledController = {
    * @param {any} licences A collection of all licences to be sent a reminder.
    * @returns {number} Returns the number of emails sent.
    */
-   sendRefusalNotification: async (licences: any): Promise<number> => {
+  sendRefusalNotification: async (licences: any): Promise<number> => {
     // A count of the number of emails sent.
-    let sentCount = 0;
+    const sentCount = 0;
 
     // Loop through the collection of licences and set up their email details.
     // Then send the email.
@@ -647,7 +647,8 @@ const ScheduledController = {
         licence.createdAt,
         licence.LicenceHolder,
         licence.LicenceApplicant,
-        licence.SiteAddress);
+        licence.SiteAddress,
+      );
 
       // Send the withdraw emails, the awaits needs to be part of the loop.
       /* eslint-disable no-await-in-loop */
