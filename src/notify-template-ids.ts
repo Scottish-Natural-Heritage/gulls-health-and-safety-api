@@ -14,11 +14,6 @@ const FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID = '52c8aa89-7fec-41c2-bb02-646ed6
 const TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID = 'd2dfaf64-49fb-4383-9713-33aa55898afa';
 
 /**
- * The ID of the Notify template to be used when a refusal email is sent.
- */
-const REFUSAL_NOTIFY_TEMPLATE_ID = '5e1470bb-6953-4320-b405-4031c8d1d51b';
-
-/**
  * The ID of the Notify template to be used when an expired licence with no returns against it
  * reminder email is sent.
  */
@@ -52,7 +47,6 @@ export {
   FOURTEEN_DAY_MAGIC_LINK_NOTIFY_TEMPLATE_ID,
   FOURTEEN_DAY_REMINDER_NOTIFY_TEMPLATE_ID,
   TWENTY_ONE_DAY_WITHDRAWAL_NOTIFY_TEMPLATE_ID,
-  REFUSAL_NOTIFY_TEMPLATE_ID,
   EXPIRED_NO_RETURN_NOTIFY_TEMPLATE_ID,
   EXPIRED_NO_FINAL_RETURN_NOTIFY_TEMPLATE_ID,
   LICENCE_EXPIRES_SOON_NOTIFY_TEMPLATE_ID,

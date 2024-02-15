@@ -1006,7 +1006,10 @@ const routes: ServerRoute[] = [
             .code(500);
         }
 
-        // If they are, send back the updated fields.
+        // Call the controllers to send the emails.
+        await Application.seRefusalEmail(existingId);
+
+        // If they are successful, send back the updated fields.
         return h.response().code(200);
       } catch (error: unknown) {
         // Log any error.

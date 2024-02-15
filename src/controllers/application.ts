@@ -164,6 +164,40 @@ const setWithdrawalEmailDetails = (
 };
 
 /**
+ * This function calls the Notify API and asks for a refusal email to be sent.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendRefusalEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('5e1470bb-6953-4320-b405-4031c8d1d51b', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+const setRefusalEmailDetails = (
+  id: number,
+  applicationDate: string,
+  licenceHolderContact: any,
+  onBehalfContact: any,
+  siteAddress: any,
+  decisionDetails: string,
+) => {
+  return {
+    lhName: licenceHolderContact.name,
+    onBehalfName: onBehalfContact.name,
+    applicationDate: MultiUseFunctions.createShortDisplayDate(new Date(applicationDate)),
+    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
+    decisionDetails,
+    id,
+  };
+};
+
+/**
  * This function returns an object containing the details required for the licence holder and the
  * licence applicant confirmation emails.
  *
@@ -2493,6 +2527,38 @@ const ApplicationController = {
       // If something went wrong during the transaction return false.
       return false;
     }
+  },
+
+  /**
+   * Sends out an email if a application has been refused.
+   *
+   * @param {any} applicationID A collection of all licences to be sent a reminder.
+   * @returns {number} Returns the number of emails sent.
+   */
+  seRefusalEmail: async (applicationId: any): Promise<number> => {
+    // A count of the number of emails sent.
+    const sentCount = 0;
+
+    // Loop through the collection of licences and set up their email details.
+    // Then send the email.
+    for (const application of applicationId) {
+      const emailDetails = setRefusalEmailDetails(
+        application.id,
+        application.createdAt,
+        application.LicenceHolder,
+        application.LicenceApplicant,
+        application.SiteAddress,
+        application.decisionDetails,
+      );
+
+      // Send the withdraw emails, the awaits needs to be part of the loop.
+      /* eslint-disable no-await-in-loop */
+      await sendRefusalEmail(emailDetails, application.LicenceHolder.emailAddress);
+      await sendRefusalEmail(emailDetails, application.LicenceApplicant.emailAddress);
+    }
+
+    /* eslint-enable no-await-in-loop */
+    return sentCount;
   },
 };
 
