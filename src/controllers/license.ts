@@ -45,8 +45,6 @@ const replaceDoubleSlashWithSingle = (inputString: string): string => {
 const setLicenceNotificationDetails = async (application: any, licence: any): Promise<any> => {
   const measuresToContinue = createAdditionalMeasures(application?.AssessmentMeasure, 'Continue');
   const additionalMeasuresIntended = createAdditionalMeasures(application?.AssessmentMeasure, 'Intend');
-  const decisionPass = application.ApplicationAssessment.decision === 'Approved';
-  const decisionFail = application.ApplicationAssessment.decision === 'Refused';
   return {
     licenceNumber: application.id,
     siteAddressLine1: application.SiteAddress.addressLine1,
@@ -70,9 +68,6 @@ const setLicenceNotificationDetails = async (application: any, licence: any): Pr
     measuresNotTried: createMeasures(application.ApplicationMeasure, 'No'),
     measuresToContinue,
     additionalMeasuresIntended,
-    decisionDetails: application.ApplicationAssessment.refusalReason,
-    decisionPass: application.ApplicationAssessment.decision ? decisionPass : '',
-    decisionFail: application.ApplicationAssessment.decision === false ? decisionFail : '',
     displayContinue: measuresToContinue !== '',
     displayAdditionalIntended: additionalMeasuresIntended !== '',
     appliedForSpecies: createAppliedFor(application.Species),

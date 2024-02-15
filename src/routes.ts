@@ -1006,11 +1006,14 @@ const routes: ServerRoute[] = [
             .code(500);
         }
 
-        // Call the controllers to send the emails.
-        await Application.seRefusalEmail(existingId);
+        if (incomingAssessment.decision !== undefined && incomingAssessment.decision === false) {
+          // Call the controller to send the email.
+          await Application.setRefusalEmail(application);
+        }
 
-        // If they are successful, send back the updated fields.
+        // If they are successful, send back the updated fields and send email.
         return h.response().code(200);
+        //return h.response({message: `Sent ${sendEmail} email.`}).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

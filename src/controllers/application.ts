@@ -179,24 +179,6 @@ const sendRefusalEmail = async (emailDetails: any, emailAddress: any) => {
   }
 };
 
-const setRefusalEmailDetails = (
-  id: number,
-  applicationDate: string,
-  licenceHolderContact: any,
-  onBehalfContact: any,
-  siteAddress: any,
-  decisionDetails: string,
-) => {
-  return {
-    lhName: licenceHolderContact.name,
-    onBehalfName: onBehalfContact.name,
-    applicationDate: MultiUseFunctions.createShortDisplayDate(new Date(applicationDate)),
-    siteAddress: MultiUseFunctions.createSummaryAddress(siteAddress),
-    decisionDetails,
-    id,
-  };
-};
-
 /**
  * This function returns an object containing the details required for the licence holder and the
  * licence applicant confirmation emails.
@@ -350,6 +332,61 @@ const sendHolderApplicantConfirmEmail = async (emailDetails: any, emailAddress: 
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
   }
+};
+
+/**
+ * This function creates a personalisation object to be used by the notify API to create
+ * the licence email.
+ *
+ * @param {any} application The licence application details.
+ * @returns {any} Returns a personalisation shaped object for notify.
+ */
+const setRefusalEmailDetails = async (application: any): Promise<any> => {
+  const measuresToContinue = MultiUseFunctions.createAdditionalMeasures(application?.AssessmentMeasure, 'Continue');
+  const additionalMeasuresIntended = MultiUseFunctions.createAdditionalMeasures(
+    application?.AssessmentMeasure,
+    'Intend',
+  );
+  const decisionTest1Pass = application.ApplicationAssessment.decision === 'Approved';
+  const decisionTest1Fail = application.ApplicationAssessment.decision === 'Refused';
+  const decisionTest2Pass = application.ApplicationAssessment.decision === 'Approved';
+  const decisionTest2Fail = application.ApplicationAssessment.decision === 'Refused';
+  return {
+    licenceNumber: application.id,
+    siteAddressLine1: application.SiteAddress.addressLine1,
+    siteAddressLine2: application.SiteAddress.addressLine2 ? application.SiteAddress.addressLine2 : 'No address line 2',
+    siteAddressTown: application.SiteAddress.addressTown,
+    sitePostcode: application.SiteAddress.postcode,
+    lhName: application.LicenceHolder.name,
+    laName: application.LicenceApplicant.name,
+    addressLine1: application.LicenceHolderAddress.addressLine1,
+    addressLine2: application.LicenceHolderAddress.addressLine2
+      ? application.LicenceHolderAddress.addressLine2
+      : 'No address line 2',
+    addressTown: application.LicenceHolderAddress.addressTown,
+    postcode: application.LicenceHolderAddress.postcode,
+    identifiedSpecies: MultiUseFunctions.createIdentifiedSpecies(application.Species),
+    issuesList: MultiUseFunctions.createIssues(application.ApplicationIssue),
+    measuresTried: MultiUseFunctions.createMeasures(application.ApplicationMeasure, 'Tried'),
+    measuresIntended: MultiUseFunctions.createMeasures(application.ApplicationMeasure, 'Intend'),
+    measuresNotTried: MultiUseFunctions.createMeasures(application.ApplicationMeasure, 'No'),
+    measuresToContinue,
+    additionalMeasuresIntended,
+    decisionDetails: application.ApplicationAssessment.refusalReason,
+    decisionTest1Pass: application.ApplicationAssessment.decision ? decisionTest1Pass : '',
+    decisionTest1Fail: application.ApplicationAssessment.decision === false ? decisionTest1Fail : '',
+    decisionTest2Pass: application.ApplicationAssessment.decision ? decisionTest2Pass : '',
+    decisionTest2Fail: application.ApplicationAssessment.decision === false ? decisionTest2Fail : '',
+    displayContinue: measuresToContinue !== '',
+    displayAdditionalIntended: additionalMeasuresIntended !== '',
+    appliedForSpecies: MultiUseFunctions.createAppliedFor(application.Species),
+    proposalResult: MultiUseFunctions.createProposalResult(application.PSpecies),
+    test1Details: application.ApplicationAssessment.testOneAssessment,
+    test2Details: application.ApplicationAssessment.testTwoAssessment,
+    test3Details: application.ApplicationAssessment.testThreeAssessment
+      ? application.ApplicationAssessment.testThreeAssessment
+      : '',
+  };
 };
 
 const ApplicationController = {
@@ -2532,33 +2569,21 @@ const ApplicationController = {
   /**
    * Sends out an email if a application has been refused.
    *
-   * @param {any} applicationID A collection of all licences to be sent a reminder.
-   * @returns {number} Returns the number of emails sent.
+   * @param {any} application A collection of all licences to be sent a reminder.
    */
-  seRefusalEmail: async (applicationId: any): Promise<number> => {
-    // A count of the number of emails sent.
-    const sentCount = 0;
+  setRefusalEmail: async (application: any) => {
+    const emailDetails = setRefusalEmailDetails(application);
 
-    // Loop through the collection of licences and set up their email details.
-    // Then send the email.
-    for (const application of applicationId) {
-      const emailDetails = setRefusalEmailDetails(
-        application.id,
-        application.createdAt,
-        application.LicenceHolder,
-        application.LicenceApplicant,
-        application.SiteAddress,
-        application.decisionDetails,
-      );
-
-      // Send the withdraw emails, the awaits needs to be part of the loop.
-      /* eslint-disable no-await-in-loop */
-      await sendRefusalEmail(emailDetails, application.LicenceHolder.emailAddress);
+    // Try to send the email to the licence holder.
+    await sendRefusalEmail(emailDetails, application.LicenceHolder.emailAddress);
+    // Check to see if this was an on behalf application.
+    if (application.LicenceApplicant !== application.LicenceHolder) {
+      // Try to send the email to the licence applicant.
       await sendRefusalEmail(emailDetails, application.LicenceApplicant.emailAddress);
     }
 
-    /* eslint-enable no-await-in-loop */
-    return sentCount;
+    // And send a copy to the licensing team too.
+    await sendRefusalEmail(emailDetails, '????@nature.scot');
   },
 };
 
