@@ -1013,7 +1013,6 @@ const routes: ServerRoute[] = [
 
         // If they are successful, send back the updated fields and send email.
         return h.response().code(200);
-        //return h.response({message: `Sent ${sendEmail} email.`}).code(200);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));

@@ -47,7 +47,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @param {string} measuresStatus Either `Tried`, `Intend` or `No`.
  * @returns {string} Returns a formatted list of bullet pointed measures.
  */
- const createAdditionalMeasures = (applicationMeasures: any, measuresStatus: string): string => {
+const createAdditionalMeasures = (applicationMeasures: any, measuresStatus: string): string => {
   const measures: string[] = [];
 
   if (applicationMeasures?.preventNesting === measuresStatus) {
@@ -93,7 +93,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @returns {string} Returns the list of species to which the licence pertains, formatted
  * as bullet points for the Notify API.
  */
- const createIdentifiedSpecies = (species: any): string => {
+const createIdentifiedSpecies = (species: any): string => {
   const identifiedSpecies: string[] = [];
   if (species.HerringGullId) {
     identifiedSpecies.push('* Herring gull');
@@ -126,7 +126,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @returns {string} Returns a list of issues to which the licence application
  * pertains, formatted as bullet points for the Notify API.
  */
- const createIssues = (applicationIssues: any): string => {
+const createIssues = (applicationIssues: any): string => {
   const issues: string[] = [];
   if (applicationIssues.aggression) {
     issues.push('* Aggression resulting in direct strikes');
@@ -169,7 +169,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @param {string} measuresStatus Either `Tried`, `Intend` or `No`.
  * @returns {string} Returns a formatted list of bullet pointed measures.
  */
- const createMeasures = (applicationMeasures: any, measuresStatus: string): string => {
+const createMeasures = (applicationMeasures: any, measuresStatus: string): string => {
   const measures: string[] = [];
 
   if (applicationMeasures.preventNesting === measuresStatus) {
@@ -213,7 +213,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @param {any} species The species and activities which the licence will pertain to.
  * @returns {string} Returns a list of the applied for licence activities results, formatted for the Notify API.
  */
- const createAppliedFor = (species: any): string => {
+const createAppliedFor = (species: any): string => {
   const proposalResult = [];
   if (species.HerringGullId) {
     proposalResult.push(addActivityResults(species.HerringGull, 'Herring gull'));
@@ -246,7 +246,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @returns {string} Returns a list of proposal results for a given species, formatted as bullet
  * points for the Notify API.
  */
- const addActivityResults = (species: any, speciesType: string): string => {
+const addActivityResults = (species: any, speciesType: string): string => {
   const proposalResults: string[] = [];
   if (species.removeNests) {
     proposalResults.push(
@@ -305,7 +305,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @param {string} range The range to made more readable.
  * @returns {string} A more accurate and readable range as a string.
  */
- const displayableRanges = (range: string | undefined): string => {
+const displayableRanges = (range: string | undefined): string => {
   if (range === '10' || range === 'upTo10') {
     return 'up to 10';
   }
@@ -335,7 +335,7 @@ const createShortDisplayDate = (date: Date): string => {
  * @param {any} species The species and activities which the licence will pertain to.
  * @returns {string} Returns a list of the proposal results, formatted for the Notify API.
  */
- const createProposalResult = (species: any): string => {
+const createProposalResult = (species: any): string => {
   const proposalResult = [];
   if (species.HerringGullId) {
     proposalResult.push(addActivityResults(species.PHerringGull, 'Herring gull'));
@@ -370,7 +370,6 @@ const MultiUseFunctions = {
   createMeasures,
   createAppliedFor,
   createProposalResult,
-
 };
 
 export default MultiUseFunctions;
