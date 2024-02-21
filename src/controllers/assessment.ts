@@ -1,5 +1,5 @@
 import {AssessmentInterface} from 'models/assessment.js';
-import transaction from 'sequelize/types/lib/transaction.js';
+import transaction from 'sequelize/types/transaction';
 import database from '../models/index.js';
 
 const {Assessment, AssessmentMeasure} = database;

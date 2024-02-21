@@ -1,5 +1,5 @@
-import transaction from 'sequelize/types/lib/transaction.js';
 import * as jwt from 'jsonwebtoken';
+import transaction from 'sequelize/types/transaction';
 import {Op, Sequelize} from 'sequelize';
 import database from '../models/index.js';
 import config from '../config/app';
