@@ -1246,7 +1246,7 @@ const routes: ServerRoute[] = [
         const license = await License.findOne(existingId);
         // Did we issue the license?
         if (license === undefined || license === null) {
-          return h.response({message: `A License for Application ${existingId} has not been issued yet.`}).code(400);
+          return h.response({message: `A Licence for Application ${existingId} has not been issued yet.`}).code(400);
         }
 
         // Call the controllers to resend the emails.

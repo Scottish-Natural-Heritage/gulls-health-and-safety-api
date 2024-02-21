@@ -853,31 +853,6 @@ const LicenseController = {
     // And send a copy to the licensing team too.
     await sendLicenceNotificationEmail(emailDetails, 'issuedlicence@nature.scot');
   },
-
-  /**
-   * Send the emails from a refusal of a licence.
-   *
-   * @param {any} applicationId The application that the license was based on.
-   * @returns {any} Returns a 200, when the License emails have sent.
-   */
-  seRefusedEmails: async (applicationId: any) => {
-    // Get the application details.
-    const applicationDetails: any = await Application.findOne(applicationId);
-
-    // Set the email details personalisation.
-    const emailDetails = await setLicenceNotificationDetails(applicationDetails, applicationDetails.License);
-
-    // Try to send the email to the licence holder.
-    await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceHolder?.emailAddress);
-    // Check to see if this was an on behalf application.
-    if (applicationDetails.LicenceApplicantId !== applicationDetails.LicenceHolderId) {
-      // Try to send the email to the licence applicant.
-      await sendLicenceNotificationEmail(emailDetails, applicationDetails.LicenceApplicant?.emailAddress);
-    }
-
-    // And send a copy to the licensing team too.
-    await sendLicenceNotificationEmail(emailDetails, 'issuedlicence@nature.scot');
-  },
 };
 
 export {LicenseController as default};

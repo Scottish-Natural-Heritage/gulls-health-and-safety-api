@@ -336,7 +336,7 @@ const sendHolderApplicantConfirmEmail = async (emailDetails: any, emailAddress: 
 
 /**
  * This function creates a personalisation object to be used by the notify API to create
- * the licence email.
+ * the refusal email.
  *
  * @param {any} application The licence application details.
  * @returns {any} Returns a personalisation shaped object for notify.
@@ -347,18 +347,12 @@ const setRefusalEmailDetails = async (application: any): Promise<any> => {
     application?.AssessmentMeasure,
     'Intend',
   );
-  const decisionTest1Pass = application.ApplicationAssessment.decision === 'Approved';
-  const decisionTest1Fail = application.ApplicationAssessment.decision === 'Refused';
-  const decisionTest2Pass = application.ApplicationAssessment.decision === 'Approved';
-  const decisionTest2Fail = application.ApplicationAssessment.decision === 'Refused';
   return {
     licenceNumber: application.id,
     siteAddressLine1: application.SiteAddress.addressLine1,
     siteAddressLine2: application.SiteAddress.addressLine2 ? application.SiteAddress.addressLine2 : 'No address line 2',
     siteAddressTown: application.SiteAddress.addressTown,
     sitePostcode: application.SiteAddress.postcode,
-    lhName: application.LicenceHolder.name,
-    laName: application.LicenceApplicant.name,
     addressLine1: application.LicenceHolderAddress.addressLine1,
     addressLine2: application.LicenceHolderAddress.addressLine2
       ? application.LicenceHolderAddress.addressLine2
@@ -373,10 +367,10 @@ const setRefusalEmailDetails = async (application: any): Promise<any> => {
     measuresToContinue,
     additionalMeasuresIntended,
     decisionDetails: application.ApplicationAssessment.refusalReason,
-    decisionTest1Pass: application.ApplicationAssessment.decision ? decisionTest1Pass : '',
-    decisionTest1Fail: application.ApplicationAssessment.decision === false ? decisionTest1Fail : '',
-    decisionTest2Pass: application.ApplicationAssessment.decision ? decisionTest2Pass : '',
-    decisionTest2Fail: application.ApplicationAssessment.decision === false ? decisionTest2Fail : '',
+    decisionTest1Pass: application.ApplicationAssessment.testOneDecision === true,
+    decisionTest1Fail: application.ApplicationAssessment.testOneDecision === false,
+    decisionTest2Pass: application.ApplicationAssessment.testTwoDecision === true,
+    decisionTest2Fail: application.ApplicationAssessment.testTwoDecision === false,
     displayContinue: measuresToContinue !== '',
     displayAdditionalIntended: additionalMeasuresIntended !== '',
     appliedForSpecies: MultiUseFunctions.createAppliedFor(application.Species),
@@ -2569,10 +2563,14 @@ const ApplicationController = {
   /**
    * Sends out an email if a application has been refused.
    *
-   * @param {any} application A collection of all licences to be sent a reminder.
+   * @param {any} applicationId A collection of all licences to be sent a reminder.
    */
-  setRefusalEmail: async (application: any) => {
-    const emailDetails = setRefusalEmailDetails(application);
+  setRefusalEmail: async (applicationId: any) => {
+    // Get the application.
+    const application: any = await ApplicationController.findOne(applicationId.dataValues.id);
+
+    // Set the email details personalisation.
+    const emailDetails = await setRefusalEmailDetails(application);
 
     // Try to send the email to the licence holder.
     await sendRefusalEmail(emailDetails, application.LicenceHolder.emailAddress);
@@ -2583,7 +2581,7 @@ const ApplicationController = {
     }
 
     // And send a copy to the licensing team too.
-    await sendRefusalEmail(emailDetails, '????@nature.scot');
+    await sendRefusalEmail(emailDetails, 'issuedlicence@nature.scot');
   },
 };
 
