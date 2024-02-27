@@ -2565,9 +2565,9 @@ const ApplicationController = {
    *
    * @param {any} applicationId A collection of all licences to be sent a reminder.
    */
-  setRefusalEmail: async (applicationId: any) => {
+  setRefusalEmail: async (applicationId: number) => {
     // Get the application.
-    const application: any = await ApplicationController.findOne(applicationId.dataValues.id);
+    const application: any = await ApplicationController.findOne(applicationId);
 
     // Set the email details personalisation.
     const emailDetails = await setRefusalEmailDetails(application);

@@ -1008,7 +1008,7 @@ const routes: ServerRoute[] = [
 
         if (incomingAssessment.decision !== undefined && incomingAssessment.decision === false) {
           // Call the controller to send the email.
-          await Application.setRefusalEmail(application);
+          await Application.setRefusalEmail(existingId);
         }
 
         // If they are successful, send back the updated fields and send email.
