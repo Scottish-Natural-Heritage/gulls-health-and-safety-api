@@ -1006,7 +1006,12 @@ const routes: ServerRoute[] = [
             .code(500);
         }
 
-        // If they are, send back the updated fields.
+        if (incomingAssessment.decision !== undefined && incomingAssessment.decision === false) {
+          // Call the controller to send the email.
+          await Application.setRefusalEmail(existingId);
+        }
+
+        // If they are successful, send back the updated fields and send email.
         return h.response().code(200);
       } catch (error: unknown) {
         // Log any error.
@@ -1241,7 +1246,7 @@ const routes: ServerRoute[] = [
         const license = await License.findOne(existingId);
         // Did we issue the license?
         if (license === undefined || license === null) {
-          return h.response({message: `A License for Application ${existingId} has not been issued yet.`}).code(400);
+          return h.response({message: `A Licence for Application ${existingId} has not been issued yet.`}).code(400);
         }
 
         // Call the controllers to resend the emails.
