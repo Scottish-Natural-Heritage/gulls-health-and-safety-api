@@ -14,7 +14,10 @@ module.exports = {
       },
     ]);
   },
-  down: async (queryInterface) => {
-    await queryInterface.dropTable('Advisories');
+  down: async (queryInterface, Sequelize) => {
+    // prettier-ignore
+    // eslint-disable-next-line prefer-destructuring
+    const Op = Sequelize.Op
+    await queryInterface.bulkDelete('Advisories', {id: {[Op.in]: [9]}}, {truncate: true});
   },
 };
