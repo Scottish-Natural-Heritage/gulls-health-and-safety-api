@@ -164,6 +164,22 @@ const setWithdrawalEmailDetails = (
 };
 
 /**
+ * This function calls the Notify API and asks for a refusal email to be sent.
+ *
+ * @param {any} emailDetails The details to use in the email to be sent.
+ * @param {any} emailAddress The email address to send the email to.
+ */
+const sendRefusalEmail = async (emailDetails: any, emailAddress: any) => {
+  if (config.notifyApiKey) {
+    const notifyClient = new NotifyClient(config.notifyApiKey);
+    await notifyClient.sendEmail('5e1470bb-6953-4320-b405-4031c8d1d51b', emailAddress, {
+      personalisation: emailDetails,
+      emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
+    });
+  }
+};
+
+/**
  * This function returns an object containing the details required for the licence holder and the
  * licence applicant confirmation emails.
  *
@@ -316,6 +332,55 @@ const sendHolderApplicantConfirmEmail = async (emailDetails: any, emailAddress: 
       emailReplyToId: '4b49467e-2a35-4713-9d92-809c55bf1cdd',
     });
   }
+};
+
+/**
+ * This function creates a personalisation object to be used by the notify API to create
+ * the refusal email.
+ *
+ * @param {any} application The licence application details.
+ * @returns {any} Returns a personalisation shaped object for notify.
+ */
+const setRefusalEmailDetails = async (application: any): Promise<any> => {
+  const measuresToContinue = MultiUseFunctions.createAdditionalMeasures(application?.AssessmentMeasure, 'Continue');
+  const additionalMeasuresIntended = MultiUseFunctions.createAdditionalMeasures(
+    application?.AssessmentMeasure,
+    'Intend',
+  );
+  return {
+    licenceNumber: application.id,
+    siteAddressLine1: application.SiteAddress.addressLine1,
+    siteAddressLine2: application.SiteAddress.addressLine2 ? application.SiteAddress.addressLine2 : 'No address line 2',
+    siteAddressTown: application.SiteAddress.addressTown,
+    sitePostcode: application.SiteAddress.postcode,
+    addressLine1: application.LicenceHolderAddress.addressLine1,
+    addressLine2: application.LicenceHolderAddress.addressLine2
+      ? application.LicenceHolderAddress.addressLine2
+      : 'No address line 2',
+    addressTown: application.LicenceHolderAddress.addressTown,
+    postcode: application.LicenceHolderAddress.postcode,
+    identifiedSpecies: MultiUseFunctions.createIdentifiedSpecies(application.Species),
+    issuesList: MultiUseFunctions.createIssues(application.ApplicationIssue),
+    measuresTried: MultiUseFunctions.createMeasures(application.ApplicationMeasure, 'Tried'),
+    measuresIntended: MultiUseFunctions.createMeasures(application.ApplicationMeasure, 'Intend'),
+    measuresNotTried: MultiUseFunctions.createMeasures(application.ApplicationMeasure, 'No'),
+    measuresToContinue,
+    additionalMeasuresIntended,
+    decisionDetails: application.ApplicationAssessment.refusalReason,
+    decisionTest1Pass: application.ApplicationAssessment.testOneDecision === true,
+    decisionTest1Fail: application.ApplicationAssessment.testOneDecision === false,
+    decisionTest2Pass: application.ApplicationAssessment.testTwoDecision === true,
+    decisionTest2Fail: application.ApplicationAssessment.testTwoDecision === false,
+    displayContinue: measuresToContinue !== '',
+    displayAdditionalIntended: additionalMeasuresIntended !== '',
+    appliedForSpecies: MultiUseFunctions.createAppliedFor(application.Species),
+    proposalResult: MultiUseFunctions.createProposalResult(application.PSpecies),
+    test1Details: application.ApplicationAssessment.testOneAssessment,
+    test2Details: application.ApplicationAssessment.testTwoAssessment,
+    test3Details: application.ApplicationAssessment.testThreeAssessment
+      ? application.ApplicationAssessment.testThreeAssessment
+      : '',
+  };
 };
 
 const ApplicationController = {
@@ -2493,6 +2558,30 @@ const ApplicationController = {
       // If something went wrong during the transaction return false.
       return false;
     }
+  },
+
+  /**
+   * Sends out an email if a application has been refused.
+   *
+   * @param {any} applicationId A collection of all licences to be sent a reminder.
+   */
+  setRefusalEmail: async (applicationId: number) => {
+    // Get the application.
+    const application: any = await ApplicationController.findOne(applicationId);
+
+    // Set the email details personalisation.
+    const emailDetails = await setRefusalEmailDetails(application);
+
+    // Try to send the email to the licence holder.
+    await sendRefusalEmail(emailDetails, application.LicenceHolder.emailAddress);
+    // Check to see if this was an on behalf application.
+    if (application.LicenceApplicant !== application.LicenceHolder) {
+      // Try to send the email to the licence applicant.
+      await sendRefusalEmail(emailDetails, application.LicenceApplicant.emailAddress);
+    }
+
+    // And send a copy to the licensing team too.
+    await sendRefusalEmail(emailDetails, 'issuedlicence@nature.scot');
   },
 };
 
