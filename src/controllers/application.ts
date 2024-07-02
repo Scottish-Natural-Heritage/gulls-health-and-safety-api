@@ -790,7 +790,9 @@ const ApplicationController = {
           },
           limit,
           offset,
-          order: [['confirmedAt', 'ASC']],
+          order: [
+            [Sequelize.literal("CASE WHEN 'confirmedAt' IS NOT NULL THEN 'confirmedAt' ELSE 'createdAt' END"), 'ASC'],
+          ],
         });
       }
 
@@ -834,7 +836,9 @@ const ApplicationController = {
         },
         limit,
         offset,
-        order: [['createdAt', 'ASC']],
+        order: [
+          [Sequelize.literal("CASE WHEN 'confirmedAt' IS NOT NULL THEN 'confirmedAt' ELSE 'createdAt' END"), 'ASC'],
+        ],
       });
     }
 
