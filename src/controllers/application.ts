@@ -790,7 +790,7 @@ const ApplicationController = {
           },
           limit,
           offset,
-          order: [['createdAt', 'ASC']],
+          order: [['confirmedAt', 'ASC']],
         });
       }
 
@@ -827,12 +827,10 @@ const ApplicationController = {
           },
         ],
         where: {
-          [Op.and]: [
-            {$confirmedByLicenseHolder$: true},
-            {$staffNumber$: {[Op.is]: null}},
-            {'$License.ApplicationId$': {[Op.is]: null}},
-            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-          ],
+          confirmedByLicenseHolder: true,
+          staffNumber: {[Op.is]: null},
+          '$License.ApplicationId$': {[Op.is]: null},
+          '$ApplicationAssessment.decision$': {[Op.not]: false},
         },
         limit,
         offset,
