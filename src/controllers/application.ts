@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import transaction from 'sequelize/types/transaction';
-import {Op, Sequelize} from 'sequelize';
+import {Op, Sequelize, fn, col} from 'sequelize';
 import database from '../models/index.js';
 import config from '../config/app';
 import jwk from '../config/jwk.js';
@@ -732,6 +732,9 @@ const ApplicationController = {
 
         return Application.findAll({
           paranoid: true,
+          attributes: {
+            include: [[fn('COALESCE', col('Application.confirmedAt'), col('Application.createdAt')), 'sortByDate']],
+          },
           include: [
             {
               model: Contact,
@@ -790,15 +793,15 @@ const ApplicationController = {
           },
           limit,
           offset,
-          order: [
-            ['createdAt', 'ASC'],
-            [Sequelize.literal("CASE WHEN 'confirmedAt' IS NOT NULL THEN 'confirmedAt' ELSE 'createdAt' END"), 'ASC'],
-          ],
+          order: [[col('sortByDate'), 'ASC']],
         });
       }
 
       return Application.findAll({
         paranoid: true,
+        attributes: {
+          include: [[fn('COALESCE', col('Application.confirmedAt'), col('Application.createdAt')), 'sortByDate']],
+        },
         include: [
           {
             model: Contact,
@@ -837,10 +840,7 @@ const ApplicationController = {
         },
         limit,
         offset,
-        order: [
-          ['createdAt', 'ASC'],
-          [Sequelize.literal("CASE WHEN 'confirmedAt' IS NOT NULL THEN 'confirmedAt' ELSE 'createdAt' END"), 'ASC'],
-        ],
+        order: [[col('sortByDate'), 'ASC']],
       });
     }
 
