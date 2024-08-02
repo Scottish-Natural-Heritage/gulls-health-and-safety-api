@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import transaction from 'sequelize/types/transaction';
-import {Op, Sequelize} from 'sequelize';
+import {Op, Sequelize, fn, col} from 'sequelize';
 import database from '../models/index.js';
 import config from '../config/app';
 import jwk from '../config/jwk.js';
@@ -732,6 +732,9 @@ const ApplicationController = {
 
         return Application.findAll({
           paranoid: true,
+          attributes: {
+            include: [[fn('COALESCE', col('Application.confirmedAt'), col('Application.createdAt')), 'sortByDate']],
+          },
           include: [
             {
               model: Contact,
@@ -790,12 +793,15 @@ const ApplicationController = {
           },
           limit,
           offset,
-          order: [['createdAt', 'ASC']],
+          order: [[col('sortByDate'), 'ASC']],
         });
       }
 
       return Application.findAll({
         paranoid: true,
+        attributes: {
+          include: [[fn('COALESCE', col('Application.confirmedAt'), col('Application.createdAt')), 'sortByDate']],
+        },
         include: [
           {
             model: Contact,
@@ -827,16 +833,14 @@ const ApplicationController = {
           },
         ],
         where: {
-          [Op.and]: [
-            {$confirmedByLicenseHolder$: true},
-            {$staffNumber$: {[Op.is]: null}},
-            {'$License.ApplicationId$': {[Op.is]: null}},
-            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-          ],
+          confirmedByLicenseHolder: true,
+          staffNumber: {[Op.is]: null},
+          '$License.ApplicationId$': {[Op.is]: null},
+          '$ApplicationAssessment.decision$': {[Op.not]: false},
         },
         limit,
         offset,
-        order: [['createdAt', 'ASC']],
+        order: [[col('sortByDate'), 'ASC']],
       });
     }
 
