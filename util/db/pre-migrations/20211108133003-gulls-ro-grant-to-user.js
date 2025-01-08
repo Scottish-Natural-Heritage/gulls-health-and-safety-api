@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'production') {
       });
 
       await queryInterface.sequelize.query('grant gulls to licensing;', {
-        type: Sequelize.QueryTypes.RAW
+        type: Sequelize.QueryTypes.RAW,
       });
 
       await queryInterface.sequelize.query(
@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'production') {
       );
 
       await queryInterface.sequelize.query('revoke gulls from licensing;', {
-        type: Sequelize.QueryTypes.RAW
+        type: Sequelize.QueryTypes.RAW,
       });
 
       await queryInterface.sequelize.query('revoke select on schema gulls from rogulls;', {
