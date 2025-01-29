@@ -67,11 +67,6 @@ const checkForValidActivities = (species: any): boolean => {
 };
 
 /**
- * The number of items to display per page on the Gulls Staff search screen.
- */
-const itemsPerPage = 100;
-
-/**
  * An array of all the routes and controllers in the app.
  */
 const routes: ServerRoute[] = [
@@ -277,49 +272,32 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/applications`,
     handler: async (request: Request, h: ResponseToolkit) => {
       const page = Number.parseInt(request.query.page as string, 10) || 1;
-      const [searchTerm, status, licenceOfficerId] = [
-        request.query.search || undefined,
-        request.query.status,
-        request.query.licenceOfficerId,
-      ];
+
+      /**
+       * The number of items to display per page on the Gulls Staff search screen.
+       */
+      const itemsPerPage = 10;
 
       const startIndex = (page - 1) * itemsPerPage;
 
       try {
-        const applications = await Application.findAllPaginatedSummary(
-          itemsPerPage,
-          startIndex,
-          searchTerm,
-          status,
-          licenceOfficerId,
-        );
+        const {count, rows} = await Application.findAllPaginatedSummary(request, itemsPerPage);
 
-        const numberOfApplications = await Application.getTotalNumberOfApplications(
-          searchTerm,
-          status,
-          licenceOfficerId,
-        );
+        const numberOfPages = Math.ceil(count / itemsPerPage);
 
-        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
-
-        const numberOfResults = numberOfApplications;
+        const numberOfResults = count;
 
         const firstIndex = startIndex + 1;
 
         const responseData = {
-          applications,
+          applications: rows,
           numberOfPages,
           numberOfResults,
           firstIndex,
         };
 
         // Did we get any applications?
-        if (
-          applications === undefined ||
-          applications === null ||
-          numberOfApplications === undefined ||
-          numberOfApplications === null
-        ) {
+        if (rows === undefined || rows === null || count === undefined || count === null) {
           return h.response({message: `No applications found.`}).code(404);
         }
 
