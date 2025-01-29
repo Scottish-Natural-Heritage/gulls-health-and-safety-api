@@ -665,7 +665,7 @@ const ApplicationController = {
         };
         break;
       case 'awaitingApproval':
-        statusObject = {$confirmedByLicenseHolder$: {[Op.not]: true}};
+        statusObject = {$confirmedByLicenseHolder$: false};
         break;
       case 'myApplications':
         statusObject = {
