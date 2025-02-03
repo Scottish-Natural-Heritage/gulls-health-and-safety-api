@@ -49,8 +49,15 @@ const ApplicationModel = (sequelize: Sequelize) => {
       isResidentialSite: {
         type: DataTypes.BOOLEAN,
       },
+      siteType: {
+        type: DataTypes.STRING,
+      },
       SiteCategoriesId: {
         type: DataTypes.INTEGER,
+        references: {
+          model: 'SiteCategories',
+          key: 'id',
+        },
       },
       previousLicence: {
         type: DataTypes.BOOLEAN,
