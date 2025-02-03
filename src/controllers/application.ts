@@ -1986,6 +1986,7 @@ const ApplicationController = {
       const newSpecies = await Species.create(speciesIds as any, {transaction: t});
       const newPSpecies = await PSpecies.create(pSpeciesIds as any, {transaction: t});
 
+      // Set the site categories foreign key in DB.
       const siteCategoryId: any = await SiteCategories.findOne({
         where: {
           [Op.and]: [{siteCategory: incomingApplication.siteCategory}, {siteType: incomingApplication.siteType}],
