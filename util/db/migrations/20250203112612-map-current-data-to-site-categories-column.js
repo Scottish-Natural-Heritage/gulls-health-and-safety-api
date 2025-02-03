@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/prefer-module */
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface, _Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
       const tableName = process.env.NODE_ENV === 'production' ? 'licensing.gulls."Applications"' : '"Applications"';
 
