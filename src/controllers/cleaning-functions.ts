@@ -134,8 +134,9 @@ const cleanEditAddress = (body: any): any => {
 const cleanApplication = (body: any): any => {
   return {
     isResidentialSite: body.isResidentialSite,
-    siteCategory: body.siteCategory,
-    siteType: body.siteType,
+    siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
+    //siteCategory: body.siteCategory,
+    //siteType: body.siteType,
     previousLicence: body.previousLicense,
     previousLicenceNumber: body.previousLicenseNumber ? body.previousLicenseNumber.trim() : undefined,
     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
