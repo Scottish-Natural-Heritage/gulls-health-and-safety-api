@@ -25,7 +25,7 @@ module.exports = {
           WHEN "isResidentialSite" = FALSE AND "siteType" = 'other' THEN 20
           ELSE "SiteCategoriesId"
           END
-          WHERE "SiteCategoriesID" IS NULL;
+          WHERE "SiteCategoriesId" IS NULL;
         `,
         {transaction: t},
       );
