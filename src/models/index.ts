@@ -28,6 +28,7 @@ import AActivity from './a-activity';
 import Amendment from './amendment';
 import AmendCondition from './amend-condition';
 import AmendAdvisory from './amend-advisory';
+import SiteCategories from './site-categories';
 
 const Sequelize = require('sequelize');
 
@@ -68,6 +69,7 @@ const database = {
   Amendment: Amendment(sequelize),
   AmendCondition: AmendCondition(sequelize),
   AmendAdvisory: AmendAdvisory(sequelize),
+  SiteCategories: SiteCategories(sequelize),
 };
 
 // Relationships go here.
@@ -102,6 +104,9 @@ database.Application.hasMany(database.Note, {as: 'ApplicationNotes', foreignKey:
 database.Application.hasOne(database.Revocation, {as: 'Revocation', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.Withdrawal, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.AssessmentMeasure, {as: 'AssessmentMeasure', foreignKey: 'ApplicationId'});
+database.Application.belongsTo(database.SiteCategories, {as: 'SiteCategories', foreignKey: 'SiteCategoriesId'});
+
+database.SiteCategories.hasMany(database.Application, {as: 'SiteCategories', foreignKey: 'SiteCategoriesId'});
 
 database.LicenseAdvisory.belongsTo(database.License, {as: 'LicenseAdvisories', foreignKey: 'LicenseId'});
 database.LicenseCondition.belongsTo(database.License, {as: 'LicenseConditions', foreignKey: 'LicenseId'});
