@@ -383,11 +383,17 @@ const rangesIntoIntegers = (range: string | undefined): number => {
     case 'upTo10':
       displayableRange = 10;
       break;
+    case 'upTo25':
+      displayableRange = 25;
+      break;
     case 'upTo50':
       displayableRange = 50;
       break;
     case 'upTo100':
       displayableRange = 100;
+      break;
+    case 'upTo250':
+      displayableRange = 250;
       break;
     case 'upTo500':
       displayableRange = 500;
