@@ -141,36 +141,6 @@ const sendLicenceNotificationEmail = async (emailDetails: any, emailAddress: any
 };
 
 /**
- * This function returns a slightly prettier and more accurate string of ranges.
- *
- * @param {string} range The range to made more readable.
- * @returns {string} A more accurate and readable range as a string.
- */
-const displayableRanges = (range: string | undefined): string => {
-  if (range === '10' || range === 'upTo10') {
-    return 'up to 10';
-  }
-
-  if (range === '50' || range === 'upTo50') {
-    return 'up to 50';
-  }
-
-  if (range === '100' || range === 'upTo100') {
-    return 'up to 100';
-  }
-
-  if (range === '500' || range === 'upTo500') {
-    return 'up to 500';
-  }
-
-  if (range === '1000' || range === 'upTo1000') {
-    return 'up to 1000';
-  }
-
-  return '';
-};
-
-/**
  * This function creates a formatted string of species and the activities permitted
  * in the licence to be issued.
  *
@@ -213,7 +183,7 @@ const addActivities = (species: any, speciesType: string): string => {
   const activities: string[] = [];
   if (species.removeNests) {
     activities.push(
-      `${speciesType}: To take and destroy ${displayableRanges(
+      `${speciesType}: To take and destroy ${MultiUseFunctions.displayableUpToRanges(
         species.quantityNestsToRemove,
       )} nests and any eggs they contain by hand.`,
     );
@@ -221,7 +191,7 @@ const addActivities = (species: any, speciesType: string): string => {
 
   if (species.eggDestruction) {
     activities.push(
-      `${speciesType}: To take and destroy eggs from ${displayableRanges(
+      `${speciesType}: To take and destroy eggs from ${MultiUseFunctions.displayableUpToRanges(
         species.quantityNestsWhereEggsDestroyed,
       )} nests by oiling, pricking or replacing with dummy eggs.`,
     );
@@ -504,7 +474,7 @@ const addActivityResults = (species: any, speciesType: string): string => {
   const proposalResults: string[] = [];
   if (species.removeNests) {
     proposalResults.push(
-      `* ${speciesType}: To take and destroy ${displayableRanges(
+      `* ${speciesType}: To take and destroy ${MultiUseFunctions.displayableUpToRanges(
         species.quantityNestsToRemove,
       )} nests and any eggs they contain by hand.`,
     );
@@ -512,7 +482,7 @@ const addActivityResults = (species: any, speciesType: string): string => {
 
   if (species.eggDestruction) {
     proposalResults.push(
-      `* ${speciesType}: To take and destroy eggs from ${displayableRanges(
+      `* ${speciesType}: To take and destroy eggs from ${MultiUseFunctions.displayableUpToRanges(
         species.quantityNestsWhereEggsDestroyed,
       )} nests by oiling, pricking or replacing with dummy eggs.`,
     );
