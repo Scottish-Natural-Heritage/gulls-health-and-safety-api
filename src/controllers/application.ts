@@ -29,7 +29,7 @@ const {
   Withdrawal,
   Returns,
   Amendment,
-  // SiteCategories,
+  SiteCategories,
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -59,7 +59,7 @@ interface ApplicationInterface {
   SiteAddressId: number;
   SpeciesId: number;
   PSpeciesId: number;
-  isResidentialSite: boolean;
+  siteCategory: string;
   siteType: string;
   previousLicence: boolean;
   previousLicenceNumber: string;
@@ -548,6 +548,11 @@ const ApplicationController = {
             },
           ],
         },
+        {
+          model: SiteCategories,
+          as: 'SiteCategories',
+          paranoid: false,
+        },
       ],
     });
   },
@@ -852,12 +857,12 @@ const ApplicationController = {
       const newPSpecies = await PSpecies.create(pSpeciesIds as any, {transaction: t});
 
       // Set the site categories foreign key in DB.
-      // const siteCategoryId: any = await SiteCategories.findOne({
-      //   where: {
-      //     [Op.and]: [{siteCategory: incomingApplication.siteCategory}, {siteType: incomingApplication.siteType}],
-      //   },
-      //   paranoid: false,
-      // });
+      const siteCategoryId: any = await SiteCategories.findOne({
+        where: {
+          [Op.and]: [{siteCategory: incomingApplication.siteCategory}, {siteType: incomingApplication.siteType}],
+        },
+        paranoid: false,
+      });
 
       // Set the application's foreign keys.
       incomingApplication.LicenceHolderId = newLicenceHolderContact.id;
@@ -866,8 +871,7 @@ const ApplicationController = {
       incomingApplication.SiteAddressId = newSiteAddress ? newSiteAddress.id : newAddress.id;
       incomingApplication.SpeciesId = newSpecies.id;
       incomingApplication.PermittedSpeciesId = newPSpecies.id;
-      // Reinstate in drop column ticket
-      // incomingApplication.SiteCategoriesId = siteCategoryId.id;
+      incomingApplication.SiteCategoriesId = siteCategoryId.id;
 
       let newId; // The prospective random ID of the new application.
       let existingApplication; // Possible already assigned application.
@@ -1302,8 +1306,7 @@ const ApplicationController = {
           LicenceHolderAddressId: null,
           SiteAddressId: null,
           SpeciesId: null,
-          isResidentialSite: null,
-          siteType: null,
+          SiteCategoriesId: null,
           previousLicenceNumber: null,
           supportingInformation: null,
           confirmedByLicenseHolder: null,
