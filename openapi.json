@@ -153,17 +153,13 @@
               }
             ]
           },
-          "isResidentialSite": {
-            "type": "boolean",
-            "example": true
-          },
-          "residentialType": {
+          "siteCategory": {
             "type": "string",
-            "example": "Private rented"
+            "example": "Commerical"
           },
-          "commercialType": {
+          "siteType": {
             "type": "string",
-            "example": "shop"
+            "example": "Hospitality"
           },
           "issueOnSite": {
             "allOf": [
@@ -388,29 +384,39 @@
         "type": "object",
         "properties": {
           "herringGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "blackHeadedGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "commonGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "greatBlackBackedGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "lesserBlackBackedGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           }
         }
       },
@@ -423,9 +429,11 @@
             "example": true
           },
           "activities": {
-            "allOf": [{
+            "allOf": [
+              {
                 "$ref": "#/components/schemas/Activities"
-            }]
+              }
+            ]
           }
         }
       },
