@@ -651,9 +651,11 @@ const ApplicationController = {
     };
 
     let statusObject;
+    let paranoid = false;
 
     switch (status) {
       case 'unassigned':
+        paranoid = true;
         statusObject = {
           $confirmedByLicenseHolder$: true,
           $staffNumber$: {[Op.is]: null},
@@ -663,6 +665,7 @@ const ApplicationController = {
 
         break;
       case 'inProgress':
+        paranoid = true;
         statusObject = {
           $confirmedByLicenseHolder$: true,
           $staffNumber$: {[Op.not]: null},
@@ -671,9 +674,11 @@ const ApplicationController = {
         };
         break;
       case 'awaitingApproval':
+        paranoid = true;
         statusObject = {$confirmedByLicenseHolder$: false};
         break;
       case 'myApplications':
+        paranoid = true;
         statusObject = {
           $confirmedByLicenseHolder$: true,
           $staffNumber$: {
@@ -689,7 +694,7 @@ const ApplicationController = {
     }
 
     return Application.findAndCountAll({
-      paranoid: false,
+      paranoid,
       ...(status === 'unassigned' && {
         attributes: {
           include: [[fn('COALESCE', col('Application.confirmedAt'), col('Application.createdAt')), 'sortByDate']],

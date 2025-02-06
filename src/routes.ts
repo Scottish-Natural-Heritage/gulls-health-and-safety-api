@@ -278,22 +278,14 @@ const routes: ServerRoute[] = [
        */
       const itemsPerPage = 10;
 
-      const startIndex = (page - 1) * itemsPerPage;
-
       try {
         const {count, rows} = await Application.findAllPaginatedSummary(request, itemsPerPage);
 
-        const numberOfPages = Math.ceil(count / itemsPerPage);
-
-        const numberOfResults = count;
-
-        const firstIndex = startIndex + 1;
-
         const responseData = {
-          applications: rows,
-          numberOfPages,
-          numberOfResults,
-          firstIndex,
+          pageNumber: page,
+          pageSize: itemsPerPage,
+          recordsCount: count,
+          records: rows,
         };
 
         // Did we get any applications?
