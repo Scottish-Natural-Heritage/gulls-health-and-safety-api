@@ -641,6 +641,11 @@ const ApplicationController = {
             [likeQuery]: `%${searchTerm}%`,
           },
         },
+        {
+          $staffNumber$: {
+            [likeQuery]: `%${searchTerm}%`,
+          },
+        },
         idSearch,
       ],
     };
