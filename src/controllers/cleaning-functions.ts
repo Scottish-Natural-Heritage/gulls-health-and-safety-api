@@ -179,7 +179,7 @@ const cleanApplication = (body: any): any => {
     case 'otherResidential':
       siteType = 'Other';
       break;
-    // Commerical
+    // Commercial
     case 'hospitality':
       siteType = 'Hospitality';
       break;
@@ -192,14 +192,31 @@ const cleanApplication = (body: any): any => {
     case 'wasteDisposal':
       siteType = 'Waste disposal';
       break;
-    case 'otherCommerical':
+    case 'otherCommercial':
       siteType = 'Other';
       break;
     default:
   }
 
+  let siteCategory = '';
+  switch (body.siteCategory) {
+    case 'healthcareEducation':
+      siteCategory = 'Healthcare or education';
+      break;
+    case 'nationalInfrastructure':
+      siteCategory = 'National infrastructure';
+      break;
+    case 'residential':
+      siteCategory = 'Residential';
+      break;
+    case 'commercial':
+      siteCategory = 'Commercial';
+      break;
+    default:
+  }
+
   return {
-    siteCategory: body.siteCategory,
+    siteCategory,
     siteType,
     previousLicence: body.previousLicense,
     previousLicenceNumber: body.previousLicenseNumber ? body.previousLicenseNumber.trim() : undefined,
