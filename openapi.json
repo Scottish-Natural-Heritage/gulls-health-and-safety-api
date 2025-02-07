@@ -155,7 +155,7 @@
           },
           "siteCategory": {
             "type": "string",
-            "example": "Commerical"
+            "example": "Commercial"
           },
           "siteType": {
             "type": "string",
