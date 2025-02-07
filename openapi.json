@@ -155,11 +155,11 @@
           },
           "siteCategory": {
             "type": "string",
-            "example": "Commercial"
+            "example": "commercial"
           },
           "siteType": {
             "type": "string",
-            "example": "Hospitality"
+            "example": "hospitality"
           },
           "issueOnSite": {
             "allOf": [
