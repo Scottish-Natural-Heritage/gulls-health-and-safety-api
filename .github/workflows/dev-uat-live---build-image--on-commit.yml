@@ -12,6 +12,17 @@ jobs:
     name: Build and Push the Image
     runs-on: ubuntu-latest
 
+    # See: https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/about-service-containers
+    services:
+      red-grouse-database:
+        image: postgres:alpine
+        env:
+          POSTGRES_USER: licensing
+          POSTGRES_PASSWORD: licensing
+          POSTGRES_DB: licensing
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v2
 
@@ -28,6 +39,8 @@ jobs:
           npm run lint
 
       - name: Check the integration tests
+        env:
+          LICENSING_DB_PASS: licensing
         run: |
           npm run test
 
