@@ -17,6 +17,7 @@ import Address from './controllers/address';
 import config from './config/app';
 import JsonUtils from './json-utils';
 import jwk from './config/jwk.js';
+import UploadedImage from './controllers/uploaded-image';
 
 /**
  * Checks if an array of returns contains a final return.
@@ -2087,6 +2088,83 @@ const routes: ServerRoute[] = [
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
 
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * POST image.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/image`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        const payload = request.payload as {filename: string};
+
+        const uploadedImage = await UploadedImage.create(existingId, payload.filename);
+
+        return h.response(uploadedImage).code(201);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * DELETE image.
+   */
+  {
+    method: 'delete',
+    path: `${config.pathPrefix}/application/{id}/image/{imageId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        const imageId = Number(request.params.imageId);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        const existingImage = await UploadedImage.findOne(imageId);
+
+        if (existingImage === undefined || existingImage === null) {
+          return h.response({message: `Image ${imageId} not found.`}).code(404);
+        }
+
+        await UploadedImage.delete(imageId);
+
+        return h.response().code(204);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
