@@ -22,7 +22,13 @@
     "prestart": "npm run migrations",
     "pretest": "npm run build && npm run migrations",
     "test": "UNDER_TEST=true start-server-and-test start http://localhost:3017/gulls-health-and-safety-api/v1/ nm:run",
-    "nm:run": "UNDER_TEST=true newman run tests/v1-gulls-health-and-safety-api.postman_collection.json"
+    "nm:run": "UNDER_TEST=true newman run tests/v1-gulls-health-and-safety-api.postman_collection.json",
+    "local:create-container": "docker pull postgres:alpine && docker run --name gulls-database -p 5432:5432 -e POSTGRES_USER=licensing -e POSTGRES_PASSWORD=${LICENSING_DB_PASS-override_this_value} -d postgres:alpine && echo 'Waiting for Postgres to start...' && sleep 2 && docker logs gulls-database",
+    "local:create-postgres": "npm run local:delete-postgres && npm run local:create-container",
+    "local:start-postgres": "docker start gulls-database",
+    "local:stop-postgres": "docker stop gulls-database",
+    "local:delete-postgres": "docker rm -f gulls-database",
+    "start:local": "npm run build && npm run local:create-postgres && npm run start"
   },
   "license": "(MIT OR OGL-UK-3.0)",
   "devDependencies": {
