@@ -1,10 +1,10 @@
 import {DataTypes, Model, Sequelize} from 'sequelize';
 
 /**
- * Build a Species model.
+ * Build a SiteCategories model.
  *
  * @param {Sequelize.Sequelize} sequelize A Sequelize connection.
- * @returns {Sequelize.Model} A Species model.
+ * @returns {Sequelize.Model} A SiteCategories model.
  */
 const SiteCategoriesModel = (sequelize: Sequelize) => {
   class SiteCategories extends Model {
