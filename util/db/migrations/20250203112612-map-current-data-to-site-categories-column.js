@@ -3,11 +3,10 @@
 module.exports = {
   up: async (queryInterface, _Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
-      const tableName = process.env.NODE_ENV === 'production' ? 'licensing.gulls."Applications"' : '"Applications"';
 
       await queryInterface.sequelize.query(
         `
-          UPDATE ${tableName}
+          UPDATE licensing.gulls."Applications"
           SET "SiteCategoriesId" = CASE
           WHEN "isResidentialSite" = TRUE AND "siteType" = 'privateOwner' THEN 11
           WHEN "isResidentialSite" = TRUE AND "siteType" = 'privateTenant' THEN 12
@@ -27,9 +26,9 @@ module.exports = {
           END
           WHERE "SiteCategoriesId" IS NULL;
         `,
-        {transaction: t},
+        { transaction: t },
       );
     });
   },
-  down: async (_queryInterface) => {},
+  down: async (_queryInterface) => { },
 };
