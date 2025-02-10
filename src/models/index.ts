@@ -29,6 +29,7 @@ import Amendment from './amendment';
 import AmendCondition from './amend-condition';
 import AmendAdvisory from './amend-advisory';
 import SiteCategories from './site-categories';
+import UploadedImage from './uploaded-image';
 
 const Sequelize = require('sequelize');
 
@@ -70,6 +71,7 @@ const database = {
   AmendCondition: AmendCondition(sequelize),
   AmendAdvisory: AmendAdvisory(sequelize),
   SiteCategories: SiteCategories(sequelize),
+  UploadedImage: UploadedImage(sequelize),
 };
 
 // Relationships go here.
@@ -105,6 +107,7 @@ database.Application.hasOne(database.Revocation, {as: 'Revocation', foreignKey: 
 database.Application.hasOne(database.Withdrawal, {as: 'Withdrawal', foreignKey: 'ApplicationId'});
 database.Application.hasOne(database.AssessmentMeasure, {as: 'AssessmentMeasure', foreignKey: 'ApplicationId'});
 database.Application.belongsTo(database.SiteCategories, {as: 'SiteCategories', foreignKey: 'SiteCategoriesId'});
+database.Application.hasMany(database.UploadedImage, {as: 'UploadedImages', foreignKey: 'ApplicationId'});
 
 database.SiteCategories.hasMany(database.Application, {as: 'SiteCategories', foreignKey: 'SiteCategoriesId'});
 

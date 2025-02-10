@@ -302,6 +302,7 @@ const addActivityResults = (species: any, speciesType: string): string => {
 /**
  * This function returns a slightly prettier and more accurate string of
  * ranges for display on the confirm page.
+ *
  * @param {string} range The range to made more readable.
  * @returns {string} A more accurate and readable range as a string.
  */
@@ -354,6 +355,7 @@ const displayableRanges = (range: string | undefined): string => {
 
 /**
  * This function returns a slightly prettier and more accurate string of the upper end of the range.
+ *
  * @param {string} range The range to made more readable.
  * @returns {string} The upper end of the range.
  */
@@ -406,6 +408,7 @@ const displayableUpperRange = (range: string | undefined): string => {
 
 /**
  * This function returns a slightly prettier and more accurate string of ranges in syntax up to X.
+ *
  * @param {string} range The range to made more readable.
  * @returns {string} A more accurate and readable range as a string.
  */

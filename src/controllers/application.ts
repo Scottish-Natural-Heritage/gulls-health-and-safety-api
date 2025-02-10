@@ -601,6 +601,8 @@ const ApplicationController = {
   /**
    * Pagination endpoint for gulls register.
    *
+   * @param request
+   * @param itemsPerPage
    */
   findAllPaginatedSummary: async (request: Request, itemsPerPage: number) => {
     // Checks if using a local database. This allows for case insensitive searching.
