@@ -165,6 +165,14 @@
             "type": "string",
             "example": "shop"
           },
+          "siteCategory": {
+            "type": "string",
+            "example": "commercial"
+          },
+          "siteType": {
+            "type": "string",
+            "example": "hospitality"
+          },
           "issueOnSite": {
             "allOf": [
               {
@@ -388,29 +396,39 @@
         "type": "object",
         "properties": {
           "herringGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "blackHeadedGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "commonGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "greatBlackBackedGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           },
           "lesserBlackBackedGull": {
-            "allOf": [{
-              "$ref": "#/components/schemas/LicensedActivities"
-          }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LicensedActivities"
+              }
+            ]
           }
         }
       },
@@ -423,9 +441,11 @@
             "example": true
           },
           "activities": {
-            "allOf": [{
+            "allOf": [
+              {
                 "$ref": "#/components/schemas/Activities"
-            }]
+              }
+            ]
           }
         }
       },
