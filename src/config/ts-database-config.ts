@@ -1,6 +1,6 @@
 import config from './app';
 
-const productionDatabaseConfig = {
+const databaseConfig = {
   preMigrations: {
     username: 'licensing',
     password: config.licensingPassword,
@@ -30,17 +30,4 @@ const productionDatabaseConfig = {
   },
 };
 
-const localDatabaseConfig = {
-  preMigrations: {
-    dialect: 'sqlite',
-    storage: './.development.db',
-    logging: false,
-  },
-  database: {
-    dialect: 'sqlite',
-    storage: './.development.db',
-    logging: false,
-  },
-};
-
-export {productionDatabaseConfig, localDatabaseConfig};
+export { databaseConfig };
