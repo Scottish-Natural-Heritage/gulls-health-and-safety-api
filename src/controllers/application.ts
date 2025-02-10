@@ -61,6 +61,7 @@ interface ApplicationInterface {
   PSpeciesId: number;
   isResidentialSite: boolean;
   siteType: string;
+  siteCategory: string;
   previousLicence: boolean;
   previousLicenceNumber: string;
   supportingInformation: string;
@@ -548,6 +549,11 @@ const ApplicationController = {
             },
           ],
         },
+        {
+          model: SiteCategories,
+          as: 'SiteCategories',
+          paranoid: false,
+        },
       ],
     });
   },
@@ -865,13 +871,13 @@ const ApplicationController = {
       const newSpecies = await Species.create(speciesIds as any, {transaction: t});
       const newPSpecies = await PSpecies.create(pSpeciesIds as any, {transaction: t});
 
-      // Set the site categories foreign key in DB.
-      // const siteCategoryId: any = await SiteCategories.findOne({
-      //   where: {
-      //     [Op.and]: [{siteCategory: incomingApplication.siteCategory}, {siteType: incomingApplication.siteType}],
-      //   },
-      //   paranoid: false,
-      // });
+      //Set the site categories foreign key in DB.
+      const siteCategoryId: any = await SiteCategories.findOne({
+        where: {
+          [Op.and]: [{siteCategory: incomingApplication.siteCategory}, {siteType: incomingApplication.siteType}],
+        },
+        paranoid: false,
+      });
 
       // Set the application's foreign keys.
       incomingApplication.LicenceHolderId = newLicenceHolderContact.id;
@@ -880,8 +886,7 @@ const ApplicationController = {
       incomingApplication.SiteAddressId = newSiteAddress ? newSiteAddress.id : newAddress.id;
       incomingApplication.SpeciesId = newSpecies.id;
       incomingApplication.PermittedSpeciesId = newPSpecies.id;
-      // Reinstate in drop column ticket
-      // incomingApplication.SiteCategoriesId = siteCategoryId.id;
+      incomingApplication.SiteCategoriesId = siteCategoryId.id;
 
       let newId; // The prospective random ID of the new application.
       let existingApplication; // Possible already assigned application.
@@ -1318,6 +1323,7 @@ const ApplicationController = {
           SpeciesId: null,
           isResidentialSite: null,
           siteType: null,
+          SiteCategoriesId: null,
           previousLicenceNumber: null,
           supportingInformation: null,
           confirmedByLicenseHolder: null,
