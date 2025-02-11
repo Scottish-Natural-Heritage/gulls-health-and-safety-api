@@ -30,6 +30,7 @@ const {
   Returns,
   Amendment,
   SiteCategories,
+  UploadedImage,
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -552,6 +553,11 @@ const ApplicationController = {
         {
           model: SiteCategories,
           as: 'SiteCategories',
+          paranoid: false,
+        },
+        {
+          model: UploadedImage,
+          as: 'UploadedImages',
           paranoid: false,
         },
       ],
