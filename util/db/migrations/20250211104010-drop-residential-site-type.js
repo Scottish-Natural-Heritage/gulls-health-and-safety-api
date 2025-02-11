@@ -1,4 +1,4 @@
-'use strict';
+/* eslint-disable unicorn/prefer-module */
 
 const databaseConfig = require('../database.js');
 
