@@ -2116,11 +2116,15 @@ const routes: ServerRoute[] = [
           return h.response({message: `Application ${existingId} not found.`}).code(404);
         }
 
-        const payload = request.payload as {filename: string};
+        const payload = request.payload as {filename: string[]};
 
-        const uploadedImage = await UploadedImage.create(existingId, payload.filename);
+        const uploadedImages = await Promise.all(
+          payload.filename.map(async (filename) => {
+            return UploadedImage.create(existingId, filename);
+          }),
+        );
 
-        return h.response(uploadedImage).code(201);
+        return h.response(uploadedImages).code(201);
       } catch (error: unknown) {
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
