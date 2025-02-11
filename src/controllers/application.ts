@@ -60,7 +60,6 @@ interface ApplicationInterface {
   SiteAddressId: number;
   SpeciesId: number;
   PSpeciesId: number;
-  isResidentialSite: boolean;
   siteType: string;
   siteCategory: string;
   previousLicence: boolean;
