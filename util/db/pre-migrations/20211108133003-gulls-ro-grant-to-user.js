@@ -17,6 +17,10 @@ if (process.env.NODE_ENV === 'production') {
         type: Sequelize.QueryTypes.RAW,
       });
 
+      await queryInterface.sequelize.query('grant gulls to licensing;', {
+        type: Sequelize.QueryTypes.RAW,
+      });
+
       await queryInterface.sequelize.query(
         'alter default privileges for role licensing, gulls in schema gulls grant select on tables to rogulls;',
         {
@@ -31,6 +35,10 @@ if (process.env.NODE_ENV === 'production') {
           type: Sequelize.QueryTypes.RAW,
         },
       );
+
+      await queryInterface.sequelize.query('revoke gulls from licensing;', {
+        type: Sequelize.QueryTypes.RAW,
+      });
 
       await queryInterface.sequelize.query('revoke select on schema gulls from rogulls;', {
         type: Sequelize.QueryTypes.RAW,
