@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, _Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
-      const tableName = process.env.NODE_ENV === 'production' ? 'licensing.gulls."SiteCategories"' : '"SiteCategories"';
+      const tableName = process.env.NODE_ENV !== 'all' ? 'licensing.gulls."SiteCategories"' : '"SiteCategories"';
 
       await queryInterface.sequelize.query(
         `
@@ -13,9 +13,9 @@ module.exports = {
           END
           WHERE "siteCategory" = 'Commerical';
         `,
-        {transaction: t},
+        { transaction: t },
       );
     });
   },
-  down: async (_queryInterface, _Sequelize) => {},
+  down: async (_queryInterface, _Sequelize) => { },
 };

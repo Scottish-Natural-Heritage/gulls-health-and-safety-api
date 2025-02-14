@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/prefer-module */
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'all') {
   module.exports = {
     up: async (queryInterface, Sequelize) => {
       // Grab the conditions as an array of objects.

@@ -8,7 +8,7 @@ const config = Object.freeze({
   roGullsPassword: process.env.RO_GULLS_DB_PASS || 'override_this_value',
 });
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'all') {
   module.exports = {
     preMigrations: {
       username: 'licensing',
