@@ -1,4 +1,5 @@
 import * as jwt from 'jsonwebtoken';
+import {type Request} from '@hapi/hapi';
 import transaction from 'sequelize/types/transaction';
 import {Op, Sequelize, fn, col} from 'sequelize';
 import database from '../models/index.js';
@@ -28,6 +29,8 @@ const {
   Withdrawal,
   Returns,
   Amendment,
+  SiteCategories,
+  UploadedImage,
 } = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
@@ -59,6 +62,7 @@ interface ApplicationInterface {
   PSpeciesId: number;
   isResidentialSite: boolean;
   siteType: string;
+  siteCategory: string;
   previousLicence: boolean;
   previousLicenceNumber: string;
   supportingInformation: string;
@@ -546,6 +550,16 @@ const ApplicationController = {
             },
           ],
         },
+        {
+          model: SiteCategories,
+          as: 'SiteCategories',
+          paranoid: false,
+        },
+        {
+          model: UploadedImage,
+          as: 'UploadedImages',
+          paranoid: false,
+        },
       ],
     });
   },
@@ -597,1272 +611,152 @@ const ApplicationController = {
   },
 
   /**
-   * This function returns all applications, including the licence holder and applicant details,
-   * and the site address details.
+   * Pagination endpoint for gulls register.
    *
-   * @param {number} limit Limit of how many applications will be returned.
-   * @param {number} offset Offset value which will be the first index of application to be returned.
-   * @param {string | undefined} searchTerm Filter value from URL query.
-   * @param {string} status Status value from URL query.
-   * @param {string} licenceOfficerId Licence Officer ID value from URL query.
-   * @returns {any} Returns an array of applications with the contact and site address details included.
+   * @param request
+   * @param itemsPerPage
    */
-  findAllPaginatedSummary: async (
-    limit: number,
-    offset: number,
-    searchTerm: string | undefined,
-    status: string | undefined,
-    licenceOfficerId: string,
-  ) => {
+  findAllPaginatedSummary: async (request: Request, itemsPerPage: number) => {
     // Checks if using a local database. This allows for case insensitive searching.
     const likeQuery = config.databaseHost === 'localhost' ? Op.like : Op.iLike;
+    const limit = itemsPerPage;
 
-    // All
-    if (status === 'all') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
+    // Prevent XSS
+    const queryParameters = new URLSearchParams(request.query);
+
+    const searchTerm: string = queryParameters.get('search') ?? '';
+    const status: string = queryParameters.get('status') ?? '';
+    const licenceOfficerId: string = queryParameters.get('licenceOfficerId') ?? '';
+    const queryPageNumber: string = queryParameters.get('page') ?? '1';
+
+    const page: number = Number.parseInt(queryPageNumber, 10);
+
+    const offset = (page - 1) * limit;
+
+    const literalQuery = {
+      id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
+    };
+    const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+
+    const searchObject = {
+      [Op.or]: [
+        {
+          '$LicenceHolder.name$': {
+            [likeQuery]: `%${searchTerm}%`,
+          },
+        },
+        {
+          '$LicenceApplicant.name$': {
+            [likeQuery]: `%${searchTerm}%`,
+          },
+        },
+        {
+          '$SiteAddress.postcode$': {
+            [likeQuery]: `%${searchTerm}%`,
+          },
+        },
+        {
+          $staffNumber$: {
+            [likeQuery]: `%${searchTerm}%`,
+          },
+        },
+        idSearch,
+      ],
+    };
+
+    let statusObject;
+    let paranoid = false;
+
+    switch (status) {
+      case 'unassigned':
+        paranoid = true;
+        statusObject = {
+          $confirmedByLicenseHolder$: true,
+          $staffNumber$: {[Op.is]: null},
+          '$License.ApplicationId$': {[Op.is]: null},
+          '$ApplicationAssessment.decision$': {[Op.not]: false},
         };
 
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
+        break;
+      case 'inProgress':
+        paranoid = true;
+        statusObject = {
+          $confirmedByLicenseHolder$: true,
+          $staffNumber$: {[Op.not]: null},
+          '$License.ApplicationId$': {[Op.is]: null},
+          '$ApplicationAssessment.decision$': {[Op.not]: false},
+        };
+        break;
+      case 'awaitingApproval':
+        paranoid = true;
+        statusObject = {$confirmedByLicenseHolder$: false};
+        break;
+      case 'myApplications':
+        paranoid = true;
+        statusObject = {
+          $confirmedByLicenseHolder$: true,
+          $staffNumber$: {
+            [likeQuery]: licenceOfficerId,
+          },
+          '$License.ApplicationId$': {[Op.is]: null},
+          '$ApplicationAssessment.decision$': {[Op.not]: false},
+        };
+        break;
 
-        return Application.findAll({
-          paranoid: false,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-          },
-          limit,
-          offset,
-          order: [['createdAt', 'DESC']],
-        });
-      }
-
-      return Application.findAll({
-        paranoid: false,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']],
-      });
+      default:
+        statusObject = {};
     }
 
-    // Unassigned
-    if (status === 'unassigned') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.findAll({
-          paranoid: true,
-          attributes: {
-            include: [[fn('COALESCE', col('Application.confirmedAt'), col('Application.createdAt')), 'sortByDate']],
-          },
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-            [Op.and]: [
-              {$confirmedByLicenseHolder$: true},
-              {$staffNumber$: {[Op.is]: null}},
-              {'$License.ApplicationId$': {[Op.is]: null}},
-              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-            ],
-          },
-          limit,
-          offset,
-          order: [[col('sortByDate'), 'ASC']],
-        });
-      }
-
-      return Application.findAll({
-        paranoid: true,
+    return Application.findAndCountAll({
+      paranoid,
+      ...(status === 'unassigned' && {
         attributes: {
           include: [[fn('COALESCE', col('Application.confirmedAt'), col('Application.createdAt')), 'sortByDate']],
         },
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        where: {
-          confirmedByLicenseHolder: true,
-          staffNumber: {[Op.is]: null},
-          '$License.ApplicationId$': {[Op.is]: null},
-          '$ApplicationAssessment.decision$': {[Op.not]: false},
+      }),
+      include: [
+        {
+          model: Contact,
+          as: 'LicenceHolder',
         },
-        limit,
-        offset,
-        order: [[col('sortByDate'), 'ASC']],
-      });
-    }
-
-    // In progress
-    if (status === 'inProgress') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.findAll({
-          paranoid: true,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-            [Op.and]: [
-              {$confirmedByLicenseHolder$: true},
-              {$staffNumber$: {[Op.not]: null}},
-              {'$License.ApplicationId$': {[Op.is]: null}},
-              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-            ],
-          },
-          limit,
-          offset,
-          order: [['createdAt', 'ASC']],
-        });
-      }
-
-      return Application.findAll({
-        paranoid: true,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        where: {
-          [Op.and]: [
-            {$confirmedByLicenseHolder$: true},
-            {$staffNumber$: {[Op.not]: null}},
-            {'$License.ApplicationId$': {[Op.is]: null}},
-            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-          ],
+        {
+          model: Contact,
+          as: 'LicenceApplicant',
         },
-        limit,
-        offset,
-        order: [['createdAt', 'ASC']],
-      });
-    }
-
-    // Awaiting LH approval
-    if (status === 'awaitingApproval') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.findAll({
-          paranoid: true,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-            $confirmedByLicenseHolder$: false,
-          },
-          limit,
-          offset,
-          order: [['createdAt', 'ASC']],
-        });
-      }
-
-      return Application.findAll({
-        paranoid: true,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        where: {
-          $confirmedByLicenseHolder$: false,
+        {
+          model: Address,
+          as: 'SiteAddress',
         },
-        limit,
-        offset,
-        order: [['createdAt', 'ASC']],
-      });
-    }
-
-    // LO Applications
-    if (status === 'myApplications') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.findAll({
-          paranoid: true,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-            [Op.and]: [
-              {$confirmedByLicenseHolder$: true},
-              {
-                $staffNumber$: {
-                  [likeQuery]: licenceOfficerId,
-                },
-              },
-              {'$License.ApplicationId$': {[Op.is]: null}},
-              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-            ],
-          },
-          limit,
-          offset,
-          order: [['createdAt', 'ASC']],
-        });
-      }
-
-      return Application.findAll({
-        paranoid: true,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        where: {
-          [Op.and]: [
-            {$confirmedByLicenseHolder$: true},
-            {
-              $staffNumber$: {
-                [likeQuery]: licenceOfficerId,
-              },
-            },
-            {'$License.ApplicationId$': {[Op.is]: null}},
-            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-          ],
+        {
+          model: License,
+          as: 'License',
         },
-        limit,
-        offset,
-        order: [['createdAt', 'ASC']],
-      });
-    }
-
-    // All if status is undefined.
-    if (status === undefined) {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.findAll({
-          paranoid: false,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-          },
-          limit,
-          offset,
-          order: [['createdAt', 'DESC']],
-        });
-      }
-
-      return Application.findAll({
-        paranoid: false,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        limit,
-        offset,
-        order: [['createdAt', 'DESC']],
-      });
-    }
-
-    return {};
-  },
-
-  /**
-   * This function returns the application count where search term is applicable.
-   *
-   * @param {string | undefined} searchTerm Filter value from URL query.
-   * @param {string} status Status value from URL query.
-   * @param {string} licenceOfficerId Licence Officer ID value from URL query.
-   * @returns {any} Returns an array of applications with the contact and site address details included.
-   */
-  getTotalNumberOfApplications: async (
-    searchTerm: string | undefined,
-    status: string | undefined,
-    licenceOfficerId: string,
-  ) => {
-    // Checks if using a local database. This allows for case insensitive searching.
-    const likeQuery = config.databaseHost === 'localhost' ? Op.like : Op.iLike;
-    // All
-    if (status === 'all') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.count({
-          paranoid: false,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-          },
-        });
-      }
-
-      return Application.count({paranoid: false});
-    }
-
-    // Unassigned
-    if (status === 'unassigned') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.count({
-          paranoid: true,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-            [Op.and]: [
-              {$confirmedByLicenseHolder$: true},
-              {$staffNumber$: {[Op.is]: null}},
-              {'$License.ApplicationId$': {[Op.is]: null}},
-              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-            ],
-          },
-        });
-      }
-
-      return Application.count({
-        paranoid: true,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        where: {
-          [Op.and]: [
-            {$confirmedByLicenseHolder$: true},
-            {$staffNumber$: {[Op.is]: null}},
-            {'$License.ApplicationId$': {[Op.is]: null}},
-            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-          ],
+        {
+          model: Revocation,
+          as: 'Revocation',
         },
-      });
-    }
-
-    // In progress
-    if (status === 'inProgress') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.count({
-          paranoid: true,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-            [Op.and]: [
-              {$confirmedByLicenseHolder$: true},
-              {$staffNumber$: {[Op.not]: null}},
-              {'$License.ApplicationId$': {[Op.is]: null}},
-              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-            ],
-          },
-        });
-      }
-
-      return Application.count({
-        paranoid: true,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        where: {
-          [Op.and]: [
-            {$confirmedByLicenseHolder$: true},
-            {$staffNumber$: {[Op.not]: null}},
-            {'$License.ApplicationId$': {[Op.is]: null}},
-            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-          ],
+        {
+          model: Withdrawal,
+          as: 'Withdrawal',
         },
-      });
-    }
-
-    // Awaiting LH approval
-    if (status === 'awaitingApproval') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.count({
-          paranoid: true,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            $confirmedByLicenseHolder$: false,
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-          },
-        });
-      }
-
-      return Application.count({paranoid: true, where: {$confirmedByLicenseHolder$: false}});
-    }
-
-    // Lo Applications
-    if (status === 'myApplications') {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.count({
-          paranoid: true,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-            [Op.and]: [
-              {$confirmedByLicenseHolder$: true},
-              {
-                $staffNumber$: {
-                  [likeQuery]: licenceOfficerId,
-                },
-              },
-              {'$License.ApplicationId$': {[Op.is]: null}},
-              {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-            ],
-          },
-        });
-      }
-
-      return Application.count({
-        paranoid: true,
-        include: [
-          {
-            model: Contact,
-            as: 'LicenceHolder',
-          },
-          {
-            model: Contact,
-            as: 'LicenceApplicant',
-          },
-          {
-            model: Address,
-            as: 'SiteAddress',
-          },
-          {
-            model: License,
-            as: 'License',
-          },
-          {
-            model: Revocation,
-            as: 'Revocation',
-          },
-          {
-            model: Withdrawal,
-            as: 'Withdrawal',
-          },
-          {
-            model: Assessment,
-            as: 'ApplicationAssessment',
-          },
-        ],
-        where: {
-          [Op.and]: [
-            {$confirmedByLicenseHolder$: true},
-            {
-              $staffNumber$: {
-                [likeQuery]: licenceOfficerId,
-              },
-            },
-            {'$License.ApplicationId$': {[Op.is]: null}},
-            {'$ApplicationAssessment.decision$': {[Op.not]: false}},
-          ],
+        {
+          model: Assessment,
+          as: 'ApplicationAssessment',
         },
-      });
-    }
-
-    // All if status is undefined
-    if (status === undefined) {
-      if (searchTerm !== undefined) {
-        const literalQuery = {
-          id: Sequelize.literal(`CAST("Application"."id" AS VARCHAR) LIKE '%${searchTerm}%'`),
-        };
-        const idSearch = Number.isNaN(Number.parseInt(searchTerm, 10)) ? {} : literalQuery;
-
-        return Application.count({
-          paranoid: false,
-          include: [
-            {
-              model: Contact,
-              as: 'LicenceHolder',
-            },
-            {
-              model: Contact,
-              as: 'LicenceApplicant',
-            },
-            {
-              model: Address,
-              as: 'SiteAddress',
-            },
-            {
-              model: License,
-              as: 'License',
-            },
-            {
-              model: Revocation,
-              as: 'Revocation',
-            },
-            {
-              model: Withdrawal,
-              as: 'Withdrawal',
-            },
-            {
-              model: Assessment,
-              as: 'ApplicationAssessment',
-            },
-          ],
-          where: {
-            [Op.or]: [
-              {
-                '$LicenceHolder.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$LicenceApplicant.name$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              {
-                '$SiteAddress.postcode$': {
-                  [likeQuery]: `%${searchTerm}%`,
-                },
-              },
-              idSearch,
-            ],
-          },
-        });
-      }
-
-      return Application.count({paranoid: false});
-    }
-
-    return 0;
+        {
+          model: SiteCategories,
+          as: 'SiteCategories',
+        },
+      ],
+      where: {
+        ...(Boolean(searchTerm) && searchObject),
+        ...(Boolean(status) && statusObject),
+      },
+      limit,
+      order: status === 'unassigned' ? [[col('sortByDate'), 'ASC']] : [['createdAt', 'DESC']],
+      // Only add offset if available
+      ...(offset && {offset}),
+    });
   },
 
   /**
@@ -1984,6 +878,15 @@ const ApplicationController = {
       // Set the species foreign keys in the DB.
       const newSpecies = await Species.create(speciesIds as any, {transaction: t});
       const newPSpecies = await PSpecies.create(pSpeciesIds as any, {transaction: t});
+
+      // Set the site categories foreign key in DB.
+      const siteCategoryId: any = await SiteCategories.findOne({
+        where: {
+          [Op.and]: [{siteCategory: incomingApplication.siteCategory}, {siteType: incomingApplication.siteType}],
+        },
+        paranoid: false,
+      });
+
       // Set the application's foreign keys.
       incomingApplication.LicenceHolderId = newLicenceHolderContact.id;
       incomingApplication.LicenceApplicantId = newOnBehalfContact ? newOnBehalfContact.id : newLicenceHolderContact.id;
@@ -1991,6 +894,7 @@ const ApplicationController = {
       incomingApplication.SiteAddressId = newSiteAddress ? newSiteAddress.id : newAddress.id;
       incomingApplication.SpeciesId = newSpecies.id;
       incomingApplication.PermittedSpeciesId = newPSpecies.id;
+      incomingApplication.SiteCategoriesId = siteCategoryId.id;
 
       let newId; // The prospective random ID of the new application.
       let existingApplication; // Possible already assigned application.
@@ -2427,6 +1331,7 @@ const ApplicationController = {
           SpeciesId: null,
           isResidentialSite: null,
           siteType: null,
+          SiteCategoriesId: null,
           previousLicenceNumber: null,
           supportingInformation: null,
           confirmedByLicenseHolder: null,

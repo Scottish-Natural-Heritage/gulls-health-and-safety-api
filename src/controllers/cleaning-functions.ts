@@ -132,9 +132,92 @@ const cleanEditAddress = (body: any): any => {
  * @returns {any} The cleaned application details.
  */
 const cleanApplication = (body: any): any => {
+  let siteType = '';
+  switch (body.siteType) {
+    // Healthcare or education
+    case 'hospitalEmergencyServices':
+      siteType = 'Hospital or emergency services';
+      break;
+    case 'school':
+      siteType = 'School';
+      break;
+    case 'daycareNursery':
+      siteType = 'Day care/nursery';
+      break;
+    case 'gpSurgery':
+      siteType = 'GP surgery';
+      break;
+    case 'careHomeShelteredHousing':
+      siteType = 'Care home or sheltered housing';
+      break;
+    case 'otherHealthcareEducation':
+      siteType = 'Other';
+      break;
+    // National infrastructure
+    case 'electricitySubstation':
+      siteType = 'Electricity substation';
+      break;
+    case 'powerGasStation':
+      siteType = 'Power or gas station';
+      break;
+    case 'busTrainStation':
+      siteType = 'Bus or train station';
+      break;
+    case 'otherNationalInfrastructure':
+      siteType = 'Other';
+      break;
+    // Residential
+    case 'privateOwnerOccupier':
+      siteType = 'Private owner/occupier';
+      break;
+    case 'privateTenant':
+      siteType = 'Private tenant';
+      break;
+    case 'councilTenant':
+      siteType = 'Council tenant';
+      break;
+    case 'otherResidential':
+      siteType = 'Other';
+      break;
+    // Commercial
+    case 'hospitality':
+      siteType = 'Hospitality';
+      break;
+    case 'industrialSite':
+      siteType = 'Industrial site';
+      break;
+    case 'retailOfficeBuilding':
+      siteType = 'Retail or office building';
+      break;
+    case 'wasteDisposal':
+      siteType = 'Waste disposal';
+      break;
+    case 'otherCommercial':
+      siteType = 'Other';
+      break;
+    default:
+  }
+
+  let siteCategory = '';
+  switch (body.siteCategory) {
+    case 'healthcareEducation':
+      siteCategory = 'Healthcare or education';
+      break;
+    case 'nationalInfrastructure':
+      siteCategory = 'National infrastructure';
+      break;
+    case 'residential':
+      siteCategory = 'Residential';
+      break;
+    case 'commercial':
+      siteCategory = 'Commercial';
+      break;
+    default:
+  }
+
   return {
-    isResidentialSite: body.isResidentialSite,
-    siteType: body.isResidentialSite ? body.residentialType : body.commercialType,
+    siteCategory,
+    siteType,
     previousLicence: body.previousLicense,
     previousLicenceNumber: body.previousLicenseNumber ? body.previousLicenseNumber.trim() : undefined,
     supportingInformation: body.supportingInformation === undefined ? undefined : body.supportingInformation.trim(),
@@ -380,11 +463,17 @@ const rangesIntoIntegers = (range: string | undefined): number => {
     case 'upTo10':
       displayableRange = 10;
       break;
+    case 'upTo25':
+      displayableRange = 25;
+      break;
     case 'upTo50':
       displayableRange = 50;
       break;
     case 'upTo100':
       displayableRange = 100;
+      break;
+    case 'upTo250':
+      displayableRange = 250;
       break;
     case 'upTo500':
       displayableRange = 500;

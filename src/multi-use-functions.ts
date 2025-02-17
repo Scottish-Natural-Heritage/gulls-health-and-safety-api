@@ -250,7 +250,7 @@ const addActivityResults = (species: any, speciesType: string): string => {
   const proposalResults: string[] = [];
   if (species.removeNests) {
     proposalResults.push(
-      `* ${speciesType}: To take and destroy ${displayableRanges(
+      `* ${speciesType}: To take and destroy ${displayableUpToRanges(
         species.quantityNestsToRemove,
       )} nests and any eggs they contain by hand.`,
     );
@@ -258,7 +258,7 @@ const addActivityResults = (species: any, speciesType: string): string => {
 
   if (species.eggDestruction) {
     proposalResults.push(
-      `* ${speciesType}: To take and destroy eggs from ${displayableRanges(
+      `* ${speciesType}: To take and destroy eggs from ${displayableUpToRanges(
         species.quantityNestsWhereEggsDestroyed,
       )} nests by oiling, pricking or replacing with dummy eggs.`,
     );
@@ -300,14 +300,125 @@ const addActivityResults = (species: any, speciesType: string): string => {
 };
 
 /**
- * This function returns a slightly prettier and more accurate string of ranges.
+ * This function returns a slightly prettier and more accurate string of
+ * ranges for display on the confirm page.
  *
  * @param {string} range The range to made more readable.
  * @returns {string} A more accurate and readable range as a string.
  */
 const displayableRanges = (range: string | undefined): string => {
+  let displayableRange = '';
+  switch (range) {
+    case 'upTo10': {
+      displayableRange = '1 - 10';
+      break;
+    }
+
+    case 'upTo25': {
+      displayableRange = '11 - 25';
+      break;
+    }
+
+    case 'upTo50': {
+      displayableRange = '26 - 50';
+      break;
+    }
+
+    case 'upTo100': {
+      displayableRange = '51 - 100';
+      break;
+    }
+
+    case 'upTo250': {
+      displayableRange = '101 - 250';
+      break;
+    }
+
+    case 'upTo500': {
+      displayableRange = '251 - 500';
+      break;
+    }
+
+    case 'upTo1000': {
+      displayableRange = '501 - 1000';
+      break;
+    }
+
+    default: {
+      displayableRange = '';
+      break;
+    }
+  }
+
+  return displayableRange;
+};
+
+/**
+ * This function returns a slightly prettier and more accurate string of the upper end of the range.
+ *
+ * @param {string} range The range to made more readable.
+ * @returns {string} The upper end of the range.
+ */
+const displayableUpperRange = (range: string | undefined): string => {
+  let upperRangeValue = '';
+  switch (range) {
+    case 'upTo10': {
+      upperRangeValue = '10';
+      break;
+    }
+
+    case 'upTo25': {
+      upperRangeValue = '25';
+      break;
+    }
+
+    case 'upTo50': {
+      upperRangeValue = '50';
+      break;
+    }
+
+    case 'upTo100': {
+      upperRangeValue = '100';
+      break;
+    }
+
+    case 'upTo250': {
+      upperRangeValue = '250';
+      break;
+    }
+
+    case 'upTo500': {
+      upperRangeValue = '500';
+      break;
+    }
+
+    case 'upTo1000': {
+      upperRangeValue = '1000';
+      break;
+    }
+
+    default: {
+      upperRangeValue = '';
+      break;
+    }
+  }
+
+  return upperRangeValue;
+};
+
+/**
+ * This function returns a slightly prettier and more accurate string of ranges in syntax up to X.
+ *
+ * @param {string} range The range to made more readable.
+ * @returns {string} A more accurate and readable range as a string.
+ */
+const displayableUpToRanges = (range: string | undefined): string => {
   if (range === '10' || range === 'upTo10') {
     return 'up to 10';
+  }
+
+  if (range === '25' || range === 'upTo25') {
+    return 'up to 25';
   }
 
   if (range === '50' || range === 'upTo50') {
@@ -316,6 +427,10 @@ const displayableRanges = (range: string | undefined): string => {
 
   if (range === '100' || range === 'upTo100') {
     return 'up to 100';
+  }
+
+  if (range === '250' || range === 'upTo250') {
+    return 'up to 250';
   }
 
   if (range === '500' || range === 'upTo500') {
@@ -370,6 +485,9 @@ const MultiUseFunctions = {
   createMeasures,
   createAppliedFor,
   createProposalResult,
+  displayableRanges,
+  displayableUpperRange,
+  displayableUpToRanges,
 };
 
 export default MultiUseFunctions;

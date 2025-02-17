@@ -17,6 +17,7 @@ import Address from './controllers/address';
 import config from './config/app';
 import JsonUtils from './json-utils';
 import jwk from './config/jwk.js';
+import UploadedImage from './controllers/uploaded-image';
 
 /**
  * Checks if an array of returns contains a final return.
@@ -65,11 +66,6 @@ const checkForValidActivities = (species: any): boolean => {
 
   return false;
 };
-
-/**
- * The number of items to display per page on the Gulls Staff search screen.
- */
-const itemsPerPage = 100;
 
 /**
  * An array of all the routes and controllers in the app.
@@ -277,49 +273,24 @@ const routes: ServerRoute[] = [
     path: `${config.pathPrefix}/applications`,
     handler: async (request: Request, h: ResponseToolkit) => {
       const page = Number.parseInt(request.query.page as string, 10) || 1;
-      const [searchTerm, status, licenceOfficerId] = [
-        request.query.search || undefined,
-        request.query.status,
-        request.query.licenceOfficerId,
-      ];
 
-      const startIndex = (page - 1) * itemsPerPage;
+      /**
+       * The number of items to display per page on the Gulls Staff search screen.
+       */
+      const itemsPerPage = 10;
 
       try {
-        const applications = await Application.findAllPaginatedSummary(
-          itemsPerPage,
-          startIndex,
-          searchTerm,
-          status,
-          licenceOfficerId,
-        );
-
-        const numberOfApplications = await Application.getTotalNumberOfApplications(
-          searchTerm,
-          status,
-          licenceOfficerId,
-        );
-
-        const numberOfPages = Math.ceil(numberOfApplications / itemsPerPage);
-
-        const numberOfResults = numberOfApplications;
-
-        const firstIndex = startIndex + 1;
+        const {count, rows} = await Application.findAllPaginatedSummary(request, itemsPerPage);
 
         const responseData = {
-          applications,
-          numberOfPages,
-          numberOfResults,
-          firstIndex,
+          pageNumber: page,
+          pageSize: itemsPerPage,
+          recordsCount: count,
+          records: rows,
         };
 
         // Did we get any applications?
-        if (
-          applications === undefined ||
-          applications === null ||
-          numberOfApplications === undefined ||
-          numberOfApplications === null
-        ) {
+        if (rows === undefined || rows === null || count === undefined || count === null) {
           return h.response({message: `No applications found.`}).code(404);
         }
 
@@ -2117,6 +2088,87 @@ const routes: ServerRoute[] = [
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
 
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * POST image.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/application/{id}/image`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        const payload = request.payload as {filename: string[]};
+
+        const uploadedImages = await Promise.all(
+          payload.filename.map(async (filename) => {
+            return UploadedImage.create(existingId, filename);
+          }),
+        );
+
+        return h.response(uploadedImages).code(201);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
+        // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * DELETE image.
+   */
+  {
+    method: 'delete',
+    path: `${config.pathPrefix}/application/{id}/image/{imageId}`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        // Is the ID a number?
+        const existingId = Number(request.params.id);
+        const imageId = Number(request.params.imageId);
+        if (Number.isNaN(existingId)) {
+          return h.response({message: `Application ${existingId} not valid.`}).code(404);
+        }
+
+        // Try to get the requested application.
+        const application = await Application.findOne(existingId);
+
+        // Did we get an application?
+        if (application === undefined || application === null) {
+          return h.response({message: `Application ${existingId} not found.`}).code(404);
+        }
+
+        const existingImage = await UploadedImage.findOne(imageId);
+
+        if (existingImage === undefined || existingImage === null) {
+          return h.response({message: `Image ${imageId} not found.`}).code(404);
+        }
+
+        await UploadedImage.delete(imageId);
+
+        return h.response().code(204);
+      } catch (error: unknown) {
+        // Log any error.
+        request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
         return h.response({error}).code(500);
       }
