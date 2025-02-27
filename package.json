@@ -26,7 +26,7 @@
     "local:start-postgres": "docker start gulls-database || ( docker run --name gulls-database -e POSTGRES_USER=licensing -e POSTGRES_PASSWORD=${LICENSING_DB_PASS-override_this_value} -p 5432:5432 --restart=always -d postgres:alpine; echo Created new container. )",
     "local:stop-postgres": "docker stop gulls-database",
     "local:delete-postgres": "docker rm -f gulls-database",
-    "start:local": "npm run build && npm run local:create-postgres && npm run start"
+    "start:local": "npm run build && npm run start"
   },
   "license": "(MIT OR OGL-UK-3.0)",
   "devDependencies": {
