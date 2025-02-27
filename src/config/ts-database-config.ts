@@ -30,4 +30,4 @@ const databaseConfig = {
   },
 };
 
-export { databaseConfig };
+export {databaseConfig};
