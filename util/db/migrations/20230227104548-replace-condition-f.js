@@ -32,7 +32,7 @@ module.exports = {
   down: async (queryInterface, Sequelize) => {
     // eslint-disable-next-line prefer-destructuring
     const Op = Sequelize.Op;
-    await queryInterface.bulkDelete('Conditions', { id: { [Op.in]: [29] } }, { truncate: true });
+    await queryInterface.bulkDelete('Conditions', {id: {[Op.in]: [29]}}, {truncate: true});
 
     // Grab the condition as a object.
     const conditionF = await queryInterface.sequelize.query('SELECT * FROM gulls."Conditions" WHERE "id" = 6;', {
