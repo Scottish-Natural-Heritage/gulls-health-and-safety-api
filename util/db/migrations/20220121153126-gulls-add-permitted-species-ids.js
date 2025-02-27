@@ -22,48 +22,48 @@ module.exports = {
       let displayableNestRange;
       // prettier-ignore
       switch (result.quantityNestsToRemove) {
-        case 'upTo10':
-          displayableNestRange = 10;
-          break;
-        case 'upTo50':
-          displayableNestRange = 50;
-          break;
-        case 'upTo100':
-          displayableNestRange = 100;
-          break;
-        case 'upTo500':
-          displayableNestRange = 500;
-          break;
-        case 'upTo1000':
-          displayableNestRange = 1000;
-          break;
-        default:
-          displayableNestRange = 0;
-          break;
+      case 'upTo10':
+        displayableNestRange = 10;
+        break;
+      case 'upTo50':
+        displayableNestRange = 50;
+        break;
+      case 'upTo100':
+        displayableNestRange = 100;
+        break;
+      case 'upTo500':
+        displayableNestRange = 500;
+        break;
+      case 'upTo1000':
+        displayableNestRange = 1000;
+        break;
+      default:
+        displayableNestRange = 0;
+        break;
       }
 
       // Get an integer value of what the user has entered into the activities table in the quantityNestsWhereEggsDestroyed column.
       let displayableEggRange;
       // prettier-ignore
       switch (result.quantityNestsWhereEggsDestroyed) {
-        case 'upTo10':
-          displayableEggRange = 10;
-          break;
-        case 'upTo50':
-          displayableEggRange = 50;
-          break;
-        case 'upTo100':
-          displayableEggRange = 100;
-          break;
-        case 'upTo500':
-          displayableEggRange = 500;
-          break;
-        case 'upTo1000':
-          displayableEggRange = 1000;
-          break;
-        default:
-          displayableEggRange = 0;
-          break;
+      case 'upTo10':
+        displayableEggRange = 10;
+        break;
+      case 'upTo50':
+        displayableEggRange = 50;
+        break;
+      case 'upTo100':
+        displayableEggRange = 100;
+        break;
+      case 'upTo500':
+        displayableEggRange = 500;
+        break;
+      case 'upTo1000':
+        displayableEggRange = 1000;
+        break;
+      default:
+        displayableEggRange = 0;
+        break;
       }
 
       updateActivitiesQueries.push(
