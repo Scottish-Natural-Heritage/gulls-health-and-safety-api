@@ -14,7 +14,7 @@ jobs:
 
     # See: https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/about-service-containers
     services:
-      red-grouse-database:
+      licensing-database:
         image: postgres:alpine
         env:
           POSTGRES_USER: licensing
