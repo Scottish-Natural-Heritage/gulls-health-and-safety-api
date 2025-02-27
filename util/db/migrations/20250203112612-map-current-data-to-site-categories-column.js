@@ -3,7 +3,6 @@
 module.exports = {
   up: async (queryInterface, _Sequelize) => {
     return queryInterface.sequelize.transaction(async (t) => {
-
       await queryInterface.sequelize.query(
         `
           UPDATE licensing.gulls."Applications"
@@ -26,9 +25,9 @@ module.exports = {
           END
           WHERE "SiteCategoriesId" IS NULL;
         `,
-        { transaction: t },
+        {transaction: t},
       );
     });
   },
-  down: async (_queryInterface) => { },
+  down: async (_queryInterface) => {},
 };
