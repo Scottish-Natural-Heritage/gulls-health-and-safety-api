@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, new-cap */
 
-import {productionDatabaseConfig, localDatabaseConfig} from '../config/ts-database-config';
+import {databaseConfig} from '../config/ts-database-config';
 import Application from './application';
 import Assessment from './assessment';
 import Contact from './contact';
@@ -33,13 +33,7 @@ import UploadedImage from './uploaded-image';
 
 const Sequelize = require('sequelize');
 
-// Default to the local database configuration.
-let sequelize = new Sequelize(localDatabaseConfig.database);
-
-// If we're running in production, switch to that configuration instead.
-if (process.env.NODE_ENV === 'production') {
-  sequelize = new Sequelize(productionDatabaseConfig.database);
-}
+const sequelize = new Sequelize(databaseConfig.database);
 
 const database = {
   sequelize,
