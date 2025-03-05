@@ -15,7 +15,6 @@ const ApplicationModel = (sequelize: Sequelize) => {
     public SiteAddressId!: number;
     public SpeciesId!: number;
     public PermittedSpeciesId!: number;
-    public isResidentialSite!: boolean;
     public SiteCategoriesId!: number;
     public previousLicence!: boolean;
     public previousLicenceNumber!: string;
@@ -45,12 +44,6 @@ const ApplicationModel = (sequelize: Sequelize) => {
       },
       PermittedSpeciesId: {
         type: DataTypes.INTEGER,
-      },
-      isResidentialSite: {
-        type: DataTypes.BOOLEAN,
-      },
-      siteType: {
-        type: DataTypes.STRING,
       },
       SiteCategoriesId: {
         type: DataTypes.INTEGER,
