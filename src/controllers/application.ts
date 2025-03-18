@@ -617,7 +617,6 @@ const ApplicationController = {
    */
   findAllPaginatedSummary: async (request: Request, itemsPerPage: number) => {
     // Checks if using a local database. This allows for case insensitive searching.
-    const likeQuery = config.databaseHost === 'localhost' ? Op.like : Op.iLike;
     const limit = itemsPerPage;
 
     // Prevent XSS
@@ -641,22 +640,22 @@ const ApplicationController = {
       [Op.or]: [
         {
           '$LicenceHolder.name$': {
-            [likeQuery]: `%${searchTerm}%`,
+            [Op.iLike]: `%${searchTerm}%`,
           },
         },
         {
           '$LicenceApplicant.name$': {
-            [likeQuery]: `%${searchTerm}%`,
+            [Op.iLike]: `%${searchTerm}%`,
           },
         },
         {
           '$SiteAddress.postcode$': {
-            [likeQuery]: `%${searchTerm}%`,
+            [Op.iLike]: `%${searchTerm}%`,
           },
         },
         {
           $staffNumber$: {
-            [likeQuery]: `%${searchTerm}%`,
+            [Op.iLike]: `%${searchTerm}%`,
           },
         },
         idSearch,
@@ -695,7 +694,7 @@ const ApplicationController = {
         statusObject = {
           $confirmedByLicenseHolder$: true,
           $staffNumber$: {
-            [likeQuery]: licenceOfficerId,
+            [Op.iLike]: licenceOfficerId,
           },
           '$License.ApplicationId$': {[Op.is]: null},
           '$ApplicationAssessment.decision$': {[Op.not]: false},
