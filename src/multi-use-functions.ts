@@ -6,15 +6,16 @@
  */
 const createSummaryAddress = (fullAddress: any): string => {
   const address = [];
-  address.push(fullAddress.addressLine1.trim());
-  // As addressLine2 is optional we need to check if it exists.
-  if (fullAddress.addressLine2) {
-    address.push(fullAddress.addressLine2.trim());
-  }
 
-  address.push(fullAddress.addressTown.trim(), fullAddress.addressCounty.trim(), fullAddress.postcode.trim());
+  address.push(
+    fullAddress?.addressLine1?.trim() ?? '',
+    fullAddress?.addressLine2?.trim() ?? '',
+    fullAddress?.addressTown?.trim() ?? '',
+    fullAddress?.addressCounty?.trim() ?? '', 
+    fullAddress?.postcode?.trim() ?? ''
+  );
 
-  return address.join(', ');
+  return address.filter((item)=> item !== '').join(', ');
 };
 
 /**
