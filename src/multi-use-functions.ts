@@ -11,11 +11,15 @@ const createSummaryAddress = (fullAddress: any): string => {
     fullAddress?.addressLine1?.trim() ?? '',
     fullAddress?.addressLine2?.trim() ?? '',
     fullAddress?.addressTown?.trim() ?? '',
-    fullAddress?.addressCounty?.trim() ?? '', 
-    fullAddress?.postcode?.trim() ?? ''
+    fullAddress?.addressCounty?.trim() ?? '',
+    fullAddress?.postcode?.trim() ?? '',
   );
 
-  return address.filter((item)=> item !== '').join(', ');
+  return address
+    .filter((item) => {
+      return item !== '';
+    })
+    .join(', ');
 };
 
 /**
