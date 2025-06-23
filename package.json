@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
-    "axios": "^1.7.2",
+    "axios": "^1.10.0",
     "axios-mock-adapter": "^1.21.1",
     "hapi-pino": "^8.5.0",
     "jsonwebtoken": "^9.0.2",
