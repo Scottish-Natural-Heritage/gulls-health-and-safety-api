@@ -52,7 +52,7 @@
     "axios": "^1.10.0",
     "axios-mock-adapter": "^1.21.1",
     "hapi-pino": "^8.5.0",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^8.5.1",
     "naturescot-utils": "^1.2.0",
     "node-cron": "3.0.0",
     "notifications-node-client": "^8.1.0",
