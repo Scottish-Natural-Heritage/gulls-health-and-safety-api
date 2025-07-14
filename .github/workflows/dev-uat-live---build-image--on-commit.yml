@@ -1,4 +1,4 @@
-name: On-commit build of image
+name: On-push build of image
 
 on:
   push:
@@ -6,11 +6,38 @@ on:
 
 env:
   ECR_REPOSITORY: naturescot/gulls-health-and-safety-api
+  PROJECT: licensing
 
 jobs:
+  determine-environment:
+    name: Determine Deployment Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Select environment
+        id: select-environment
+        run: |
+          if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref_name }}" == "main" ]; then
+            echo "live"
+            echo "environment=live" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref_name }}" == "develop" ]; then
+            echo "uat"
+            echo "environment=uat" >> "$GITHUB_OUTPUT"
+          else
+            echo "dev"
+            echo "environment=dev" >> "$GITHUB_OUTPUT"
+          fi
+
+    outputs:
+      environment: ${{ steps.select-environment.outputs.environment }}
+
   build_and_push:
     name: Build and Push the Image
+    needs: determine-environment
     runs-on: ubuntu-latest
+
+    env:
+      ENVIRONMENT: ${{ needs.determine-environment.outputs.environment }}
 
     # See: https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/about-service-containers
     services:
@@ -82,3 +109,19 @@ jobs:
       - name: Logout of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Force re-deployment if service exists
+        id: redeploy-service
+        env:
+          CLUSTER_NAME: ${{env.PROJECT}}-${{env.ENVIRONMENT}}-cluster
+          SERVICE_NAME: ${{env.PROJECT}}-${{env.ENVIRONMENT}}-gulls-health-and-safety-api
+        run: |
+          echo Cluster: $CLUSTER_NAME
+          echo Service: $SERVICE_NAME
+          if [ $(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME | jq '.services | length') == 1 ]
+          then
+            aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment > /dev/null
+            echo service redeployed
+          else
+            echo service not redeployed
+          fi
