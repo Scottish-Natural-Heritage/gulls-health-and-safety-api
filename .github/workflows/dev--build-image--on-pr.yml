@@ -2,15 +2,34 @@ name: On-PR build of image
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [develop]
 
 env:
   ECR_REPOSITORY: naturescot/gulls-health-and-safety-api
+  PROJECT: licensing
 
 jobs:
+  determine-environment:
+    name: Determine Deployment Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Select environment
+        id: select-environment
+        run: |
+          echo "dev"
+          echo "environment=dev" >> "$GITHUB_OUTPUT"
+
+    outputs:
+      environment: ${{ steps.select-environment.outputs.environment }}
+
   build_and_push:
     name: Build and Push the Image
+    needs: determine-environment
     runs-on: ubuntu-latest
+
+    env:
+      ENVIRONMENT: ${{ needs.determine-environment.outputs.environment }}
 
     # See: https://docs.github.com/en/actions/use-cases-and-examples/using-containerized-services/about-service-containers
     services:
@@ -80,3 +99,19 @@ jobs:
       - name: Logout of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Force re-deployment if service exists
+        id: redeploy-service
+        env:
+          CLUSTER_NAME: ${{env.PROJECT}}-${{env.ENVIRONMENT}}-cluster
+          SERVICE_NAME: ${{env.PROJECT}}-${{env.ENVIRONMENT}}-gulls-health-and-safety-api
+        run: |
+          echo Cluster: $CLUSTER_NAME
+          echo Service: $SERVICE_NAME
+          if [ $(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME | jq '.services | length') == 1 ]
+          then
+            aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment > /dev/null
+            echo service redeployed
+          else
+            echo service not redeployed
+          fi
