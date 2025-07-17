@@ -388,179 +388,102 @@ const setRefusalEmailDetails = async (application: any): Promise<any> => {
 
 const ApplicationController = {
   findOne: async (id: number) => {
-    return Application.findByPk(id, {
-      paranoid: false,
-      include: [
-        {
-          model: Revocation,
-          as: 'Revocation',
-        },
-        {
-          model: Withdrawal,
-          as: 'Withdrawal',
-        },
-        {
-          model: Contact,
-          as: 'LicenceHolder',
-          paranoid: false,
-        },
-        {
-          model: Contact,
-          as: 'LicenceApplicant',
-          paranoid: false,
-        },
-        {
-          model: Address,
-          as: 'LicenceHolderAddress',
-          paranoid: false,
-        },
-        {
-          model: Address,
-          as: 'SiteAddress',
-          paranoid: false,
-        },
-        {
-          model: Species,
-          as: 'Species',
-          paranoid: false,
-          include: [
-            {
-              model: Activity,
-              as: 'HerringGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'BlackHeadedGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'CommonGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'GreatBlackBackedGull',
-              paranoid: false,
-            },
-            {
-              model: Activity,
-              as: 'LesserBlackBackedGull',
-              paranoid: false,
-            },
-          ],
-        },
-        {
-          model: PSpecies,
-          as: 'PSpecies',
-          paranoid: false,
-          include: [
-            {
-              model: PActivity,
-              as: 'PHerringGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PBlackHeadedGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PCommonGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PGreatBlackBackedGull',
-              paranoid: false,
-            },
-            {
-              model: PActivity,
-              as: 'PLesserBlackBackedGull',
-              paranoid: false,
-            },
-          ],
-        },
-        {
-          model: Issue,
-          as: 'ApplicationIssue',
-          paranoid: false,
-        },
-        {
-          model: Measure,
-          as: 'ApplicationMeasure',
-          paranoid: false,
-        },
-        {
-          model: Assessment,
-          as: 'ApplicationAssessment',
-          paranoid: false,
-        },
-        {
-          model: AssessmentMeasure,
-          as: 'AssessmentMeasure',
-          paranoid: false,
-        },
-        {
-          model: Note,
-          as: 'ApplicationNotes',
-          paranoid: false,
-        },
-        {
-          model: License,
-          as: 'License',
-          paranoid: false,
-          include: [
-            {
-              model: LicenseAdvisory,
-              as: 'LicenseAdvisories',
-              paranoid: false,
-              include: [
-                {
-                  model: Advisory,
-                  as: 'Advisory',
-                  paranoid: false,
-                },
-              ],
-            },
-            {
-              model: LicenseCondition,
-              as: 'LicenseConditions',
-              paranoid: false,
-              include: [
-                {
-                  model: Condition,
-                  as: 'Condition',
-                  paranoid: false,
-                },
-              ],
-            },
-            {
-              model: Returns,
-              as: 'Returns',
-              paranoid: false,
-            },
-            {
-              model: Amendment,
-              as: 'Amendment',
-              paranoid: false,
-            },
-          ],
-        },
-        {
-          model: SiteCategories,
-          as: 'SiteCategories',
-          paranoid: false,
-        },
-        {
-          model: UploadedImage,
-          as: 'UploadedImages',
-          paranoid: false,
-        },
-      ],
-    });
+    const application = await Application.findByPk(id, { paranoid: false });
+
+    if (!application) return null;
+
+    const [
+      revocation,
+      withdrawal,
+      licenceHolder,
+      licenceApplicant,
+      licenceHolderAddress,
+      siteAddress,
+      species,
+      permittedSpecies,
+      issues,
+      measures,
+      assessments,
+      assessmentMeasures,
+      notes,
+      license,
+      siteCategories,
+      uploadedImages,
+    ] = await Promise.all([
+      Revocation.findOne({ where: { ApplicationId: id }, paranoid: false }),
+      Withdrawal.findOne({ where: { ApplicationId: id }, paranoid: false }),
+      Contact.findByPk(application.LicenceHolderId, { paranoid: false }),
+      Contact.findByPk(application.LicenceApplicantId, { paranoid: false }),
+      Address.findByPk(application.LicenceHolderAddressId, { paranoid: false }),
+      Address.findByPk(application.SiteAddressId, { paranoid: false }),
+      Species.findByPk(application.SpeciesId, {
+        paranoid: false,
+        include: [
+          { model: Activity, as: 'HerringGull', paranoid: false },
+          { model: Activity, as: 'BlackHeadedGull', paranoid: false },
+          { model: Activity, as: 'CommonGull', paranoid: false },
+          { model: Activity, as: 'GreatBlackBackedGull', paranoid: false },
+          { model: Activity, as: 'LesserBlackBackedGull', paranoid: false },
+        ],
+      }),
+      PSpecies.findByPk(application.PermittedSpeciesId, {
+        paranoid: false,
+        include: [
+          { model: PActivity, as: 'PHerringGull', paranoid: false },
+          { model: PActivity, as: 'PBlackHeadedGull', paranoid: false },
+          { model: PActivity, as: 'PCommonGull', paranoid: false },
+          { model: PActivity, as: 'PGreatBlackBackedGull', paranoid: false },
+          { model: PActivity, as: 'PLesserBlackBackedGull', paranoid: false },
+        ],
+      }),
+      Issue.findOne({ where: { ApplicationId: id }, paranoid: false }),
+      Measure.findOne({ where: { ApplicationId: id }, paranoid: false }),
+      Assessment.findOne({ where: { ApplicationId: id }, paranoid: false }),
+      AssessmentMeasure.findOne({ where: { ApplicationId: id }, paranoid: false }),
+      Note.findAll({ where: { ApplicationId: id }, paranoid: false }),
+      License.findOne({
+        where: { ApplicationId: id },
+        paranoid: false,
+        include: [
+          {
+            model: LicenseAdvisory,
+            as: 'LicenseAdvisories',
+            include: [{ model: Advisory, as: 'Advisory', paranoid: false }],
+            paranoid: false,
+          },
+          {
+            model: LicenseCondition,
+            as: 'LicenseConditions',
+            include: [{ model: Condition, as: 'Condition', paranoid: false }],
+            paranoid: false,
+          },
+          { model: Returns, as: 'Returns', paranoid: false },
+          { model: Amendment, as: 'Amendment', paranoid: false },
+        ],
+      }),
+      SiteCategories.findByPk(application.SiteCategoriesId, { paranoid: false }),
+      UploadedImage.findAll({ where: { ApplicationId: id }, paranoid: false }),
+    ]);
+
+    return {
+      ...application.toJSON(),
+      Revocation: revocation || null,
+      Withdrawal: withdrawal || null,
+      LicenceHolder: licenceHolder || null,
+      LicenceApplicant: licenceApplicant || null,
+      LicenceHolderAddress: licenceHolderAddress || null,
+      SiteAddress: siteAddress || null,
+      Species: species || null,
+      PSpecies: permittedSpecies || null,
+      ApplicationIssue: issues,
+      ApplicationMeasure: measures,
+      ApplicationAssessment: assessments,
+      AssessmentMeasure: assessmentMeasures,
+      ApplicationNotes: notes,
+      License: license || null,
+      SiteCategories: siteCategories || null,
+      UploadedImages: uploadedImages,
+    };
   },
 
   findAll: async () => {
