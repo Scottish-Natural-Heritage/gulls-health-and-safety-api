@@ -465,9 +465,8 @@ const ApplicationController = {
       UploadedImage.findAll({where: {ApplicationId: id}, paranoid: false}),
     ]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
-      ...application.toJSON(),
+      ...application,
       Revocation: revocation ?? null,
       Withdrawal: withdrawal ?? null,
       LicenceHolder: licenceHolder ?? null,
