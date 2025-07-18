@@ -958,7 +958,7 @@ const routes: ServerRoute[] = [
 
         // If we already have an assessment measure entry we need it's ID to upsert the new values,
         // so cast the application first so we can access the AssessmentMeasure object.
-        const assessmentMeasure = application as any;
+        const assessmentMeasure = application;
 
         let assessmentMeasureId;
 
@@ -1511,7 +1511,7 @@ const routes: ServerRoute[] = [
         const cleanedAmendment = CleaningFunctions.cleanAmendment(newAmendment);
 
         // If we have a licence we'll need the email address of the licence holder to send an amended email.
-        const application = (await Application.findOne(existingId)) as any;
+        const application = await Application.findOne(existingId);
         cleanedAmendment.licenceHolderEmailAddress = application.LicenceHolder?.emailAddress;
         cleanedAmendment.licenceApplicantEmailAddress = application.LicenceApplicant?.emailAddress;
 
