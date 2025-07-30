@@ -604,7 +604,7 @@ const AmendmentController = {
     });
 
     // We need the licence application details to create the amendment email.
-    const application = (await ApplicationController.findOne(incomingAmendment.LicenceId)) as any;
+    const application = await ApplicationController.findOne(incomingAmendment.LicenceId);
 
     // We need the newly created amendment to create the amendment email.
     let amendmentDetails;
@@ -647,7 +647,7 @@ const AmendmentController = {
 
   resendAmendmentEmail: async (applicationId: number, amendmentId: number) => {
     // We need the licence application details to create the amendment email.
-    const application = (await ApplicationController.findOne(applicationId)) as any;
+    const application = await ApplicationController.findOne(applicationId);
 
     // We need the amendment to create the amendment email.
     const amendment = (await AmendmentController.findOne(amendmentId)) as any;
