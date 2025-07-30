@@ -3,6 +3,8 @@ name: On-push build of image
 on:
   push:
     branches: [main, develop]
+  pull_request:
+    branches: [develop]
 
 env:
   ECR_REPOSITORY: naturescot/gulls-health-and-safety-api
