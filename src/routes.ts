@@ -83,6 +83,17 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Health-check endpoint.
+   */
+  {
+    method: 'get',
+    path: `${config.pathPrefix}/health`,
+    handler: (_request: Request, h: ResponseToolkit) => {
+      return h.response({message: 'OK'}).code(200);
+    },
+  },
+
+  /**
    * GET all advisories endpoint.
    */
   {
