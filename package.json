@@ -31,8 +31,6 @@
   "license": "(MIT OR OGL-UK-3.0)",
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
-    "@types/hapi__hapi": "^20.0.8",
-    "@types/hapi-pino": "^8.0.5",
     "@types/jsonwebtoken": "^8.5.6",
     "@types/node": "^16.0.0",
     "@types/node-cron": "3.0.1",
@@ -48,10 +46,10 @@
     "xo": "^0.42.0"
   },
   "dependencies": {
-    "@hapi/hapi": "^20.2.2",
+    "@hapi/hapi": "^21.4.4",
     "axios": "^1.10.0",
     "axios-mock-adapter": "^1.21.1",
-    "hapi-pino": "^8.5.0",
+    "hapi-pino": "^13.0.0",
     "jsonwebtoken": "^9.0.2",
     "naturescot-utils": "^1.2.0",
     "node-cron": "3.0.0",
