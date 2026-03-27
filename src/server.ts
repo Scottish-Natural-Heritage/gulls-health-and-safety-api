@@ -85,6 +85,14 @@ cron.schedule('0 6 * * *', async () => {
   //   console.error(JsonUtils.unErrorJson(error));
   // }
 
+  // Retention cron jobs
+
+  try {
+    await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/apply-undetermined-retention`);
+  } catch (error: unknown) {
+    console.error(JsonUtils.unErrorJson(error));
+  }
+
   console.log('Ending cron job(s).');
 });
 
