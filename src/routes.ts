@@ -838,6 +838,34 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Apply retention policy to refused, expired and revoked applications (5 years past their
+   * terminal date). Redacts PII from contacts and addresses, hard-deletes officer notes,
+   * and stamps retentionAppliedAt.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-terminal-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const applications = await Scheduled.getApplicationsPastRetention();
+
+        /* eslint-disable no-await-in-loop */
+        for (const application of applications) {
+          await Scheduled.applyRetentionToApplication(application);
+        }
+        /* eslint-enable no-await-in-loop */
+
+        return h
+          .response({message: `Retention applied to ${applications.length} terminal application(s).`})
+          .code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * Apply retention policy to withdrawn applications by hard-deleting any Notes and
    * UploadedImages still attached.
    * 
