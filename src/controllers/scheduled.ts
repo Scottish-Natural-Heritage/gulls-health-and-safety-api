@@ -22,7 +22,8 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Assessment, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} = database;
+const {Application, Assessment, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} =
+  database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
