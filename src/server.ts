@@ -96,7 +96,7 @@ cron.schedule('0 6 * * *', async () => {
   /**
    * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
    * withdraw function.
-   * 
+   *
    * TODO: Once any previously-withdrawn applications have been cleaned up, this function can be removed.
    */
   try {

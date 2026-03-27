@@ -873,7 +873,7 @@ const routes: ServerRoute[] = [
 
         /* eslint-disable no-await-in-loop */
         for (const application of applications) {
-          await Scheduled.applyRetentionToApplication(application);
+          await Scheduled.applyRetentionToUndeterminedApplication(application);
         }
         /* eslint-enable no-await-in-loop */
 

@@ -656,7 +656,7 @@ const ScheduledController = {
    *
    * @param {any} application The application to apply retention to.
    */
-  applyRetentionToApplication: async (application: any): Promise<void> => {
+  applyRetentionToUndeterminedApplication: async (application: any): Promise<void> => {
     const contactIds = [...new Set([application.LicenceHolderId, application.LicenceApplicantId])];
     const addressIds = [...new Set([application.LicenceHolderAddressId, application.SiteAddressId])];
 
