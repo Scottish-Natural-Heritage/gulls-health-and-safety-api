@@ -713,6 +713,7 @@ const ScheduledController = {
       }
 
       await Note.destroy({where: {ApplicationId: application.id}, force: true, transaction: t});
+      await UploadedImage.destroy({where: {ApplicationId: application.id}, force: true, transaction: t});
 
       await Application.update(
         {retentionAppliedAt: new Date()},
