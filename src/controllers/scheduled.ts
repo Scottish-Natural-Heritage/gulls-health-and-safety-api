@@ -22,7 +22,7 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} = database;
+const {Application, Assessment, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -575,6 +575,75 @@ const ScheduledController = {
 
     // Return the unconfirmed array of applications or undefined if empty.
     return unconfirmed ? (unconfirmed as ApplicationInterface[]) : undefined;
+  },
+
+  /**
+   * Returns all confirmed, undetermined (unassigned or in-progress) applications whose last
+   * transaction (Application.updatedAt) was more than 6 months ago and have not yet had
+   * retention applied.
+   *
+   * @returns {any[]} An array of undetermined applications past their retention period.
+   */
+  getUndeterminedApplicationsPastRetention: async () => {
+    const sixMonthsAgo: Date = new Date(new Date().setMonth(new Date().getMonth() - 6));
+
+    return Application.findAll({
+      where: {
+        confirmedByLicenseHolder: true,
+        retentionAppliedAt: {[Op.is]: null},
+        updatedAt: {[Op.lte]: sixMonthsAgo},
+        '$License.ApplicationId$': {[Op.is]: null},
+        '$Withdrawal.ApplicationId$': {[Op.is]: null},
+        '$Revocation.ApplicationId$': {[Op.is]: null},
+        '$ApplicationAssessment.decision$': {[Op.not]: false},
+      },
+      include: [
+        {model: Contact, as: 'LicenceHolder'},
+        {model: Contact, as: 'LicenceApplicant'},
+        {model: Address, as: 'LicenceHolderAddress'},
+        {model: Address, as: 'SiteAddress'},
+        {model: License, as: 'License', required: false},
+        {model: Withdrawal, as: 'Withdrawal', required: false},
+        {model: Revocation, as: 'Revocation', required: false},
+        {model: Assessment, as: 'ApplicationAssessment', required: false},
+      ],
+      subQuery: false,
+    });
+  },
+
+  /**
+   * Redacts PII from all contact and address records associated with the given application,
+   * then marks the application as having had retention applied.
+   *
+   * @param {any} application The application to apply retention to.
+   */
+  applyRetentionToApplication: async (application: any): Promise<void> => {
+    const contactIds = [...new Set([application.LicenceHolderId, application.LicenceApplicantId])];
+    const addressIds = [...new Set([application.LicenceHolderAddressId, application.SiteAddressId])];
+
+    await database.sequelize.transaction(async (t: any) => {
+      await Contact.update(
+        {
+          name: 'retained',
+          organisation: null,
+          emailAddress: 'retained@example.com',
+          phoneNumber: null,
+        },
+        {where: {id: contactIds}, transaction: t},
+      );
+
+      await Address.update(
+        {
+          addressLine1: 'retained',
+          addressLine2: null,
+          addressTown: 'retained',
+          addressCounty: null,
+        },
+        {where: {id: addressIds}, transaction: t},
+      );
+
+      await application.update({retentionAppliedAt: new Date()}, {transaction: t});
+    });
   },
 
   /**

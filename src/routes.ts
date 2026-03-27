@@ -838,6 +838,33 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Apply retention policy to undetermined (unassigned and in-progress) applications
+   * whose last transaction was more than 6 months ago.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-undetermined-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const applications = await Scheduled.getUndeterminedApplicationsPastRetention();
+
+        /* eslint-disable no-await-in-loop */
+        for (const application of applications) {
+          await Scheduled.applyRetentionToApplication(application);
+        }
+        /* eslint-enable no-await-in-loop */
+
+        return h
+          .response({message: `Retention applied to ${applications.length} undetermined application(s).`})
+          .code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * Soft DELETEs a single licence and all child records (revoke).
    */
   {
