@@ -93,6 +93,18 @@ cron.schedule('0 6 * * *', async () => {
     console.error(JsonUtils.unErrorJson(error));
   }
 
+  /**
+   * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
+   * withdraw function.
+   * 
+   * TODO: Once any previously-withdrawn applications have been cleaned up, this function can be removed.
+   */
+  try {
+    await axios.post(`http://localhost:${config.gullsApiPort}${config.pathPrefix}/apply-withdrawn-retention`);
+  } catch (error: unknown) {
+    console.error(JsonUtils.unErrorJson(error));
+  }
+
   console.log('Ending cron job(s).');
 });
 

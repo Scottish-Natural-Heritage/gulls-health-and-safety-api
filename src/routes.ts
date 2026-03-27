@@ -838,6 +838,29 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Apply retention policy to withdrawn applications by hard-deleting any Notes and
+   * UploadedImages still attached.
+   * 
+   * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
+   * withdraw function.
+   * 
+   * TODO: Once any previously-withdrawn applications have been cleaned up, this function can be removed.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-withdrawn-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const count = await Scheduled.cleanupWithdrawnApplications();
+        return h.response({message: `Withdrawn retention cleanup processed ${count} application(s).`}).code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * Apply retention policy to undetermined (unassigned and in-progress) applications
    * whose last transaction was more than 6 months ago.
    */

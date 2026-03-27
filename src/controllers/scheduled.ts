@@ -22,8 +22,20 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Assessment, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} =
-  database;
+const {
+  Application,
+  Assessment,
+  Contact,
+  Address,
+  License,
+  Note,
+  Revocation,
+  Returns,
+  Withdrawal,
+  UploadedImage,
+  PSpecies,
+  PActivity,
+} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -576,6 +588,32 @@ const ScheduledController = {
 
     // Return the unconfirmed array of applications or undefined if empty.
     return unconfirmed ? (unconfirmed as ApplicationInterface[]) : undefined;
+  },
+
+  /**
+   * Hard-deletes any Notes and UploadedImages still attached to withdrawn applications.
+   * 
+   * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
+   * withdraw function.
+   * 
+   * TODO: Once any previous applications have been cleaned up, this function can be removed.
+   *
+   * @returns {number} The number of withdrawn applications processed.
+   */
+  cleanupWithdrawnApplications: async (): Promise<number> => {
+    const withdrawals = await Withdrawal.findAll({attributes: ['ApplicationId']});
+    const applicationIds: number[] = withdrawals
+      .map((w) => {
+        return w.ApplicationId;
+      })
+      .filter(Boolean);
+
+    if (applicationIds.length === 0) return 0;
+
+    await Note.destroy({where: {ApplicationId: applicationIds}, force: true});
+    await UploadedImage.destroy({where: {ApplicationId: applicationIds}, force: true});
+
+    return applicationIds.length;
   },
 
   /**
