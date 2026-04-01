@@ -41,6 +41,8 @@ const ContactModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         validate: {
           notEmpty: true,
+           // TODO: we may want to remove email address validation in favour of an application-level check 
+           // so that, when retention is applied, this field can be set to "No data", in line with other applications.
           isEmail: true,
         },
       },

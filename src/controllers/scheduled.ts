@@ -691,9 +691,9 @@ const ScheduledController = {
       if (contactIds.length > 0) {
         await Contact.update(
           {
-            name: 'retained',
+            name: 'No data',
             organisation: null,
-            emailAddress: 'retained@example.com',
+            emailAddress: 'no.data@example.com', // this is value needed to pass validation in src/models/contact.ts,  ContactModel: isEmail: true
             phoneNumber: null,
           },
           {where: {id: contactIds}, paranoid: false, transaction: t},
@@ -703,9 +703,9 @@ const ScheduledController = {
       if (addressIds.length > 0) {
         await Address.update(
           {
-            addressLine1: 'retained',
+            addressLine1: 'No data',
             addressLine2: null,
-            addressTown: 'retained',
+            addressTown: 'No data',
             addressCounty: null,
           },
           {where: {id: addressIds}, paranoid: false, transaction: t},
@@ -769,9 +769,9 @@ const ScheduledController = {
     await database.sequelize.transaction(async (t: any) => {
       await Contact.update(
         {
-          name: 'retained',
+          name: 'No data',
           organisation: null,
-          emailAddress: 'retained@example.com',
+          emailAddress: 'No data',
           phoneNumber: null,
         },
         {where: {id: contactIds}, transaction: t},
@@ -779,9 +779,9 @@ const ScheduledController = {
 
       await Address.update(
         {
-          addressLine1: 'retained',
+          addressLine1: 'No data',
           addressLine2: null,
-          addressTown: 'retained',
+          addressTown: 'No data',
           addressCounty: null,
         },
         {where: {id: addressIds}, transaction: t},
