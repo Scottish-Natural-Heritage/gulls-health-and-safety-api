@@ -22,8 +22,20 @@ import {ApplicationInterface} from './application.js';
 /* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
-const {Application, Assessment, Contact, Address, License, Revocation, Returns, Withdrawal, PSpecies, PActivity} =
-  database;
+const {
+  Application,
+  Assessment,
+  Contact,
+  Address,
+  License,
+  Note,
+  Revocation,
+  Returns,
+  Withdrawal,
+  UploadedImage,
+  PSpecies,
+  PActivity,
+} = database;
 
 /**
  * This function calls the Notify API and asks for a 14 day reminder email to be sent to
@@ -579,6 +591,138 @@ const ScheduledController = {
   },
 
   /**
+   * Hard-deletes any Notes and UploadedImages still attached to withdrawn applications.
+   * 
+   * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
+   * withdraw function.
+   * 
+   * TODO: Once any previous applications have been cleaned up, this function can be removed.
+   *
+   * @returns {number} The number of withdrawn applications processed.
+   */
+  cleanupWithdrawnApplications: async (): Promise<number> => {
+    const withdrawals = await Withdrawal.findAll({attributes: ['ApplicationId']});
+    const applicationIds: number[] = withdrawals
+      .map((w) => {
+        return w.ApplicationId;
+      })
+      .filter(Boolean);
+
+    if (applicationIds.length === 0) return 0;
+
+    await Note.destroy({where: {ApplicationId: applicationIds}, force: true});
+    await UploadedImage.destroy({where: {ApplicationId: applicationIds}, force: true});
+
+    return applicationIds.length;
+  },
+
+  /**
+   * Returns all refused, expired and revoked applications that are more than 5 years past
+   * their relevant terminal date and have not yet had retention applied.
+   *
+   * - Refused: 5 years past Assessment.updatedAt (when decision was set to false)
+   * - Expired: 5 years past License.periodTo, with no Revocation
+   * - Revoked: 5 years past Revocation.createdAt (Application is soft-deleted)
+   *
+   * @returns An array of applications past their retention period.
+   */
+  getApplicationsPastRetention: async () => {
+    const fiveYearsAgo: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 5));
+
+    const [refused, expired, revoked] = await Promise.all([
+      // Refused: confirmed applications with a failed assessment, no licence issued
+      Application.findAll({
+        paranoid: true,
+        where: {
+          retentionAppliedAt: {[Op.is]: null},
+          '$ApplicationAssessment.decision$': false,
+          '$ApplicationAssessment.updatedAt$': {[Op.lte]: fiveYearsAgo},
+          '$License.ApplicationId$': {[Op.is]: null},
+        },
+        include: [
+          {model: Assessment, as: 'ApplicationAssessment', required: true},
+          {model: License, as: 'License', required: false},
+        ],
+        subQuery: false,
+      }),
+      // Expired: issued licences where periodTo is more than 5 years ago, not revoked
+      Application.findAll({
+        paranoid: true,
+        where: {
+          retentionAppliedAt: {[Op.is]: null},
+          '$License.periodTo$': {[Op.lte]: fiveYearsAgo},
+          '$Revocation.ApplicationId$': {[Op.is]: null},
+        },
+        include: [
+          {model: License, as: 'License', required: true},
+          {model: Revocation, as: 'Revocation', required: false},
+        ],
+        subQuery: false,
+      }),
+      // Revoked: soft-deleted applications with a Revocation more than 5 years ago
+      Application.findAll({
+        paranoid: false,
+        where: {
+          deletedAt: {[Op.not]: null},
+          retentionAppliedAt: {[Op.is]: null},
+          '$Revocation.createdAt$': {[Op.lte]: fiveYearsAgo},
+        },
+        include: [{model: Revocation, as: 'Revocation', required: true}],
+        subQuery: false,
+      }),
+    ]);
+
+    return [...refused, ...expired, ...revoked];
+  },
+
+  /**
+   * Redacts PII from contact and address records for a refused, expired or revoked application,
+   * hard-deletes its officer notes, then marks it as having had retention applied.
+   *
+   * Uses paranoid: false on updates to handle revoked applications whose records are soft-deleted.
+   *
+   * @param {any} application The application to apply retention to.
+   */
+  applyRetentionToApplication: async (application: any): Promise<void> => {
+    const contactIds = [...new Set([application.LicenceHolderId, application.LicenceApplicantId])].filter(Boolean);
+    const addressIds = [...new Set([application.LicenceHolderAddressId, application.SiteAddressId])].filter(Boolean);
+
+    await database.sequelize.transaction(async (t: any) => {
+      if (contactIds.length > 0) {
+        await Contact.update(
+          {
+            name: 'No data',
+            organisation: null,
+            emailAddress: 'no.data@example.com', // this is value needed to pass validation in src/models/contact.ts,  ContactModel: isEmail: true
+            phoneNumber: null,
+          },
+          {where: {id: contactIds}, paranoid: false, transaction: t},
+        );
+      }
+
+      if (addressIds.length > 0) {
+        await Address.update(
+          {
+            addressLine1: 'No data',
+            addressLine2: null,
+            addressTown: 'No data',
+            addressCounty: null,
+          },
+          {where: {id: addressIds}, paranoid: false, transaction: t},
+        );
+      }
+
+      await Note.destroy({where: {ApplicationId: application.id}, force: true, transaction: t});
+      await UploadedImage.destroy({where: {ApplicationId: application.id}, force: true, transaction: t});
+
+      await Application.update(
+        {retentionAppliedAt: new Date()},
+        {where: {id: application.id}, paranoid: false, transaction: t},
+      );
+    });
+  },
+
+  /**
    * Returns all confirmed, undetermined (unassigned or in-progress) applications whose last
    * transaction (Application.updatedAt) was more than 6 months ago and have not yet had
    * retention applied.
@@ -618,16 +762,16 @@ const ScheduledController = {
    *
    * @param {any} application The application to apply retention to.
    */
-  applyRetentionToApplication: async (application: any): Promise<void> => {
+  applyRetentionToUndeterminedApplication: async (application: any): Promise<void> => {
     const contactIds = [...new Set([application.LicenceHolderId, application.LicenceApplicantId])];
     const addressIds = [...new Set([application.LicenceHolderAddressId, application.SiteAddressId])];
 
     await database.sequelize.transaction(async (t: any) => {
       await Contact.update(
         {
-          name: 'retained',
+          name: 'No data',
           organisation: null,
-          emailAddress: 'retained@example.com',
+          emailAddress: 'No data',
           phoneNumber: null,
         },
         {where: {id: contactIds}, transaction: t},
@@ -635,9 +779,9 @@ const ScheduledController = {
 
       await Address.update(
         {
-          addressLine1: 'retained',
+          addressLine1: 'No data',
           addressLine2: null,
-          addressTown: 'retained',
+          addressTown: 'No data',
           addressCounty: null,
         },
         {where: {id: addressIds}, transaction: t},

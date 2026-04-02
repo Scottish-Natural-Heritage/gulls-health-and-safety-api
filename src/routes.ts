@@ -838,6 +838,57 @@ const routes: ServerRoute[] = [
   },
 
   /**
+   * Apply retention policy to refused, expired and revoked applications (5 years past their
+   * terminal date). Redacts PII from contacts and addresses, hard-deletes officer notes,
+   * and stamps retentionAppliedAt.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-terminal-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const applications = await Scheduled.getApplicationsPastRetention();
+
+        /* eslint-disable no-await-in-loop */
+        for (const application of applications) {
+          await Scheduled.applyRetentionToApplication(application);
+        }
+        /* eslint-enable no-await-in-loop */
+
+        return h
+          .response({message: `Retention applied to ${applications.length} terminal application(s).`})
+          .code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Apply retention policy to withdrawn applications by hard-deleting any Notes and
+   * UploadedImages still attached.
+   * 
+   * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
+   * withdraw function.
+   * 
+   * TODO: Once any previously-withdrawn applications have been cleaned up, this function can be removed.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-withdrawn-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const count = await Scheduled.cleanupWithdrawnApplications();
+        return h.response({message: `Withdrawn retention cleanup processed ${count} application(s).`}).code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
    * Apply retention policy to undetermined (unassigned and in-progress) applications
    * whose last transaction was more than 6 months ago.
    */
@@ -850,7 +901,7 @@ const routes: ServerRoute[] = [
 
         /* eslint-disable no-await-in-loop */
         for (const application of applications) {
-          await Scheduled.applyRetentionToApplication(application);
+          await Scheduled.applyRetentionToUndeterminedApplication(application);
         }
         /* eslint-enable no-await-in-loop */
 
