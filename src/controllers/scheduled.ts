@@ -592,10 +592,10 @@ const ScheduledController = {
 
   /**
    * Hard-deletes any Notes and UploadedImages still attached to withdrawn applications.
-   * 
+   *
    * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
    * withdraw function.
-   * 
+   *
    * TODO: Once any previous applications have been cleaned up, this function can be removed.
    *
    * @returns {number} The number of withdrawn applications processed.
@@ -693,7 +693,7 @@ const ScheduledController = {
           {
             name: 'No data',
             organisation: null,
-            emailAddress: 'no.data@example.com', // this is value needed to pass validation in src/models/contact.ts,  ContactModel: isEmail: true
+            emailAddress: 'no.data@example.com', // This is value needed to pass validation in src/models/contact.ts,  ContactModel: isEmail: true
             phoneNumber: null,
           },
           {where: {id: contactIds}, paranoid: false, transaction: t},

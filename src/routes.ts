@@ -855,9 +855,7 @@ const routes: ServerRoute[] = [
         }
         /* eslint-enable no-await-in-loop */
 
-        return h
-          .response({message: `Retention applied to ${applications.length} terminal application(s).`})
-          .code(200);
+        return h.response({message: `Retention applied to ${applications.length} terminal application(s).`}).code(200);
       } catch (error: unknown) {
         request.logger.error(JsonUtils.unErrorJson(error));
         return h.response({error}).code(500);
@@ -868,10 +866,10 @@ const routes: ServerRoute[] = [
   /**
    * Apply retention policy to withdrawn applications by hard-deleting any Notes and
    * UploadedImages still attached.
-   * 
+   *
    * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
    * withdraw function.
-   * 
+   *
    * TODO: Once any previously-withdrawn applications have been cleaned up, this function can be removed.
    */
   {
