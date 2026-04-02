@@ -1370,6 +1370,10 @@ const ApplicationController = {
         await Assessment.destroy({where: {ApplicationId: id}, force: true, transaction: t});
         // Delete any assessment Measure attached to the application/license.
         await AssessmentMeasure.destroy({where: {ApplicationId: id}, force: true, transaction: t});
+        // Delete any Notes attached to the application.
+        await Note.destroy({where: {ApplicationId: id}, force: true, transaction: t});
+        // Delete any UploadedImages attached to the application.
+        await UploadedImage.destroy({where: {ApplicationId: id}, force: true, transaction: t});
 
         // Send the withdrawal email to the license holder.
         await sendWithdrawalEmail(emailDetails, application.LicenceHolder.emailAddress);
