@@ -59,6 +59,9 @@
     "sequelize": "6.33.0",
     "sequelize-cli": "^6.2.0"
   },
+  "overrides": {
+    "lodash": "^4.17.23"
+  },
   "xo": {
     "space": 2,
     "prettier": true,
