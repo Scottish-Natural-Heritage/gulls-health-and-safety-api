@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, new-cap */
-
+/* eslint-disable @typescript-eslint/no-require-imports */
 import {databaseConfig} from '../config/ts-database-config';
 import Application from './application';
 import Assessment from './assessment';

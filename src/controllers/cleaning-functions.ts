@@ -489,8 +489,6 @@ const rangesIntoIntegers = (range: string | undefined): number => {
   return displayableRange;
 };
 
-// Disabled because of conflict between editorconfig and prettier.
-/* eslint-disable editorconfig/indent */
 /**
  * Cleans the measure details into something the database can use.
  *
@@ -702,7 +700,7 @@ const cleanPermittedActivityChange = (body: any): any => {
  */
 const cleanCondition = async (body: any) => {
   const optionalConditions = [];
-  /* eslint-disable no-await-in-loop */
+   
   for (const condition of body.conditions) {
     const findOptionalCondition = await Condition.findOne(condition);
     if (findOptionalCondition) {
@@ -740,7 +738,7 @@ const cleanAdvisory = async (body: any) => {
 
   return undefined;
 };
-/* eslint-enable no-await-in-loop */
+ 
 
 /**
  * Clean an incoming request body to make it more compatible with the
@@ -851,8 +849,6 @@ const cleanAmendment = (body: any): any => {
     amendedBy: body.amendedBy ? String(body.amendedBy).trim() : undefined,
   };
 };
-
-/* eslint-enable editorconfig/indent */
 
 const CleaningFunctions = {
   cleanContact,
