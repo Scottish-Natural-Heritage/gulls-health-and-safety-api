@@ -7,7 +7,7 @@
   ],
   "repository": "github:Scottish-Natural-Heritage/gulls-health-and-safety-api",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "lint:spelling": "cspell \"{src/**/*.ts,**/*.json}\"",
