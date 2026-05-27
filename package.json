@@ -56,8 +56,11 @@
     "notifications-node-client": "^8.1.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
-    "sequelize": "6.33.0",
+    "sequelize": "^6.33.0",
     "sequelize-cli": "^6.2.0"
+  },
+  "overrides": {
+    "lodash": "^4.17.23"
   },
   "xo": {
     "space": 2,
