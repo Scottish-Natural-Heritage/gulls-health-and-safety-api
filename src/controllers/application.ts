@@ -35,7 +35,7 @@ const {
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
-/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
+/* eslint-disable-next-line @typescript-eslint/no-require-imports */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
 /**
@@ -465,7 +465,6 @@ const ApplicationController = {
       UploadedImage.findAll({where: {ApplicationId: id}, paranoid: false}),
     ]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
       ...application.toJSON(),
       Revocation: revocation ?? null,
@@ -544,7 +543,7 @@ const ApplicationController = {
     const limit = itemsPerPage;
 
     // Prevent XSS
-    const queryParameters = new URLSearchParams(request.query);
+    const queryParameters = new URLSearchParams(request.query as any);
 
     const searchTerm: string = queryParameters.get('search') ?? '';
     const status: string = queryParameters.get('status') ?? '';
@@ -824,8 +823,6 @@ const ApplicationController = {
       let foundExistingId = true; // Assume true until checked.
 
       // Generate a random 6 digit ID between 1000 and 999_999 and checks if it's already in use.
-      // No await in loop disabled because we need to wait for the result.
-      /* eslint-disable no-await-in-loop */
       while (foundExistingId && remainingAttempts > 0) {
         newId = Math.floor(Math.random() * (999_999 - 1000) + 1000);
         existingApplication = await Application.findByPk(newId);
@@ -835,7 +832,6 @@ const ApplicationController = {
 
         remainingAttempts--;
       }
-      /* eslint-enable no-await-in-loop */
 
       incomingApplication.id = newId;
 

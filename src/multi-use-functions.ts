@@ -312,7 +312,7 @@ const addActivityResults = (species: any, speciesType: string): string => {
  * @returns {string} A more accurate and readable range as a string.
  */
 const displayableRanges = (range: string | undefined): string => {
-  let displayableRange = '';
+  let displayableRange: string;
   switch (range) {
     case 'upTo10': {
       displayableRange = '1 - 10';
@@ -365,7 +365,7 @@ const displayableRanges = (range: string | undefined): string => {
  * @returns {string} The upper end of the range.
  */
 const displayableUpperRange = (range: string | undefined): string => {
-  let upperRangeValue = '';
+  let upperRangeValue: string;
   switch (range) {
     case 'upTo10': {
       upperRangeValue = '10';

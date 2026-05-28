@@ -480,7 +480,7 @@ const routes: ServerRoute[] = [
         );
 
         // Grab the 'forwarding' url from the request.
-        const {confirmBaseUrl} = request.query;
+        const {confirmBaseUrl} = request.query as any;
 
         // Check there's actually one there, otherwise we'll have to make one up.
         const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
@@ -731,7 +731,7 @@ const routes: ServerRoute[] = [
           for (const application of unconfirmed) {
             const sentReminder: any = {fourteenDayReminder: true};
             // The await is needed here as we have an indeterminate number of unconfirmed to update in the DB.
-            // eslint-disable-next-line no-await-in-loop
+             
             await Application.remind(application.id, sentReminder);
           }
         }
@@ -822,7 +822,7 @@ const routes: ServerRoute[] = [
             createdBy: 'node-cron automated process',
           };
           // Disabled as we need to loop through the list of applications to withdraw.
-          // eslint-disable-next-line no-await-in-loop
+           
           await Application.withdraw(application.id, withdrawalReason);
         }
 
@@ -849,11 +849,11 @@ const routes: ServerRoute[] = [
       try {
         const applications = await Scheduled.getApplicationsPastRetention();
 
-        /* eslint-disable no-await-in-loop */
+         
         for (const application of applications) {
           await Scheduled.applyRetentionToApplication(application);
         }
-        /* eslint-enable no-await-in-loop */
+         
 
         return h.response({message: `Retention applied to ${applications.length} terminal application(s).`}).code(200);
       } catch (error: unknown) {
@@ -897,11 +897,11 @@ const routes: ServerRoute[] = [
       try {
         const applications = await Scheduled.getUndeterminedApplicationsPastRetention();
 
-        /* eslint-disable no-await-in-loop */
+         
         for (const application of applications) {
           await Scheduled.applyRetentionToUndeterminedApplication(application);
         }
-        /* eslint-enable no-await-in-loop */
+         
 
         return h
           .response({message: `Retention applied to ${applications.length} undetermined application(s).`})

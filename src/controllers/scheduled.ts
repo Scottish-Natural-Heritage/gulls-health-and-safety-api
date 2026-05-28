@@ -19,7 +19,7 @@ import {ApplicationInterface} from './application.js';
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
-/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
+/* eslint-disable-next-line @typescript-eslint/no-require-imports */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
 const {
@@ -251,6 +251,7 @@ const setReturnReminderEmailDetails = (id: number, contact: any, siteAddress: an
 const ScheduledController = {
   getUnconfirmed: async () => {
     return Application.findAll({
+      // eslint-disable-next-line no-constant-binary-expression
       where: {confirmedByLicenseHolder: false, fourteenDayReminder: false || null},
       include: [
         {
@@ -473,7 +474,7 @@ const ScheduledController = {
         );
       }
 
-      /* eslint-disable no-await-in-loop */
+       
 
       // Check reminder type and send the correct template.
       if (reminderType === 'expiredNoReturn') {
@@ -516,7 +517,7 @@ const ScheduledController = {
       }
     }
 
-    /* eslint-enable no-await-in-loop */
+     
 
     return sentCount;
   },
@@ -531,7 +532,7 @@ const ScheduledController = {
 
     for (const application of unconfirmed) {
       // Loop through each application and create personalisation object, the await needs to be part of the loop.
-      // eslint-disable-next-line no-await-in-loop
+       
       const emailDetails = await set14DayReminderEmailDetails(
         application.id,
         application.createdAt,
@@ -541,7 +542,7 @@ const ScheduledController = {
         confirmBaseUrl,
       );
 
-      // eslint-disable-next-line no-await-in-loop
+       
       const applicantEmailDetails = await set14DayReminderEmailDetailsForApplicant(
         application.id,
         application.createdAt,
@@ -551,10 +552,10 @@ const ScheduledController = {
       );
 
       // Send the reminder emails, the awaits needs to be part of the loop.
-      /* eslint-disable no-await-in-loop */
+       
       await sendReminderMagicLinkEmail(emailDetails, application.LicenceHolder.emailAddress);
       await sendReminderEmailForApplicant(applicantEmailDetails, application.LicenceApplicant.emailAddress);
-      /* eslint-enable no-await-in-loop */
+       
     }
 
     // Return the unconfirmed array of applications or undefined if empty.
@@ -580,10 +581,10 @@ const ScheduledController = {
       );
 
       // Send the withdraw emails, the awaits needs to be part of the loop.
-      /* eslint-disable no-await-in-loop */
+       
       await sendWithdrawEmail(emailDetails, application.LicenceHolder.emailAddress);
       await sendWithdrawEmail(emailDetails, application.LicenceApplicant.emailAddress);
-      /* eslint-enable no-await-in-loop */
+       
     }
 
     // Return the unconfirmed array of applications or undefined if empty.
@@ -800,12 +801,12 @@ const ScheduledController = {
   resendLicenceEmails: async (licences: any): Promise<number> => {
     let sentCount = 0;
 
-    /* eslint-disable no-await-in-loop */
+     
     for (const licence of licences) {
       await LicenceController.reSendEmails(licence.id);
       sentCount++;
     }
-    /* eslint-enable no-await-in-loop */
+     
 
     return sentCount;
   },
