@@ -10,7 +10,7 @@ const {Returns, RSpecies, RActivity} = database;
 
 // Disabled rules because Notify client has no index.js and implicitly has "any" type, and this is how the import is done
 // in the Notify documentation - https://docs.notifications.service.gov.uk/node.html
-/* eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, unicorn/prefer-module, prefer-destructuring */
+/* eslint-disable-next-line @typescript-eslint/no-require-imports */
 const NotifyClient = require('notifications-node-client').NotifyClient;
 
 /**
@@ -484,7 +484,7 @@ const ReturnsController = {
     }
 
     // Create a map of all of the submitted returns for each species, to be used by Notify.
-    const returnDetails: Map<string, any> = new Map();
+    const returnDetails = new Map<string, any>();
 
     if (herringReturnActivity) {
       returnDetails.set('Herring Gull', herringReturnActivity);

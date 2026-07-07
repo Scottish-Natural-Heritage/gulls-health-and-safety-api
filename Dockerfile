@@ -2,8 +2,8 @@
 # Builder Stage
 ################################################################################
 
-# We're deploying to the 20-alpine image, so do our building on it too.
-FROM node:20-alpine as builder
+# We're deploying to the 24-alpine image, so do our building on it too.
+FROM node:24-alpine as builder
 
 # By default, we want to do everything in a non-privileged user, so go to their
 # home dir and drop to their account.
@@ -28,15 +28,15 @@ RUN npm prune --production
 # Deployable Image
 ################################################################################
 
-# We built on the 20-alpine image, so we need to deploy on it too.
-FROM node:20-alpine
+# We built on the 24-alpine image, so we need to deploy on it too.
+FROM node:24-alpine
 
 # Drop back to the non-privileged user for run-time.
 WORKDIR /home/node
 USER node
 
 # Tell node, et al to run in production mode.
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Copy the run dependencies, built code and scripts from the builder.
 COPY --chown=node:node --from=builder /home/node/node_modules ./node_modules
@@ -51,16 +51,16 @@ COPY --chown=node:node ./.secrets ./.secrets
 
 # These variables are for overriding but keep them consistent between image and
 # run.
-ENV GULLS_API_PORT 3017
-ENV GULLS_API_PATH_PREFIX gulls-health-and-safety-api
+ENV GULLS_API_PORT=3017
+ENV GULLS_API_PATH_PREFIX=gulls-health-and-safety-api
 
 # These variables are for overriding and they only matter during run.
-ENV LICENSING_DB_HOST override_this_value
-ENV LICENSING_DB_PASS override_this_value
-ENV GULLS_DB_PASS override_this_value
-ENV RO_GULLS_DB_PASS override_this_value
-ENV PC_LOOKUP_API_KEY override_this_value
-ENV GULLS_NOTIFY_API_KEY override_this_value
+ENV LICENSING_DB_HOST=override_this_value
+ENV LICENSING_DB_PASS=override_this_value
+ENV GULLS_DB_PASS=override_this_value
+ENV RO_GULLS_DB_PASS=override_this_value
+ENV PC_LOOKUP_API_KEY=override_this_value
+ENV GULLS_NOTIFY_API_KEY=override_this_value
 
 # Let docker know about our listening port.
 EXPOSE $GULLS_API_PORT

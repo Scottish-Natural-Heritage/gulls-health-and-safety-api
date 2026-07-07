@@ -480,7 +480,7 @@ const routes: ServerRoute[] = [
         );
 
         // Grab the 'forwarding' url from the request.
-        const {confirmBaseUrl} = request.query;
+        const {confirmBaseUrl} = request.query as any;
 
         // Check there's actually one there, otherwise we'll have to make one up.
         const urlInvalid = confirmBaseUrl === undefined || confirmBaseUrl === null;
@@ -731,7 +731,7 @@ const routes: ServerRoute[] = [
           for (const application of unconfirmed) {
             const sentReminder: any = {fourteenDayReminder: true};
             // The await is needed here as we have an indeterminate number of unconfirmed to update in the DB.
-            // eslint-disable-next-line no-await-in-loop
+             
             await Application.remind(application.id, sentReminder);
           }
         }
@@ -822,7 +822,7 @@ const routes: ServerRoute[] = [
             createdBy: 'node-cron automated process',
           };
           // Disabled as we need to loop through the list of applications to withdraw.
-          // eslint-disable-next-line no-await-in-loop
+           
           await Application.withdraw(application.id, withdrawalReason);
         }
 
@@ -832,6 +832,82 @@ const routes: ServerRoute[] = [
         // Log any error.
         request.logger.error(JsonUtils.unErrorJson(error));
         // Something bad happened? Return 500 and the error.
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Apply retention policy to refused, expired and revoked applications (5 years past their
+   * terminal date). Redacts PII from contacts and addresses, hard-deletes officer notes,
+   * and stamps retentionAppliedAt.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-terminal-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const applications = await Scheduled.getApplicationsPastRetention();
+
+         
+        for (const application of applications) {
+          await Scheduled.applyRetentionToApplication(application);
+        }
+         
+
+        return h.response({message: `Retention applied to ${applications.length} terminal application(s).`}).code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Apply retention policy to withdrawn applications by hard-deleting any Notes and
+   * UploadedImages still attached.
+   *
+   * This is only needed to handle applications withdrawn before Note and UploadedImage deletion was added to the
+   * withdraw function.
+   *
+   * TODO: Once any previously-withdrawn applications have been cleaned up, this function can be removed.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-withdrawn-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const count = await Scheduled.cleanupWithdrawnApplications();
+        return h.response({message: `Withdrawn retention cleanup processed ${count} application(s).`}).code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
+        return h.response({error}).code(500);
+      }
+    },
+  },
+
+  /**
+   * Apply retention policy to undetermined (unassigned and in-progress) applications
+   * whose last transaction was more than 6 months ago.
+   */
+  {
+    method: 'post',
+    path: `${config.pathPrefix}/apply-undetermined-retention`,
+    handler: async (request: Request, h: ResponseToolkit) => {
+      try {
+        const applications = await Scheduled.getUndeterminedApplicationsPastRetention();
+
+         
+        for (const application of applications) {
+          await Scheduled.applyRetentionToUndeterminedApplication(application);
+        }
+         
+
+        return h
+          .response({message: `Retention applied to ${applications.length} undetermined application(s).`})
+          .code(200);
+      } catch (error: unknown) {
+        request.logger.error(JsonUtils.unErrorJson(error));
         return h.response({error}).code(500);
       }
     },

@@ -1,5 +1,3 @@
-// Disabled this rule as it does'nt like the uprn, usrn numbers that gazetteer responds.
-/* eslint-disable unicorn/numeric-separators-style */
 import MockAdapter from 'axios-mock-adapter';
 import axios, {AxiosResponse} from 'axios';
 
